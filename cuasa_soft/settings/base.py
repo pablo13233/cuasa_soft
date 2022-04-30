@@ -29,7 +29,8 @@ DJANGO_APPS = [
 
 LOCAL_APPS = (
     #apps locales
-
+    'home',
+    'tickets',
 
 )
 
