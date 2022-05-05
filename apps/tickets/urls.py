@@ -4,5 +4,5 @@ from . import views
 app_name = 'tickets_app' # namespace
 
 urlpatterns = [
-
+    path('ticket/', views.About, name='about'),
 ]
