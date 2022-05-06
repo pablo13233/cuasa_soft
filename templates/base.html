@@ -36,9 +36,8 @@
     {% block content %}
 
     {% endblock content%}
-
+    {% include 'partials/_footer.html' %}
   </main>
-
   <!-- Configurador de interfas-->
   <div class="fixed-plugin">
     <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
@@ -106,7 +105,6 @@
     </div>
   </div>
   <!-- Fin Configurador de interfas-->
-  {% include 'partials/_footer.html' %}
   {% include 'partials/_scripts.html' %}
 </body>
 
