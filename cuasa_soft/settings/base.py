@@ -31,6 +31,7 @@ LOCAL_APPS = (
     #apps locales
     'apps.home',
     'apps.tickets',
+    'apps.usuarios',
 
 )
 

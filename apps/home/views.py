@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.views.generic import (
-    TemplateView,
+    TemplateView, CreateView,
     )
-# Create your views here.
+from django.urls import reverse_lazy
 
+# Create your views here.
 
 class IndexHomeView(TemplateView):
     template_name = "home/home.html"
+
