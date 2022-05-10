@@ -8,7 +8,7 @@ Crear Usuarios
 
 {% block content %}
 
-<div class="container-fluid py-4 col-12 border">
+<div class="container-fluid py-4 col-12">
     <div class="row mb-4">
         <div class="col-12 mb-md-0 mb-4">
             <div class="card">
@@ -20,7 +20,64 @@ Crear Usuarios
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
-
+                    <div class="col ms-4">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Usuario:</label>
+                                        <input type="text" class="form-control border rounded" name="username">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Nombres:</label>
+                                        <input type="text" class="form-control border rounded" name="first_name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Apellidos:</label>
+                                        <input type="text" class="form-control border rounded" name="last_name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Correo:</label>
+                                        <input type="text" class="form-control border rounded" name="email">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Contraseña:</label>
+                                        <input type="text" class="form-control border rounded" name="password1">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>Confirmar Contraseña:</label>
+                                        <input type="text" class="form-control border rounded" name="password2">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row text">
+                                <div class="col-sm-8 ms-4 p-3">
+                                    <button class="btn btn-success" type="submit">Guardar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
