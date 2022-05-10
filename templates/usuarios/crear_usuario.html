@@ -21,13 +21,13 @@ Crear Usuarios
                 </div>
                 <div class="card-body px-0 pb-2">
                     <div class="col ms-4">
-                        <form action="" method="post">
+                        <form action="#" method="post">
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-sm-8">
                                     <div class="form-group">
-                                        <label>Usuario:</label>
-                                        <input type="text" class="form-control border rounded" name="username">
+                                        <label>{{ form.label.username }}</label>
+                                        <p class="form-control rounded">{{form.username}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -35,7 +35,7 @@ Crear Usuarios
                                 <div class="col-sm-8">
                                     <div class="form-group">
                                         <label>Nombres:</label>
-                                        <input type="text" class="form-control border rounded" name="first_name">
+                                        <p class="form-control rounded">{{form.first_name}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -43,7 +43,7 @@ Crear Usuarios
                                 <div class="col-sm-8">
                                     <div class="form-group">
                                         <label>Apellidos:</label>
-                                        <input type="text" class="form-control border rounded" name="last_name">
+                                        <p class="form-control rounded">{{form.last_name}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -51,7 +51,7 @@ Crear Usuarios
                                 <div class="col-sm-8">
                                     <div class="form-group">
                                         <label>Correo:</label>
-                                        <input type="text" class="form-control border rounded" name="email">
+                                        <p class="form-control rounded">{{form.email}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -59,7 +59,7 @@ Crear Usuarios
                                 <div class="col-sm-8">
                                     <div class="form-group">
                                         <label>Contraseña:</label>
-                                        <input type="text" class="form-control border rounded" name="password1">
+                                        <p class="form-control rounded">{{form.password1}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -67,13 +67,15 @@ Crear Usuarios
                                 <div class="col-sm-8">
                                     <div class="form-group">
                                         <label>Confirmar Contraseña:</label>
-                                        <input type="text" class="form-control border rounded" name="password2">
+                                        <p class="form-control rounded">{{form.password2}}</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="row text">
                                 <div class="col-sm-8 ms-4 p-3">
-                                    <button class="btn btn-success" type="submit">Guardar</button>
+                                    <div class="form-group">
+                                        <button class="btn btn-success" type="submit">Guardar</button>
+                                    </div>
                                 </div>
                             </div>
                         </form>
