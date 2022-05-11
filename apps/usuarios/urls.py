@@ -15,5 +15,4 @@ urlpatterns = [
         views.RegistroUsuarioCreateView.as_view(),
         name='reg_usuarios'
     ),
-
 ]
