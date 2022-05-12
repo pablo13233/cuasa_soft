@@ -31,4 +31,4 @@ def login(request):
 #view cierre sesion
 def logout_view(request):
     logout(request)
-    return redirect('login/login.html')
+    return redirect('login_app:login')

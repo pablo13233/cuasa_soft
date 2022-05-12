@@ -17,7 +17,7 @@ def UsuariosView(request):
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
-            action = request.POST.get['action']
+            action = request.POST['action']
             if action == 'listar':
                 for i in User.objects.all():
                     data.append(i.toJson())

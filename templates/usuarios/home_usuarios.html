@@ -62,8 +62,8 @@ Usuarios
             </div>
             <div class="modal-body">
                 <form action="." method="post" id="form_usuario" enctype="multipart/form-data">
-                    {% csrf_token %}
                     <div class="form-group row">
+                        {% csrf_token %}
                         <input type="text" class="d-none" name="action" id="action" value="crear">
                         <input type="text" class="d-none" id="id_usuario" value="0">
 
@@ -99,7 +99,8 @@ Usuarios
                     <div class="form-group row">
                         <div class="col-md-12">
                             <label for="">Confirmar Contraseña</label>
-                            <input type="password" class="form-control" name="password2" id="names" id="password" required>
+                            <input type="password" class="form-control" name="password2" id="names" id="password"
+                                required>
                         </div>
                     </div>
                 </form>
@@ -118,22 +119,22 @@ Usuarios
     var tablaUsuarios;
     var modalTitulo = $('.modal-title');
 
-    window.onload = function() {
-        $('#btnAdd').on("click",function() {
+    window.onload = function () {
+        $("#btnAdd").on("click", function () {
             modalTitulo.find('span').html('Usuario Nuevo');
-            $('#action').val('crear');
+            $('#action').val("crear");
             $('#form_usuario')[0].reset();
             $('#username').focus;
 
             $('#modalUsuarios').modal('show');
         });
         $('#datatable').DataTable();
-        obtenerDatos();
+        obtenerDatos(); 
     }
 
     $('#datatable tbody').on('click', 'a[rel="editar"]', function () {
-        var tr = tablaUsuario.cell($(this).closest('td, li')).index();
-        var data = tablaUsuario.row(tr.row).data();
+        var tr = tablaUsuarios.cell($(this).closest('td, li')).index();
+        var data = tablaUsuarios.row(tr.row).data();
 
         modalTitulo.find('span').html('Editar usuario');
 
@@ -146,8 +147,8 @@ Usuarios
         $('#password').val(data.password);
         $('#modalUsuario').modal('show');
     }).on('click', 'a[rel="eliminar"]', function () {
-        var tr = tablaUsuario.cell($(this).closest('td, li')).index();
-        var data = tablaUsuario.row(tr.row).data();
+        var tr = tablaUsuarios.cell($(this).closest('td, li')).index();
+        var data = tablaUsuarios.row(tr.row).data();
 
         $('#action').val("eliminar");
         $('#id_usuario').val(data.id);
@@ -167,9 +168,10 @@ Usuarios
         });
     });
 
-    $("#btn").on("click", function () {
+    $("#btnSave").on("click", function () {
 
-        if ($("#username").val() == "" || $("#password").val() == "" || $("#first_name").val() == "" || $("#last_name").val() == "" || $("#email").val() == "") {
+        if ($("#username").val() == "" || $("#password").val() == "" || $("#first_name").val() == "" || $(
+                "#last_name").val() == "" || $("#email").val() == "") {
             alert("No puede dejar campos vacios");
         } else {
             submit_with_ajax("", "");
@@ -248,7 +250,8 @@ Usuarios
 
     function obtenerDatos() {
         token = $('input[name="csrfmiddlewaretoken"]').val();
-        tablaUsuario = $('#datatable').DataTable({
+        console.log('llega a funcion');
+        tablaUsuarios = $('#datatable').DataTable({
             responsive: true,
             autoWidth: false,
             destroy: true,
@@ -274,7 +277,7 @@ Usuarios
                     "data": "username"
                 },
                 {
-                    "data": "Nombre"
+                    "data": "first_name"
                 },
                 {
                     "data": "Correo"
@@ -300,7 +303,6 @@ Usuarios
             ],
         });
     }
-
 </script>
 
 {% endblock content %}
