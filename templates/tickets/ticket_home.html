@@ -91,7 +91,7 @@ Tickets
                     <div class="form-group row">
                         <div class="col-md-12">
                             <label for="">Descripción</label>
-                            <textArea id="descripcion_Ticket" name="descriptionl" class="form-control "
+                            <textArea id="description" name="description" class="form-control"
                                 placeholder="Descripción del Ticket" style="resize: none">
 
                       </textArea>
@@ -102,7 +102,7 @@ Tickets
 
                         <div class="col-md-12">
                             <label for="">Imagen</label>
-                            <input type="file" id="img_ticket" name="imt_ticket" accept="image/*">
+                            <input type="file" id="imagen" name="imagen" accept="image/*">
                         </div>
                     </div>
                 </form>
@@ -183,13 +183,13 @@ Tickets
                     "data": "id"
                 },
                 {
-                    "data": "username"
+                    "data": "creador.username"
                 },
                 {
-                    "data": "desctiption"
+                    "data": "description"
                 },
                 {
-                    "data": "create_at"
+                    "data": "created_at"
                 }, 
             ]
         });
@@ -219,13 +219,9 @@ Tickets
 
         parametros.append('title', $("#title").val());
         parametros.append('description', $("#description").val());
-
         parametros.append('id', parseInt($("#id_ticket").val()));
 
-
-
-        parametros.append('imagen', $("#img_ticket")[0].files[0]);
-
+        parametros.append('imagen', $("#imagen")[0].files[0]);
 
         parametros.append('csrfmiddlewaretoken', token);
 

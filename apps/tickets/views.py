@@ -26,11 +26,9 @@ def ticketViews (request):
 
                 dato_Ticket = Ticket()
                 dato_Ticket.title = request.POST['title']
-                dato_Ticket.status = request.POST['status']
                 dato_Ticket.description = request.POST['description']
-                dato_Ticket.created_at = request.POST['created_at']
 
-                dato_Ticket.username = User.objects.get(pk=request.user.id)
+                dato_Ticket.user_id = User.objects.get(pk=request.user.id)
                 dato_Ticket.save()
 
                 if request.FILES:
@@ -47,7 +45,6 @@ def ticketViews (request):
                 dato_Ticket.title = request.POST['title']
                 dato_Ticket.status = request.POST['status']
                 dato_Ticket.description = request.POST['description']
-                dato_Ticket.created_at = request.POST['created_at']
 
                 if request.FILES:
                     if dato_Ticket.img_ticket.url != "/media/img_defecto.jpg":

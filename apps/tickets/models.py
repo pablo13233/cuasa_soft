@@ -13,11 +13,11 @@ class Ticket(models.Model):
     title = models.CharField(max_length=100)
     assignee = models.ForeignKey(User, related_name='asignado' , null=True, blank=True, on_delete=models.CASCADE)
     status = models.CharField(max_length=25, choices=TicketStatus.choices, default=TicketStatus.OPEN)
-    description = models.TextField(max_length=500, null=True, blank=True)
-    img_ticket = models.ImageField(upload_to='tickets/', verbose_name='Image')
-    created_at = models.DateTimeField('creado en',auto_now_add=True)
-    updated_at = models.DateTimeField('actualizado en',auto_now=True)
-    username = models.ForeignKey(User, related_name='creador', on_delete=models.CASCADE)
+    description = models.TextField(max_length=500, default="", blank=False, null=False)
+    img_ticket = models.ImageField(upload_to='tickets/', verbose_name='Image', default='img_defecto.jpg')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    user_id = models.ForeignKey(User, related_name='creador', on_delete=models.CASCADE)
 
     def __str__(self):
         return "{}-{}".format(self.pk, self.title)
@@ -25,4 +25,5 @@ class Ticket(models.Model):
     def toJSON(self):
         item = model_to_dict(self) #convertir el objeto a un diccionario
         item['img_ticket'] = self.img_ticket.url #agregar la url de la imagen
+        item['user_id'] = {'id': self.user_id.id, 'usuario': self.user_id.username} #agregar el id y el username del usuario
         return item
