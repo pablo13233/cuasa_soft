@@ -1,5 +1,5 @@
 from django.db import models
-
+from .managers import UserManager
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 # Create your models here. 
 
@@ -8,8 +8,15 @@ class User(AbstractUser, PermissionsMixin):
     email = models.EmailField(max_length=50, unique=True)  
     nombres = models.CharField(max_length=50, blank=True)
     apellidos = models.CharField(max_length=50, blank=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     
     USERNAME_FIELD = 'username'
+
+    REQUIRED_FIELDS = ['email',]
+
+    objects = UserManager()
 
     def get_short_name(self):
         return self.username

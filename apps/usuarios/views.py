@@ -5,14 +5,13 @@ from django.views.generic import (
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
 
-from django.contrib.auth.models import User
+from .models import User
 from apps.usuarios.forms import RegistroForm
- 
-from django.http import JsonResponse
+
 
 # Create your views here.
 
-@login_required
+""" @login_required
 def UsuariosView(request):
     if request.method == 'POST' and request.is_ajax():
         data = []
@@ -54,12 +53,12 @@ def UsuariosView(request):
         return JsonResponse(data, safe=False)
     elif request.method == 'GET':
         print("Metodo Normal")
-        return render(request, 'usuarios/home_usuarios.html',{'titulo': 'Inicio', 'entidad': 'Usuarios'})
+        return render(request, 'usuarios/home_usuarios.html',{'titulo': 'Inicio', 'entidad': 'Usuarios'}) """
             
 
-""" @login_required
-class RegistroUsuarioCreateView(CreateView):
+@login_required
+class CrearUsuarioView(CreateView):
     model = User
     template_name = "usuarios/crear_usuario.html"
     form_class = RegistroForm
-    success_url = reverse_lazy('usuarios_app:admin_usuarios') """
+    success_url = reverse_lazy('usuarios_app:admin_usuarios')
