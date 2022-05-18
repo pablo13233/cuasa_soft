@@ -56,9 +56,10 @@ def UsuariosView(request):
         return render(request, 'usuarios/home_usuarios.html',{'titulo': 'Inicio', 'entidad': 'Usuarios'}) """
             
 
-@login_required
+""" @login_required
 class CrearUsuarioView(CreateView):
     model = User
     template_name = "usuarios/crear_usuario.html"
     form_class = RegistroForm
-    success_url = reverse_lazy('usuarios_app:admin_usuarios')
+    success_url = reverse_lazy('usuarios_app:admin_usuarios') """
+    
