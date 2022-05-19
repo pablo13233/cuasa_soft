@@ -26,7 +26,7 @@ Crear Usuarios
                             <div class="row">
                                 <div class="col-sm-8">
                                     <div class="form-group">
-                                        <label>{{ form.label.username }}</label>
+                                        <label>Nombre de Usuario:</label>
                                         <p class="form-control rounded">{{form.username}}</p>
                                     </div>
                                 </div>
@@ -68,6 +68,30 @@ Crear Usuarios
                                     <div class="form-group">
                                         <label>Confirmar Contraseña:</label>
                                         <p class="form-control rounded">{{form.password2}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="{{form.staff}}">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">Staff</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="{{form.superuser}}">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">Administrador</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="{{form.activo}}">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">Activo</label>
                                     </div>
                                 </div>
                             </div>

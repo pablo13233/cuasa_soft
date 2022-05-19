@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import (
     TemplateView, CreateView, ListView,
 )
+from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
 
@@ -56,10 +57,22 @@ def UsuariosView(request):
         return render(request, 'usuarios/home_usuarios.html',{'titulo': 'Inicio', 'entidad': 'Usuarios'}) """
             
 
-""" @login_required
+@login_required
 class CrearUsuarioView(CreateView):
-    model = User
     template_name = "usuarios/crear_usuario.html"
     form_class = RegistroForm
-    success_url = reverse_lazy('usuarios_app:admin_usuarios') """
+    success_url = 'usuarios_app:crear_usuarios'
     
+    def form_valid(self, form):
+        User.objects.create_user(
+            form.cleaned_data['username'],
+            form.cleaned_data['email'],
+            form.cleaned_data['password1'],
+            nombres = form.cleaned_data['nombres'],
+            apellidos = form.cleaned_data['apellidos'],
+            is_staff = form.cleaned_data['staff'],
+            is_superuser = form.cleaned_data['superuser'],
+            is_active = form.cleaned_data['activo']
+
+        )
+        return super(RegistroForm, self).form_valid(form)
