@@ -15,18 +15,18 @@ Usuarios
                 <div class="card-header pb-0">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h6>Administracion de Usuarios</h6>
+                            <h6>Usuarios</h6>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
-                            <button type="button" class="btn btn-success btn-sm" id="btnAdd">
+                            <a href="{%url 'usuarios_app:crear_usuarios'%}" class="btn btn-success btn-sm">
                                 <i class="material-icons opacity-10 fs-3">person_add</i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
                     <div class="table-responsive p-4 mb-4 rounded">
-                        <table class="table table-hover table-sm" id="datatable">
+                        <table class="table table-hover table-sm">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -37,272 +37,64 @@ Usuarios
                                 </tr>
                             </thead>
                             <tbody>
-
+                                {% for usuario in usuarios %}
+                                <tr>
+                                    <th scope="row">{{usuario.id}}</th>
+                                    <td>{{usuario.username}}</td>
+                                    <td>{{usuario.nombres}} </td>
+                                    <td>{{usuario.email}}</td>
+                                    <td>
+                                        <a href="{%url 'usuarios_app:editar_usuarios' usuario.id%}" class="btn btn-sm btn-primary fs-4">
+                                            <i class="material-icons opacity-10 fs-3">edit</i>
+                                        </a>
+                                        <a href="{%url 'usuarios_app:eliminar_usuarios' usuario.id%}" class="btn btn-sm btn-danger">
+                                            <i class="material-icons opacity-10 fs-3">delete</i>
+                                        </a> 
+                                    </td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+                    <div class="row">
+                        {% if is_paginated %}
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{page_obj.previous_page_number}}"
+                                        aria-label="Atras">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% for page in page_obj.paginator.page_range %}
+
+                                {% ifequal page page_obj.number  %}
+                                <li class="page-item active"><a class="page-link" href="?page={{page}}">{{page}}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{page}}">{{page}}</a></li>
+                                {% endifequal %}
+
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{page_obj.next_page_number}}"
+                                        aria-label="Siguiente">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Modal Usuarios -->
-<div class="modal fade" id="modalUsuarios" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="">
-                    <i class="material-icons opacity-10 fs-3">person_add</i><span>Usuario Nuevo</span>
-                </h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hiden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="." method="post" id="form_usuario" enctype="multipart/form-data">
-                    <div class="form-group row">
-                        {% csrf_token %}
-                        <input type="text" class="d-none" name="action" id="action" value="crear">
-                        <input type="text" class="d-none" id="id_usuario" value="0">
-
-                        <div class="col-md-12">
-                            <label for="">Nombre de Usuario</label>
-                            <input type="text" class="form-control" name="username" id="username" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label for="">Nombres</label>
-                            <input type="text" class="form-control" name="names" id="first_name" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label for="">Apellidos</label>
-                            <input type="text" class="form-control" name="last_names" id="last_name" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label for="">Correo</label>
-                            <input type="email" class="form-control" name="email" id="email" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label for="">Contraseña</label>
-                            <input type="password" class="form-control" name="password1" id="" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label for="">Confirmar Contraseña</label>
-                            <input type="password" class="form-control" name="password2" id="names" id="password"
-                                required>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="sumit" class="btn btn-primary" id="btnSave">Guardar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    var tablaUsuarios;
-    var modalTitulo = $('.modal-title');
-
-    window.onload = function () {
-        $("#btnAdd").on("click", function () {
-            modalTitulo.find('span').html('Usuario Nuevo');
-            $('#action').val("crear");
-            $('#form_usuario')[0].reset();
-            $('#username').focus;
-
-            $('#modalUsuarios').modal('show');
-        });
-        $('#datatable').DataTable();
-        obtenerDatos(); 
-    }
-
-    $('#datatable tbody').on('click', 'a[rel="editar"]', function () {
-        var tr = tablaUsuarios.cell($(this).closest('td, li')).index();
-        var data = tablaUsuarios.row(tr.row).data();
-
-        modalTitulo.find('span').html('Editar usuario');
-
-        $('#action').val("editar");
-        $('#id_usuario').val(data.id);
-        $('#username').val(data.username);
-        $('#first_name').val(data.first_name);
-        $('#last_name').val(data.last_name);
-        $('#email').val(data.email);
-        $('#password').val(data.password);
-        $('#modalUsuario').modal('show');
-    }).on('click', 'a[rel="eliminar"]', function () {
-        var tr = tablaUsuarios.cell($(this).closest('td, li')).index();
-        var data = tablaUsuarios.row(tr.row).data();
-
-        $('#action').val("eliminar");
-        $('#id_usuario').val(data.id);
-
-        Swal.fire({
-            title: `¿Esta seguro de eliminar el usuario Nro ${data.id}?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                submit_with_ajax("", "");
-            }
-        });
-    });
-
-    $("#btnSave").on("click", function () {
-
-        if ($("#username").val() == "" || $("#password").val() == "" || $("#first_name").val() == "" || $(
-                "#last_name").val() == "" || $("#email").val() == "") {
-            alert("No puede dejar campos vacios");
-        } else {
-            submit_with_ajax("", "");
-        }
-        return false;
-    });
-
-    //Función Ajax 
-    function submit_with_ajax(url, parametros) {
-        var parametros = new FormData();
-        token = $('input[name="csrfmiddlewaretoken"]').val();
-        parametros.append('action', $('#action').val());
-        parametros.append('username', $("#username").val());
-        parametros.append('first_name', $("#first_name").val());
-        parametros.append('id', parseInt($("#id_usuario").val()));
-        parametros.append('last_name', $("#last_name").val());
-        parametros.append('email', $("#email").val());
-        parametros.append('password', $("#password").val());
-        parametros.append('csrfmiddlewaretoken', token);
-
-        $.ajax({
-            url: window.location.pathname, //window.location.pathname
-            type: 'POST',
-            data: parametros, // parametros,
-
-            dataType: 'json',
-            contentType: 'multipart/form-data',
-            processData: false,
-            contentType: false,
-            success: function (result) {
-                //alert("Correcto");
-                if (result.correcto) {
-                    $('#form_usuario')[0].reset();
-                    $("#modalUsuario").modal("hide");
-                    tablaCategoria.ajax.reload(null, false);
-
-                    switch (result.tipo_accion) {
-                        case "crear":
-                            texto = "Datos guardado con éxito";
-                            break;
-                        case "editar":
-                            texto = "Datos editados con éxito";
-                            break;
-                        case "eliminar":
-                            texto = "Registro eliminado con éxito";
-                            break;
-                        default:
-                            texto = "";
-                    }
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Correcto',
-                        text: texto
-                    });
-
-                } else {
-                    tablaCategoria.ajax.reload(null, false);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Ha ocurrido un error al realizar la acción'
-                    });
-                }
-
-            },
-            error: function (error) {
-                //alert(error.responseJSON.Message);
-
-            },
-            failure: function () {
-                //alert('Failure');
-            }
-        });
-    }
-
-    function obtenerDatos() {
-        token = $('input[name="csrfmiddlewaretoken"]').val();
-        console.log('llega a funcion');
-        tablaUsuarios = $('#datatable').DataTable({
-            responsive: true,
-            autoWidth: false,
-            destroy: true,
-            bSortable: true,
-            deferRender: true,
-            language: {
-                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
-            },
-            ajax: {
-                url: window.location.pathname, //Obtenemos la url obsoluta
-                type: 'POST',
-                data: {
-                    'action': 'listar', //Mandamos la accion para que django sepa que tiene que buscar
-                    'csrfmiddlewaretoken': token
-                }, // parametros
-                dataSrc: ""
-            },
-            columns: [ //Columnas de nuestro modelo/Tabla aqui retorna o pinta los valores en la datables
-                {
-                    "data": "id"
-                },
-                {
-                    "data": "username"
-                },
-                {
-                    "data": "first_name"
-                },
-                {
-                    "data": "Correo"
-                },
-                {
-                    "data": "id"
-                }, //3 esta no existe en los modelos porque son los botones tenemos que personalizarlo
-            ],
-            columnDefs: [ //Personalizar una columna
-                {
-                    targets: [4], //Personalizar la colummna numero 3
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
-                        <i class="fas fa-edit"></i></a> `;
-
-                        buttons += `<a  rel="eliminar" class='btn btn-danger btn-sm btn-flat'>
-                                    <i class="fa-solid fa-trash-can"></i></a>`;
-                        return buttons;
-                    }
-                },
-            ],
-        });
-    }
-</script>
 
 {% endblock content %}

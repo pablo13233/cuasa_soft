@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import (
-    TemplateView, CreateView, ListView,
+    TemplateView, CreateView, ListView, UpdateView, DeleteView, DetailView,
 )
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
@@ -57,11 +57,11 @@ def UsuariosView(request):
         return render(request, 'usuarios/home_usuarios.html',{'titulo': 'Inicio', 'entidad': 'Usuarios'}) """
             
 
-@login_required
+# @login_required
 class CrearUsuarioView(CreateView):
     template_name = "usuarios/crear_usuario.html"
     form_class = RegistroForm
-    success_url = 'usuarios_app:crear_usuarios'
+    success_url = reverse_lazy('usuarios_app:crear_usuarios')
     
     def form_valid(self, form):
         User.objects.create_user(
@@ -70,9 +70,29 @@ class CrearUsuarioView(CreateView):
             form.cleaned_data['password1'],
             nombres = form.cleaned_data['nombres'],
             apellidos = form.cleaned_data['apellidos'],
-            is_staff = form.cleaned_data['staff'],
-            is_superuser = form.cleaned_data['superuser'],
-            is_active = form.cleaned_data['activo']
+            is_staff = form.cleaned_data['is_staff'],
+            is_superuser = form.cleaned_data['is_superuser'],
+            is_active = form.cleaned_data['is_active']
 
         )
-        return super(RegistroForm, self).form_valid(form)
+        return super(RegistroForm, self).form_valid(form)  
+
+
+class ListaUsuariosView(ListView):
+    template_name = "usuarios/home_usuarios.html"
+    context_object_name = 'usuarios'
+    paginate_by = 10
+    ordering = ['nombres']
+    model = User
+
+
+class EditarUsuarioView(UpdateView):
+    model = User
+    template_name = "TEMPLATE_NAME"
+    success_url = reverse_lazy('usuarios_app:lista_usuarios')
+
+class EliminarUsuarioView(DeleteView):
+    model = User
+    Template_name = "TEMPLATE_NAME"
+    success_url = reverse_lazy('usuarios_app:lista_usuarios')
+
