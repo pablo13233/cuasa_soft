@@ -23,78 +23,7 @@ Crear Usuarios
                     <div class="col ms-4">
                         <form action="#" method="post">
                             {% csrf_token %}
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label>Nombre de Usuario:</label>
-                                        <input class="form-control rounded" type="text" value="{{form.username}}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label>Nombres:</label>
-                                        <p class="form-control rounded">{{form.nombres}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label>Apellidos:</label>
-                                        <p class="form-control rounded">{{form.apellidos}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label>Correo:</label>
-                                        <p class="form-control rounded" value="">{{form.email}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label>Contraseña:</label>
-                                        <p class="form-control rounded">{{form.password1}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label>Confirmar Contraseña:</label>
-                                        <p class="form-control rounded">{{form.password2}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="{{form.is_staff}}">
-                                        <label class="form-check-label" for="flexSwitchCheckDefault">Staff</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="{{form.is_superuser}}">
-                                        <label class="form-check-label" for="flexSwitchCheckDefault">Administrador</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="{{form.is_active}}">
-                                        <label class="form-check-label" for="flexSwitchCheckDefault">Activo</label>
-                                    </div>
-                                </div>
-                            </div>
+                            {{form.as_p}}
                             <div class="row text">
                                 <div class="col-sm-8 ms-4 p-3">
                                     <div class="form-group">
