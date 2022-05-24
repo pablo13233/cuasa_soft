@@ -34,44 +34,52 @@ class RegistroForm(forms.ModelForm):
             attrs={'placeholder': 'Correo Electrónico', 'class': 'form-control rounded', 'type':'email'}
         ),
     )
-    nombres = forms.CharField(
+    first_name = forms.CharField(
         label='Nombres',
         required=True,
         widget=forms.TextInput(
             attrs={'placeholder': 'Nombres', 'class': 'form-control rounded', 'type':'text'}
         ),
     )
-    apellidos = forms.CharField(
+    last_name = forms.CharField(
         label='Apellidos',
         required=True,
         widget=forms.TextInput(
             attrs={'placeholder': 'Apellidos', 'class': 'form-control rounded', 'type':'text'}
         ),
     )
-    is_staff = forms.BooleanField(
-        label='Es Administrador',
-        required=False,
-        widget=forms.CheckboxInput(
-            attrs={'placeholder': 'Es Administrador', 'class': 'form-check-input', 'type':'checkbox', 'unchecked':'unchecked', 'role':'switch', 'id':'flexSwitchCheckDefault'}
-        ),
-    )
-    is_active = forms.BooleanField(
-        label='Está Activo',
-        required=False,
-        widget=forms.CheckboxInput(
-            attrs={'placeholder': 'Está Activo', 'class': 'form-check-input', 'type':'checkbox', 'checked':'checked', 'role':'switch', 'id':'flexSwitchCheckChecked'}
-        ),
-    )
     class Meta:
         model = User
         fields = (
             'username',
-            'nombres',
-            'apellidos',
+            'first_name',
+            'last_name',
             'email',
-            'is_staff',
-            'is_active',
         )
-    def clean_password2(self):
-        if self.cleaned_data['password1'] != self.cleaned_data['password2']:
+    
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError('El nombre de usuario ya existe')
+        return username
+    
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('El correo electrónico ya existe')
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+        if password1 is not None and password1 != password2:
             self.add_error('password2', 'Las contraseñas no coinciden')
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+        return user

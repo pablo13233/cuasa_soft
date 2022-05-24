@@ -21,11 +21,11 @@ class CrearUsuarioView(LoginRequiredMixin, CreateView):
         User.objects.create_user(
             form.cleaned_data['username'],
             form.cleaned_data['email'],
-            form.cleaned_data['password2'],
-            nombres = form.cleaned_data['nombres'],
-            apellidos = form.cleaned_data['apellidos']
+            form.cleaned_data['password1'],
+            nombres = form.cleaned_data['first_name'],
+            apellidos = form.cleaned_data['last_name']
         )
-        return super(RegistroForm, self).form_valid(form)  
+        return super().form_valid(form)  
 
 
 class ListaUsuariosView(LoginRequiredMixin, ListView):
