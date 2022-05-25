@@ -1,6 +1,7 @@
 from django.db import models
 from .managers import UserManager
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
+from django.forms import model_to_dict
 # Create your models here. 
 
 class User(AbstractUser, PermissionsMixin):
@@ -16,7 +17,7 @@ class User(AbstractUser, PermissionsMixin):
 
     REQUIRED_FIELDS = ['email',]
 
-    
+    objects = UserManager()
 
     def get_short_name(self):
         return self.username
@@ -27,4 +28,7 @@ class User(AbstractUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
-    objects = UserManager()
+    def toJSON(self):
+        item = model_to_dict(self) #convertir el objeto a un diccionario
+        item['name'] = self.get_full_name()
+        return item
