@@ -48,7 +48,7 @@ def Create_User(request):
             else:
                 user = User.objects.create_user(
                     username=username, password=password1, email=email, first_name=first_name, last_name=last_name
-                    )
+                )
                 messages.success(request, f'El usuario {username} se creó correctamente',
                                  extra_tags='alert alert-success alert-dismissible fade show')
                 return redirect('usuarios_app:crear_usuarios')
@@ -56,32 +56,32 @@ def Create_User(request):
         form = RegistroForm()
     return render(request, 'usuarios/crear_usuario.html', {'form': form})
 
+
 @login_required
-def Usuario_View (request):
+def Usuario_View(request):
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
-            #========================   select   =========================
+            # ========================   select   =========================
             action = request.POST['action']
-            if action =='buscardatos':
+            if action == 'buscardatos':
                 for i in User.objects.all():
                     data.append(i.toJSON())
-
-                #========================   eliminar   =========================
-            elif action =='eliminar':
+                # ========================   username   =========================
+            elif action == 'username':
                 dato_User = User.objects.get(username=request.POST['username'])
                 dato_User.is_active = request.POST['is_active']
-                    
+
                 dato_User.save()
-                data = {'tipo_accion': 'eliminar','correcto': True}
+                data = {'tipo_accion': 'username', 'correcto': True}
             else:
                 data['error'] = 'Ha ocurrido un error'
-            
+
         except Exception as e:
             data['error'] = str(e)
-            data = {'tipo_accion': 'error','correcto': False, 'error': str(e)}
-        return JsonResponse(data,safe=False)
-    elif request.method =="GET":
+            data = {'tipo_accion': 'error', 'correcto': False, 'error': str(e)}
+        return JsonResponse(data, safe=False)
+    elif request.method == "GET":
         return render(request, 'usuarios/home_usuarios.html')
 
 
