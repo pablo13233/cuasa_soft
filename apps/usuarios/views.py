@@ -67,13 +67,49 @@ def Usuario_View(request):
             if action == 'buscardatos':
                 for i in User.objects.all():
                     data.append(i.toJSON())
-                # ========================   username   =========================
-            elif action == 'username':
+            # ========================   Crear   =========================
+            elif action == 'crear':
+                check1 = False
+                check2 = False
+                check3 = False
+                form = RegistroForm(request.POST)
+                if form.is_valid():
+                    username = form.cleaned_data['username']
+                    password1 = form.cleaned_data['password1']
+                    password2 = form.cleaned_data['password2']
+                    email = form.cleaned_data['email']
+                    first_name = form.cleaned_data['first_name']
+                    last_name = form.cleaned_data['last_name']
+
+                    if password1 != password2:
+                        check1 = True
+                        messages.error(request, 'Las contraseñas no coinciden',
+                                    extra_tags='warning')
+                    if User.objects.filter(username=username).exists():
+                        check2 = True
+                        messages.error(request, 'El nombre de usuario ya existe',
+                                    extra_tags='warning')
+                    if User.objects.filter(email=email).exists():
+                        check3 = True
+                        messages.error(request, 'El correo electrónico ya existe',
+                                    extra_tags='warning')
+                    if check1 or check2 or check3:
+                        messages.error(request, 'No se pudo crear el usuario',
+                                    extra_tags='warning')
+                        return redirect('usuarios_app:crear_usuarios')
+                    else:
+                        user = User.objects.create_user(
+                            username=username, password=password1, email=email, first_name=first_name, last_name=last_name
+                        )
+                        return redirect('usuarios_app:crear_usuarios')
+                data = {'tipo_accion': 'crear', 'correcto': True}
+                # ========================   desactivar   =========================
+            elif action == 'desactivar':
                 dato_User = User.objects.get(username=request.POST['username'])
                 dato_User.is_active = request.POST['is_active']
-
+                
                 dato_User.save()
-                data = {'tipo_accion': 'username', 'correcto': True}
+                data = {'tipo_accion': 'desactivar', 'correcto': True}
             else:
                 data['error'] = 'Ha ocurrido un error'
 

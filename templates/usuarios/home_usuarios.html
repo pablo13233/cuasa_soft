@@ -18,7 +18,7 @@ Usuarios
                             <h6>Usuarios</h6>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
-                            <a href="{%url 'usuarios_app:crear_usuarios'%}" class="btn btn-success btn-sm">
+                            <a href="{%url 'usuarios_app:crear_usuarios'%}" class="btn btn-success btn-sm" id="bntAdd">
                                 <i class="material-icons opacity-10 fs-3">person_add</i>
                             </a>
                         </div>
@@ -65,12 +65,48 @@ Usuarios
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modalUsuarios" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">Crear Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="." method="post" id="formUsuario" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            <p>{{form.as_p}}</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     //==================================================Carga del Modal========================================================
+    var modalTitulo = $('.modal-title');
     var tablaUsuarios;
 
     window.onload = function () {
 
+        $("#bntAdd").click(function (e) {
+            e.preventDefault();
+            modalTitulo.text('Crear Usuario');
+            $("#modalUsuarios").modal("show");
+            $("action").val("crear");
+        });
         //alert("Pagina cargada");
         $('#datatable').DataTable();
         obtenerDatos();
@@ -136,18 +172,33 @@ Usuarios
         });
     }
 
+    //================================================ Validar Form =========================================================
+
+    $("#btnGuardar").on('click', function(){
+        if($("#nombre_usuario").val() == ""){
+            alert("El campo nombre es obligatorio");
+        }else if($("#password1").val() == ""){
+            alert("El campo password es obligatorio");
+        }else if($("#password2").val() == ""){
+            alert("El campo password es obligatorio");
+        }else if($("#email").val() == ""){
+            alert("El campo email es obligatorio");
+        }else if($("#nombres").val() == ""){
+            alert("El campo nombres es obligatorio");
+        }else if($("#apellidos").val() == ""){
+            alert("El campo apellidos es obligatorio");
+        }else{
+            submit_with_ajax("", "");
+        }
+        return false;
+    })
+
     //================================================Función AJAX======================================================
 
     function submit_with_ajax(url, parametros) {
         var parametros = new FormData();
         token = $('input[name="csrfmiddlewaretoken"]').val();
-        parametros.append('action', $('#action').val());
-
-        parametros.append('username', $("#title").val());
-        parametros.append('description', $("#description").val());
-        parametros.append('id', parseInt($("#id_ticket").val()));
-
-        parametros.append('imagen', $("#imagen")[0].files[0]);
+        parametros.append('action', $('#action').val());;
 
         parametros.append('csrfmiddlewaretoken', token);
 
@@ -162,10 +213,15 @@ Usuarios
             contentType: false,
             success: function (result) {
                 //alert("Correcto");
-                if (result.correcto) {
+                if (result.correcto) { 
+                    $("#modalUsuarios").modal("hide");
+                    $("#formUsuario")[0].reset();
                     tablaUsuarios.ajax.reload(null, false);
 
                     switch (result.tipo_accion) {
+                        case 'crear':
+                            alert("Usuario creado correctamente");
+                            break;
                         case "editar":
                             texto = "Datos editados con éxito";
                             break;
