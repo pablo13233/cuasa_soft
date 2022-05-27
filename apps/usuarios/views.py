@@ -80,7 +80,7 @@ def Usuario_View(request):
                     email = form.cleaned_data['email']
                     first_name = form.cleaned_data['first_name']
                     last_name = form.cleaned_data['last_name']
-
+                    
                     if password1 != password2:
                         check1 = True
                         messages.error(request, 'Las contraseñas no coinciden',

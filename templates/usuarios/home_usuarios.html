@@ -8,6 +8,7 @@ Usuarios
 
 {% block content %}
 
+
 <div class="container-fluid py-4 col-12">
     <div class="row mb-4">
         <div class="col-12 mb-md-0 mb-4">
@@ -81,7 +82,7 @@ Usuarios
                     {% csrf_token %}
                     <div class="col-sm-8">
                         <div class="form-group">
-                            <p>{{form.as_p}}</p>
+                            <p>{{form.username}}</p>
                         </div>
                     </div>
                 </form>
