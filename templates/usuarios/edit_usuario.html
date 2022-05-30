@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Editar Usuarios
+{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid py-4 col-12">
+    <div class="row mb-4">
+        <div class="col-12 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-7">
+                            <h6><i class="bi bi-pencil fs-2"></i> Editar Usuario</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="col ms-4">
+                        <form action="" method="post">{% csrf_token %}
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <p>{{ form.username.label }}</p>
+                                        <p>{{ form.username }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p>{{ form.first_name.label }}</p>
+                                        <p>{{ form.first_name }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p>{{ form.last_name.label }}</p>
+                                        <p>{{ form.last_name }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p>{{ form.email.label }}</p>
+                                        <p>{{ form.email }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" value="{{ form.is_active }}">
+                                            <label class="form-check-label">{{ form.is_active.label }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" value="{{ form.is_staff }}"">
+                                            <label class="form-check-label">{{ form.is_staff.label }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <p>{{ form.password1.label }}</p>
+                                        <p>{{ form.password1 }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p>{{ form.password2.label }}</p>
+                                        <p>{{ form.password2 }}</p>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="row text">
+                                <div class="col-sm-8 ms-4 p-3">
+                                    <button class="btn btn-success" type="submit">Guardar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

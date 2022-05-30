@@ -6,6 +6,6 @@ app_name = 'usuarios_app'  # namespace
 
 urlpatterns = [
     path('usuarios/registro', views.Create_User, name='crear_usuarios'),
-    path('usuarios/lista-usuarios', views.Usuario_View, name='lista_usuarios'),
-    path('usuarios/editar-usuario/<int:pk>', views.EditarUsuarioView.as_view(), name='editar_usuarios'),
+    path('usuarios/lista-usuarios', views.Usuario_List.as_view(), name='lista_usuarios'),
+    path('usuarios/editar-usuario/<int:id>', views.Update_User, name='editar_usuarios'),
 ]

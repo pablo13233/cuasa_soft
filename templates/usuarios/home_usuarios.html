@@ -16,11 +16,11 @@ Usuarios
                 <div class="card-header pb-0">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h6>Usuarios</h6>
+                            <h3><i class="bi bi-person-lines-fill fs-1"></i> Usuarios</h3>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
-                            <a href="{%url 'usuarios_app:crear_usuarios'%}" class="btn btn-success btn-sm" id="bntAdd">
-                                <i class="material-icons opacity-10 fs-3">person_add</i>
+                            <a href="{%url 'usuarios_app:crear_usuarios'%}" class="btn btn-success btn-sm mb-2" id="bntAdd">
+                                <i class="bi bi-person-plus-fill opacity-10 fs-3"></i>
                             </a>
                         </div>
                     </div>
@@ -56,7 +56,37 @@ Usuarios
                                 </tr>
                             </thead>
                             <tbody>
-
+                                {% for usuario in usuarios %}
+                                    <tr class="text-center">
+                                        <td>
+                                            {{usuario.id}}
+                                        </td>
+                                        <td>
+                                            {{usuario.username}}
+                                        </td>
+                                        <td>
+                                            {{usuario.get_full_name}}
+                                        </td>
+                                        <td>
+                                            {{usuario.email}}
+                                        </td>
+                                        <td>
+                                            {% if usuario.is_active == True %}
+                                                <span class="badge bg-success">Activo</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Inactivo</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{%url 'usuarios_app:editar_usuarios' usuario.id%}" class="btn btn-warning btn-sm mb-2">
+                                                <i class="bi bi-pencil-square opacity-10 fs-5"></i>
+                                            </a>
+                                            <a href="{}" class="btn btn-danger btn-sm mb-2">
+                                                <i class="bi bi-trash-fill opacity-10 fs-5"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -66,234 +96,8 @@ Usuarios
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="modalUsuarios" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="">Crear Usuario</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="." method="post" id="formUsuario" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="col-sm-8">
-                        <div class="form-group">
-                            <p>{{form.username}}</p>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    //==================================================Carga del Modal========================================================
-    var modalTitulo = $('.modal-title');
-    var tablaUsuarios;
-
-    window.onload = function () {
-
-        $("#bntAdd").click(function (e) {
-            e.preventDefault();
-            modalTitulo.text('Crear Usuario');
-            $("#modalUsuarios").modal("show");
-            $("action").val("crear");
-        });
-        //alert("Pagina cargada");
-        $('#datatable').DataTable();
-        obtenerDatos();
-    }
-
-
-    //================================================== Obtener Datos===========================================================
-    function obtenerDatos() {
-        token = $('input[name="csrfmiddlewaretoken"]').val();
-        tablaUsuarios = $('#datatable').DataTable({
-            responsive: true,
-            autoWidth: false,
-            destroy: true,
-            bSortable: true,
-            deferRender: true,
-            language: {
-                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
-            },
-            ajax: {
-                url: window.location.pathname, //Obtenemos la url obsoluta
-                type: 'POST',
-                data: {
-                    'action': 'buscardatos', //Mandamos la accion para que django sepa que tiene que buscar
-                    'csrfmiddlewaretoken': token
-                }, // parametros
-                dataSrc: ""
-            },
-            columns: [ //Columnas de nuestro modelo/Tabla aqui retorna o pinta los valores en la datables
-                {
-                    "data": "id"
-                },
-                {
-                    "data": "username"
-                },
-                {
-                    "data": "name"
-                },
-                {
-                    "data": "email"
-                },
-                {
-                    "data": "is_active"
-                },
-                {
-                    "data": "id"
-                }, //se cambia por los botones
-            ],
-            columnDefs: [ //Personalizar una columna
-                {
-                    targets: [5], //Personalizar la colummna numero 3
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
-                                        <i class="fas fa-edit"></i></a> `;
-
-                        buttons += `<a  rel="desactivar" class='btn btn-danger btn-sm btn-flat'>
-                                        <i class="fa-solid fa-trash-can"></i></a>`;
-                        return buttons;
-                    }
-                },
-            ],
-        });
-    }
-
-    //================================================ Validar Form =========================================================
-
-    $("#btnGuardar").on('click', function(){
-        if($("#nombre_usuario").val() == ""){
-            alert("El campo nombre es obligatorio");
-        }else if($("#password1").val() == ""){
-            alert("El campo password es obligatorio");
-        }else if($("#password2").val() == ""){
-            alert("El campo password es obligatorio");
-        }else if($("#email").val() == ""){
-            alert("El campo email es obligatorio");
-        }else if($("#nombres").val() == ""){
-            alert("El campo nombres es obligatorio");
-        }else if($("#apellidos").val() == ""){
-            alert("El campo apellidos es obligatorio");
-        }else{
-            submit_with_ajax("", "");
-        }
-        return false;
-    })
-
-    //================================================Función AJAX======================================================
-
-    function submit_with_ajax(url, parametros) {
-        var parametros = new FormData();
-        token = $('input[name="csrfmiddlewaretoken"]').val();
-        parametros.append('action', $('#action').val());;
-
-        parametros.append('csrfmiddlewaretoken', token);
-
-        $.ajax({
-            url: window.location.pathname, //window.location.pathname
-            type: 'POST',
-            data: parametros, // parametros,
-
-            dataType: 'json',
-            contentType: 'multipart/form-data',
-            processData: false,
-            contentType: false,
-            success: function (result) {
-                //alert("Correcto");
-                if (result.correcto) { 
-                    $("#modalUsuarios").modal("hide");
-                    $("#formUsuario")[0].reset();
-                    tablaUsuarios.ajax.reload(null, false);
-
-                    switch (result.tipo_accion) {
-                        case 'crear':
-                            alert("Usuario creado correctamente");
-                            break;
-                        case "editar":
-                            texto = "Datos editados con éxito";
-                            break;
-                        case "username":
-                            texto = "Registro eliminado con éxito";
-                            break;
-                        default:
-                            texto = "";
-                    }
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Correcto',
-                        text: texto
-                    });
-
-                } else {
-                    tablaUsuarios.ajax.reload(null, false);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Ha ocurrido un error al realizar la acción'
-                    });
-                }
-
-            },
-            error: function (error) {
-                //alert(error.responseJSON.Message);
-
-            },
-            failure: function () {
-                //alert('Failure');
-            }
-        });
-    }
-
-    //=================================================Data table=============================================================
 
 
 
-    $('#datatable tbody').on('click', 'a[rel="editar"]', function () {
-        var tr = tablaUser.cell($(this).closest('td, li')).index();
-        var data = tablaUser.row(tr.row).data();
-
-        $('#action').val("editar");
-        $('#username').val(data.username);
-
-        $('#modalTicket').modal('show');
-
-    }).on('click', 'a[rel="username"]', function () {
-        var tr = tablaUser.cell($(this).closest('td, li')).index();
-        var data = tablaUser.row(tr.row).data();
-
-        $('#action').val("desactivar");
-        $('#username').val(data.username);
-
-        Swal.fire({
-            title: `¿Esta seguro de desactivar el Usuario > ${data.username}?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, desactivar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                submit_with_ajax("", "");
-            }
-        });
-
-    });
-</script>
 
 {% endblock content %}
