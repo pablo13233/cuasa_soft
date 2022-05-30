@@ -70,16 +70,16 @@ class Usuario_List(LoginRequiredMixin, ListView):
         return queryset.order_by(self.order_by)
 
 @login_required
-def Update_User(request, id):
-    user = User.objects.get(id=id)
+def Update_User(request, usr):
+    user = User.objects.get(username=usr)
     if request.method == 'POST':
         form = UpdateUserForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
-            messages.success(request, f'El usuario {user.username} se actualizó correctamente',
-                             extra_tags='alert alert-success alert-dismissible fade show')
+            
             return redirect('usuarios_app:lista_usuarios')
     else:
         form = UpdateUserForm(instance=user)
     return render(request, 'usuarios/edit_usuario.html', {'form': form})
+
 

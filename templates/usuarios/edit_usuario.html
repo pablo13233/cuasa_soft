@@ -25,15 +25,11 @@ Editar Usuarios
                             <div class="col-sm-8">
                                 <div class="form-group">
                                     <div class="row">
-                                        <p>{{ form.username.label }}</p>
-                                        <p>{{ form.username }}</p>
-                                    </div>
-                                    <div class="row">
                                         <p>{{ form.first_name.label }}</p>
                                         <p>{{ form.first_name }}</p>
                                     </div>
                                     <div class="row">
-                                        <p>{{ form.last_name.label }}</p>
+                                        <p>{{ form.last_name.label }}</p> 
                                         <p>{{ form.last_name }}</p>
                                     </div>
                                     <div class="row">
@@ -48,7 +44,7 @@ Editar Usuarios
                                     </div>
                                     <div class="row">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" value="{{ form.is_staff }}"">
+                                            <input class="form-check-input" type="checkbox" role="switch" value="{{ form.is_staff }}">
                                             <label class="form-check-label">{{ form.is_staff.label }}</label>
                                         </div>
                                     </div>

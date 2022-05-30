@@ -74,13 +74,6 @@ class UpdateUserForm(forms.ModelForm):
             ),
         validators=[validate_password],
     )
-    username = forms.CharField(
-        label='Nombre de Usuario',
-        required=False,
-        widget=forms.TextInput(
-            attrs={'class': 'form-control rounded', 'type':'text', 'id': 'nombre_usuario', 'disabled':'true'}
-        ),
-    )
     email = forms.EmailField(
         label='Correo Electrónico',
         required=False,
@@ -103,7 +96,7 @@ class UpdateUserForm(forms.ModelForm):
         ),
     )
     is_active = forms.BooleanField(
-        label='Estado',
+        label='Activo',
         required=False,
         widget=forms.CheckboxInput(
             attrs={}
@@ -113,13 +106,12 @@ class UpdateUserForm(forms.ModelForm):
         label='Es Administrador',
         required=False,
         widget=forms.CheckboxInput(
-            attrs={'placeholder': 'Tipo de Usuario', 'class': 'form-control rounded', 'type':'checkbox', 'id': 'tipo_usuario'}
+            attrs={}
         ),
     )
     class Meta:
         model = User
         fields = (
-            'username',
             'first_name',
             'last_name',
             'email',
