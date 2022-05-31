@@ -70,8 +70,8 @@ class Usuario_List(LoginRequiredMixin, ListView):
         return queryset.order_by(self.order_by)
 
 @login_required
-def Update_User(request, usr):
-    user = User.objects.get(username=usr)
+def Update_User(request, id):
+    user = User.objects.get(id=id)
     if request.method == 'POST':
         form = UpdateUserForm(request.POST, instance=user)
         if form.is_valid():

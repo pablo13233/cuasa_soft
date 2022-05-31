@@ -56,29 +56,29 @@ Usuarios
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for usuario in usuarios %}
+                                {% for us in usuarios %}
                                     <tr class="text-center">
                                         <td>
-                                            {{usuario.id}}
+                                            {{us.id}}
                                         </td>
                                         <td>
-                                            {{usuario.username}}
+                                            {{us.username}}
                                         </td>
                                         <td>
-                                            {{usuario.get_full_name}}
+                                            {{us.get_full_name}}
                                         </td>
                                         <td>
-                                            {{usuario.email}}
+                                            {{us.email}}
                                         </td>
                                         <td>
-                                            {% if usuario.is_active == True %}
+                                            {% if us.is_active == True %}
                                                 <span class="badge bg-success">Activo</span>
                                             {% else %}
                                                 <span class="badge bg-danger">Inactivo</span>
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <a href="{%url 'usuarios_app:editar_usuarios' usuario.username%}" class="btn btn-warning btn-sm mb-2">
+                                            <a href="{% url 'usuarios_app:editar_usuarios' us.id %}" class="btn btn-warning btn-sm mb-2">
                                                 <i class="bi bi-pencil-square opacity-10 fs-5"></i>
                                             </a>
                                             <a href="{}" class="btn btn-danger btn-sm mb-2">
