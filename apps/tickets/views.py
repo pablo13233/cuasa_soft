@@ -36,36 +36,6 @@ def ticketViews (request):
                     dato_Ticket.img_ticket = imagen
                     dato_Ticket.save()#Actualizamos la ruta de la imagen con la concatenacion del id recien creado
                 data = {'tipo_accion': 'crear', 'correcto': True}
-
-                #========================   editar   =========================
-            elif action == 'editar':
-
-                dato_Ticket = Ticket.objects.get(pk=request.POST['id'])
-                dato_Ticket.title = request.POST['title']
-                dato_Ticket.status = request.POST['status']
-                dato_Ticket.description = request.POST['description']
-
-                if request.FILES:
-                    if dato_Ticket.img_ticket.url != "/media/img_defecto.jpg":
-                        dato_Ticket.img_ticket.delete()
-
-                    imagen = request.FILES.get("imagen")
-                    imagen.name = str(dato_Ticket.pk)+"_"+imagen.name
-                    dato_Ticket.img_ticket = imagen
-                    
-                dato_Ticket.save()
-                data = {'tipo_accion': 'editar', 'correcto': True}
-
-                #========================   eliminar   =========================
-            elif action =='eliminar':
-                dato_Ticket = Ticket.objects.get(pk=request.POST['id'])
-                if dato_Ticket.img_ticket.url != "/media/img_defecto.jpg":
-                    dato_Ticket.img_ticket.delete()
-
-                dato_Ticket.delete()
-                data = {'tipo_accion': 'eliminar','correcto': True}
-            else:
-                data['error'] = 'Ha ocurrido un error'
             
         except Exception as e:
             data['error'] = str(e)
