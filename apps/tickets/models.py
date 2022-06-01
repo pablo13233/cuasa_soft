@@ -14,7 +14,7 @@ class Ticket(models.Model):
     assignee = models.ForeignKey(User, related_name='asignado' , null=True, blank=True, on_delete=models.CASCADE)
     status = models.CharField(max_length=25, choices=TicketStatus.choices, default=TicketStatus.OPEN)
     description = models.TextField(max_length=500, default="", blank=False, null=False)
-    img_ticket = models.ImageField(upload_to='tickets/', verbose_name='Image', default='img_defecto.jpg')
+    img_ticket = models.ImageField(upload_to='tickets/{User.username}/', verbose_name='Image', default='img_defecto.jpg')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     user_id = models.ForeignKey(User, related_name='creador', on_delete=models.CASCADE)

@@ -210,6 +210,20 @@ Tickets
         obtenerDatos();
     }
 
+    //=================================================Data table=============================================================
+
+    $('#datatable tbody').on('click', 'button[rel="verTicket"]', function () {
+        var tr = tablaTicket.cell($(this).closest('td, li')).index();
+        var data = tablaTicket.row(tr.row).data();
+        //console.log(data.imagen_Carrusel);
+        $("#imagen_ver").attr("src", data.img_ticket);
+        $("#title_ver").val(data.title);
+        $("#description_ver").val(data.description);
+        $("#assigned_ver").val(data.assignee);
+
+        $("#modalVerTicket").modal("show");
+    });
+
     //================================================== Obtener Datos===========================================================
     function obtenerDatos() {
         token = $('input[name="csrfmiddlewaretoken"]').val();
@@ -281,8 +295,8 @@ Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var buttons = `<a  rel="#" class='btn btn-secondary btn-sm btn-flat test-popup-link'>
-                                        <i class="bi bi-eye-fill fs-6"></i></a> `;
+                        var buttons = `<button rel="verTicket" type="button" class='btn btn-secondary btn-sm btn-flat'>
+                                        <i class="bi bi-eye-fill fs-6"></i></button>`;
                             return buttons;
                     }
                 },
@@ -376,18 +390,5 @@ Tickets
         });
     }
 
-    //=================================================Data table=============================================================
-
-    $('#datatable tbody').on('click', 'a[rel="verTicket"]', function () {
-        var tr = tablaTicket.cell($(this).closest('td, li')).index();
-        var data = tablaTicket.row(tr.row).data();
-        //console.log(data.imagen_Carrusel);
-        $("#id_imagen").attr("src", data.img_ticket);
-        $("#title_ver").val(data.title);
-        $("#description_ver").val(data.description);
-        $("#assigned_ver").val(data.assignee.usuario);
-
-        $("#modalVerTicket").modal("show");
-    });
 </script>
 {% endblock content %}
