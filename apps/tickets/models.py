@@ -9,12 +9,15 @@ class TicketStatus(models.TextChoices):
     IN_REVIEW = 'En revisión'
     DONE = 'Terminado'
 
+def get_user_image_folder(instance, filename):
+    return '{0}/{1}/{2}'.format('tickets', instance.user_id.username, filename)
+
 class Ticket(models.Model):
     title = models.CharField(max_length=100)
     assignee = models.ForeignKey(User, related_name='asignado' , null=True, blank=True, on_delete=models.CASCADE)
     status = models.CharField(max_length=25, choices=TicketStatus.choices, default=TicketStatus.OPEN)
     description = models.TextField(max_length=500, default="", blank=False, null=False)
-    img_ticket = models.ImageField(upload_to='tickets/{User.username}/', verbose_name='Image', default='img_defecto.jpg')
+    img_ticket = models.ImageField(upload_to=get_user_image_folder, verbose_name='Image', default='img_defecto.jpg')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     user_id = models.ForeignKey(User, related_name='creador', on_delete=models.CASCADE)
