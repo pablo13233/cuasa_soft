@@ -7,10 +7,11 @@ class TicketStatus(models.TextChoices):
     OPEN = 'Abierto'
     IN_PROGRESS = 'En progreso'
     IN_REVIEW = 'En revisión'
-    DONE = 'Terminado'
+    DONE = 'Terminado' 
+
 
 def get_user_image_folder(instance, filename):
-    return '{0}/{1}/{2}'.format('tickets', instance.user_id.username, filename)
+    return '{0}/{1}/{2}/{3}/{4}'.format('tickets', instance.user_id.username, instance.created_at.year, instance.created_at.month , filename)
 
 class Ticket(models.Model):
     title = models.CharField(max_length=100)

@@ -17,7 +17,7 @@ def ticketViews (request):
             #========================   select   =========================
             action = request.POST['action']
             if action =='buscardatos':
-                for i in Ticket.objects.all():
+                for i in Ticket.objects.filter(user_id=request.user.id):
                     data.append(i.toJSON())
 
                     #========================   Crear   =========================
