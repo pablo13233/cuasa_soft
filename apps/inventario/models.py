@@ -108,5 +108,32 @@ class Item(models.Model):
     
     class Meta:
         verbose_name = 'Item'
-        verbose_name_plural = 'Items'
+        verbose_name_plural = 'Items' 
         ordering = ['correlativo']
+
+
+def get_user_notes_assigned_folder(instance, filename):
+     return '{0}/{1}/{2}/{3}/{4}'.format('notas_asignacion', instance.user_id.username, instance.created_at.year, instance.created_at.month , filename)
+
+def get_user_notes_unassinged_folder(instance, filename):
+     return '{0}/{1}/{2}/{3}/{4}'.format('notas_desasignacion', instance.user_id.username, instance.created_at.year, instance.created_at.month , filename)
+
+class Historial_Asignacion(models.Model):
+    id = models.AutoField(primary_key=True)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='articulo')
+    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='asignado_a')
+    created_at = models.DateField(null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creado_por') 
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    update_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actualizado_por')
+    observaciones = models.TextField(max_length=500, default="", blank=True, null=True)
+    nota_asignacion = models.FileField(upload_to=get_user_notes_assigned_folder, null=True, blank=True)
+    nota_descargo = models.FileField(upload_to=get_user_notes_unassinged_folder, null=True, blank=True)
+
+    def __str__(self):
+        return self.item.id
+    
+    class Meta:
+        verbose_name = 'Historial_Asignacion'
+        verbose_name_plural = 'Historial_Asignaciones'
+        ordering = ['fecha_asignacion']
