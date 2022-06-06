@@ -29,6 +29,20 @@ class Marca(models.Model):
         verbose_name = 'Marca'
         verbose_name_plural = 'Marcas'
         ordering = ['nombre_marca']
+    
+class Modelo(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre_modelo = models.CharField(max_length=50) 
+    marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='modelo_created_by')
+
+    def __str__(self):
+        return self.nombre_modelo
+    
+    class Meta:
+        verbose_name = 'Modelo'
+        verbose_name_plural = 'Modelos'
+        ordering = ['nombre_modelo']
 
 class Proveedor(models.Model):
     id = models.AutoField(primary_key=True)
@@ -45,18 +59,6 @@ class Proveedor(models.Model):
         verbose_name_plural = 'Proveedores'
         ordering = ['nombre_proveedor']
 
-class Tipo(models.Model):
-    id = models.AutoField(primary_key=True)
-    nombre_tipo = models.CharField(max_length=50)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tipo_created_by')
-
-    def __str__(self):
-        return self.nombre_tipo
-    
-    class Meta:
-        verbose_name = 'Tipo'
-        verbose_name_plural = 'Tipos'
-        ordering = ['nombre_tipo']
 
 class Modelo(models.Model):
     id = models.AutoField(primary_key=True)
@@ -86,15 +88,13 @@ class Estado(models.Model):
 
 class Item(models.Model):
     id = models.AutoField(primary_key=True)
-    correlativo = models.CharField(max_length=50, unique=True)
+    correlativo = models.CharField(max_length=8, unique=True)
     nombre_item = models.CharField(max_length=50, blank=False, null=False)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='item_categoria')
-    marca = models.ForeignKey(Marca, on_delete=models.CASCADE, related_name='item_marca')
+    modelo = models.ForeignKey(Modelo, on_delete=models.CASCADE, related_name='item_modelo')
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='item_proveedor')
     precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='item_created_by')
-    asignado = models.ForeignKey(User, on_delete=models.CASCADE, related_name='item_asignado')
-    tipo = models.ForeignKey(Tipo, on_delete=models.CASCADE, related_name='item_tipo')
     fecha_compra = models.DateField(null=True, blank=True)
     fehca_garantia = models.DateField(null=True, blank=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE, related_name='item_estado')
@@ -119,14 +119,16 @@ def get_user_notes_unassinged_folder(instance, filename):
      return '{0}/{1}/{2}/{3}/{4}'.format('notas_desasignacion', instance.user_id.username, instance.created_at.year, instance.created_at.month , filename)
 
 class Historial_Asignacion(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True) 
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='articulo')
     assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='asignado_a')
+    assigned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='asignado_por')
     created_at = models.DateField(null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creado_por') 
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-    update_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actualizado_por')
     observaciones = models.TextField(max_length=500, default="", blank=True, null=True)
+    assigned_date = models.DateField(null=True, blank=True)
+    unassigned_date = models.DateField(null=True, blank=True)
     nota_asignacion = models.FileField(upload_to=get_user_notes_assigned_folder, null=True, blank=True)
     nota_descargo = models.FileField(upload_to=get_user_notes_unassinged_folder, null=True, blank=True)
 
