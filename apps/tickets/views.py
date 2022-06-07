@@ -43,3 +43,4 @@ def ticketViews (request):
         return JsonResponse(data,safe=False)
     elif request.method =="GET":
         return render(request, 'tickets/ticket_home.html')
+

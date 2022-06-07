@@ -86,6 +86,8 @@ class Estado(models.Model):
         verbose_name_plural = 'Estados'
         ordering = ['name_estado']
 
+def get_item_image_folder(instance, filename):
+    return '{0}/{1}/{2}/{3}'.format('items', instance.categoria.nombre_categoria, instance.correlativo , filename)
 class Item(models.Model):
     id = models.AutoField(primary_key=True)
     correlativo = models.CharField(max_length=8, unique=True)
@@ -102,6 +104,7 @@ class Item(models.Model):
     comentarios = models.TextField(max_length=500, default="", blank=True, null=True)
     serial_number = models.CharField(max_length=60, blank=False, null=False, unique=True)
     ubicacion = models.TextField(max_length=500, default="", blank=False, null=False)
+    imagen_item = models.ImageField(upload_to=get_item_image_folder, default='img_defecto.jpg', null=True, blank=True, verbose_name='Image')
 
     def __str__(self):
         return self.nombre_item
@@ -138,4 +141,4 @@ class Historial_Asignacion(models.Model):
     class Meta:
         verbose_name = 'Historial_Asignacion'
         verbose_name_plural = 'Historial_Asignaciones'
-        ordering = ['fecha_asignacion']
+        ordering = ['assigned_date']
