@@ -6,7 +6,6 @@ from django.forms import model_to_dict
 class TicketStatus(models.TextChoices):
     OPEN = 'Abierto'
     IN_PROGRESS = 'En progreso'
-    IN_REVIEW = 'En revisión'
     DONE = 'Terminado' 
 
 def get_user_image_folder(instance, filename):
@@ -29,5 +28,6 @@ class Ticket(models.Model):
         item = model_to_dict(self) #convertir el objeto a un diccionario
         item['img_ticket'] = self.img_ticket.url #agregar la url de la imagen
         item['user_id'] = {'id': self.user_id.id, 'usuario': self.user_id.username} #agregar el id y el username del usuario
+        item['assignee'] = {'id': self.assignee.id, 'usuario': self.assignee.username} #agregar el id y el username del usuario
         item['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S") #agregar la fecha de creacion
         return item

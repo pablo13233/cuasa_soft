@@ -30,7 +30,7 @@ class Marca(models.Model):
         verbose_name_plural = 'Marcas'
         ordering = ['nombre_marca']
     
-class Modelo(models.Model):
+class ModeloItem(models.Model):
     id = models.AutoField(primary_key=True)
     nombre_modelo = models.CharField(max_length=50) 
     marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
@@ -93,9 +93,9 @@ class Item(models.Model):
     correlativo = models.CharField(max_length=8, unique=True)
     nombre_item = models.CharField(max_length=50, blank=False, null=False)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='item_categoria')
-    modelo = models.ForeignKey(Modelo, on_delete=models.CASCADE, related_name='item_modelo')
+    ModeloItem = models.ForeignKey(ModeloItem, on_delete=models.CASCADE, related_name='item_modelo')
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='item_proveedor')
-    precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True) 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='item_created_by')
     fecha_compra = models.DateField(null=True, blank=True)
     fehca_garantia = models.DateField(null=True, blank=True)

@@ -44,3 +44,41 @@ def ticketViews (request):
     elif request.method =="GET":
         return render(request, 'tickets/ticket_home.html')
 
+
+@login_required
+def AdminTicketViews (request):
+    if request.method == 'POST' and request.is_ajax():
+        data = []
+        try:
+            #========================   select Tickets Abiertos  =========================
+            action = request.POST['action']
+            if action =='ticketsopen':
+                for i in Ticket.objects.filter(status='OPEN'):
+                    data.append(i.toJSON())
+
+            #========================   select Tickets Progreso  =========================
+            elif action =='ticketsprogress':
+                for i in Ticket.objects.filter(status='IN_PROGRESS'):
+                    data.append(i.toJSON())
+
+            #========================   select Tickets Terminados  =========================
+            elif action =='ticketdone':
+                for i in Ticket.objects.filter(status='DONE'):
+                    data.append(i.toJSON())
+                    #========================   Crear   =========================
+            elif action =='update':
+
+                dato_Ticket = Ticket.objects.get(pk=request.POST['id'])
+                dato_Ticket.status = request.POST['status']
+                dato_Ticket.assignee = request.POST['assignee']
+
+                dato_Ticket.save()
+                data = {'tipo_accion': 'update', 'correcto': True}
+
+            
+        except Exception as e:
+            data['error'] = str(e)
+            data = {'tipo_accion': 'error','correcto': False, 'error': str(e)}
+        return JsonResponse(data,safe=False)
+    elif request.method =="GET":
+        return render(request, 'tickets/ticket_admin.html')

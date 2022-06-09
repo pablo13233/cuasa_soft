@@ -17,16 +17,11 @@ Administracion Tickets
                         <div class="col-lg-6 col-7">
                             <h3><i class="bi bi-ticket-perforated-fill fs-1"></i> Tickets Abiertos</h3>
                         </div>
-                        <div class="col-lg-6 col-5 my-auto text-end">
-                            <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
-                                <i class="bi bi-person-plus-fill opacity-10 fs-3"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
                     <div class="table-responsive">
-                        <table class="table align-items-center mb-0" id="datatable">
+                        <table class="table align-items-center mb-0" id="tableOpen">
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -72,16 +67,11 @@ Administracion Tickets
                         <div class="col-lg-6 col-7">
                             <h3><i class="bi bi-ticket-perforated fs-1"></i> Tickets Progreso</h3>
                         </div>
-                        <div class="col-lg-6 col-5 my-auto text-end">
-                            <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
-                                <i class="bi bi-person-plus-fill opacity-10 fs-3"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
                     <div class="table-responsive">
-                        <table class="table align-items-center mb-0" id="datatable">
+                        <table class="table align-items-center mb-0" id="tableProgress">
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -127,16 +117,11 @@ Administracion Tickets
                         <div class="col-lg-6 col-7">
                             <h3><i class="bi bi-ticket fs-1"></i> Tickets Completados</h3>
                         </div>
-                        <div class="col-lg-6 col-5 my-auto text-end">
-                            <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
-                                <i class="bi bi-person-plus-fill opacity-10 fs-3"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
                     <div class="table-responsive">
-                        <table class="table align-items-center mb-0" id="datatable">
+                        <table class="table align-items-center mb-0" id="tableClose">
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -176,4 +161,444 @@ Administracion Tickets
 
 </div>
 
+<!-- Inicio Editar -->
+<div class="modal fade" id="modalTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="">
+                    <i class="fa-solid fa-plus"></i> <span>Crear Ticket</span></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <form method="post" action="." id="form_ticket" enctype="multipart/form-data">
+                    <div class="form-group row">
+                        {% csrf_token %}
+                        <input type="text" class="d-none" name="action" id="action" value="crear" />
+                        <input type="text" class="d-none" id="id_ticket" value="0" />
+
+
+                        <div class="col-md-12">
+                            <label for="">Titulo</label>
+                            <input type="text" class="form-control" name="title" id="title" required
+                                placeholder="Titulo del Ticket" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label for="">Descripción</label>
+                            <textArea id="description" name="description" class="form-control"
+                                placeholder="Descripción del Ticket" style="resize: none">
+
+                      </textArea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row ">
+
+                        <div class="col-md-12">
+                            <label for="">Imagen</label>
+                            <input type="file" id="imagen" name="imagen" accept="image/*">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" id="btn">Guardar</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- Fin Editar -->
+
+<script>
+    //==================================================Carga del Modal========================================================
+
+    var modalTitulo = $('.modal-title');
+    var tablaTicket;
+
+    window.onload = function () {
+
+        //alert("Pagina cargada");
+        $("#btnAdd").on("click", function () {
+            modalTitulo.find('span').html('Agregar Ticket');
+            modalTitulo.find('i').removeClass().addClass('fas fa-plus');
+            $('#action').val("crear");
+            $('#form_ticket')[0].reset();
+            $('#description').val("");
+            $('#title').val("");
+
+            $('#titulo').focus();
+
+            $('#modalTicket').modal('show');
+        });
+        $('#datatable').DataTable();
+        ticketsopen();
+        ticketsprogress();
+        ticketdone();
+    }
+
+    //=================================================Data table=============================================================
+
+    $('#datatable tbody').on('click', 'button[rel="verTicket"]', function () {
+        var tr = tablaTicket.cell($(this).closest('td, li')).index();
+        var data = tablaTicket.row(tr.row).data();
+        //console.log(data.imagen_Carrusel);
+        $("#imagen_ver").attr("src", data.img_ticket);
+        $("#title_ver").val(data.title);
+        $("#description_ver").val(data.description);
+        $("#assigned_ver").val(data.assignee);
+
+        $("#modalVerTicket").modal("show");
+    });
+
+    //================================================== Obtener Tickets Abiertos===========================================================
+    function ticketsopen() {
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaTicket = $('#tableOpen').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            language: {
+                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+            },
+            ajax: {
+                url: window.location.pathname, //Obtenemos la url obsoluta
+                type: 'POST',
+                data: {
+                    'action': 'ticketsopen', //Mandamos la accion para que django sepa que tiene que buscar
+                    'csrfmiddlewaretoken': token
+                }, // parametros
+                dataSrc: ""
+            },
+            columns: [ //Columnas de nuestro modelo/Tabla aqui retorna o pinta los valores en la datables
+                {
+                    "data": "id"
+                },
+                {
+                    "data": "user_id.usuario"
+                },
+                {
+                    "data": "description"
+                },
+                {
+                    "data": "created_at"
+                },
+                {
+                    "data": "status"
+                },
+                {
+                    "data": "action"
+                }
+            ], 
+            columnDefs: [ //Personalizar una columna
+                {
+                    targets: [2],
+                    render: function (data, type, row) {
+                        return data.substr(0, 25) + "...";
+                    }
+                },
+                {
+                    targets: [4], //Personalizar la colummna numero 5
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        var span = ` {% if data.status == OPEN %}
+                                        <span class="badge rounded-pill bg-primary fs-6">Abierto</span>
+                                    {% elif data.status == IN_PROGRESS %}
+                                        <span class="badge rounded-pill bg-warning text-dark fs-6">En Progreso</span>
+                                    {% elif data.status == IN_REVIEW %}
+                                        <span class="badge rounded-pill bg-info text-dark fs-6">En Revision</span>
+                                    {% elif data.status == DONE %}
+                                        <span class="badge rounded-pill bg-success fs-6">Terminado</span>
+                                    {% endif %}`;
+                                
+                            return span;
+                    }
+                },
+                {
+                    targets: [5], //Personalizar la colummna numero 6
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        var buttons = `<button rel="verTicket" type="button" class='btn btn-secondary btn-sm btn-flat'>
+                                        <i class="bi bi-eye-fill fs-6"></i></button>`;
+                            return buttons;
+                    }
+                },
+            ],
+        });
+    }
+
+    //================================================== Obtener Ticket Progreso ===========================================================
+    function ticketprogress() {
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaTicket = $('#tableProgress').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            language: {
+                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+            },
+            ajax: {
+                url: window.location.pathname, //Obtenemos la url obsoluta
+                type: 'POST',
+                data: {
+                    'action': 'ticketprogress', //Mandamos la accion para que django sepa que tiene que buscar
+                    'csrfmiddlewaretoken': token
+                }, // parametros
+                dataSrc: ""
+            },
+            columns: [ //Columnas de nuestro modelo/Tabla aqui retorna o pinta los valores en la datables
+                {
+                    "data": "id"
+                },
+                {
+                    "data": "user_id.usuario"
+                },
+                {
+                    "data": "assignee.usuario"
+                },
+                {
+                    "data": "description"
+                },
+                {
+                    "data": "created_at"
+                },
+                {
+                    "data": "status"
+                },
+                {
+                    "data": "action"
+                }
+            ], 
+            columnDefs: [ //Personalizar una columna
+                {
+                    targets: [3],
+                    render: function (data, type, row) {
+                        return data.substr(0, 25) + "...";
+                    }
+                },
+                {
+                    targets: [5], //Personalizar la colummna numero 5
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        var span = ` {% if data.status == OPEN %}
+                                        <span class="badge rounded-pill bg-primary fs-6">Abierto</span>
+                                    {% elif data.status == IN_PROGRESS %}
+                                        <span class="badge rounded-pill bg-warning text-dark fs-6">En Progreso</span>
+                                    {% elif data.status == IN_REVIEW %}
+                                        <span class="badge rounded-pill bg-info text-dark fs-6">En Revision</span>
+                                    {% elif data.status == DONE %}
+                                        <span class="badge rounded-pill bg-success fs-6">Terminado</span>
+                                    {% endif %}`;
+                                
+                            return span;
+                    }
+                },
+                {
+                    targets: [6], //Personalizar la colummna numero 6
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        var buttons = `<button rel="verTicket" type="button" class='btn btn-secondary btn-sm btn-flat'>
+                                        <i class="bi bi-eye-fill fs-6"></i></button>`;
+                            return buttons;
+                    }
+                },
+            ],
+        });
+    }
+
+    //================================================== Obtener Ticket Progreso ===========================================================
+    function ticketsdone() {
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaTicket = $('#tableClose').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            language: {
+                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+            },
+            ajax: {
+                url: window.location.pathname, //Obtenemos la url obsoluta
+                type: 'POST',
+                data: {
+                    'action': 'ticketsdone', //Mandamos la accion para que django sepa que tiene que buscar
+                    'csrfmiddlewaretoken': token
+                }, // parametros
+                dataSrc: ""
+            },
+            columns: [ //Columnas de nuestro modelo/Tabla aqui retorna o pinta los valores en la datables
+            {
+                    "data": "id"
+                },
+                {
+                    "data": "user_id.usuario"
+                },
+                {
+                    "data": "assignee.usuario"
+                },
+                {
+                    "data": "description"
+                },
+                {
+                    "data": "created_at"
+                },
+                {
+                    "data": "status"
+                },
+                {
+                    "data": "action"
+                }
+            ], 
+            columnDefs: [ //Personalizar una columna
+                {
+                    targets: [3],
+                    render: function (data, type, row) {
+                        return data.substr(0, 25) + "...";
+                    }
+                },
+                {
+                    targets: [5], //Personalizar la colummna numero 5
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        var span = ` {% if data.status == OPEN %}
+                                        <span class="badge rounded-pill bg-primary fs-6">Abierto</span>
+                                    {% elif data.status == IN_PROGRESS %}
+                                        <span class="badge rounded-pill bg-warning text-dark fs-6">En Progreso</span>
+                                    {% elif data.status == IN_REVIEW %}
+                                        <span class="badge rounded-pill bg-info text-dark fs-6">En Revision</span>
+                                    {% elif data.status == DONE %}
+                                        <span class="badge rounded-pill bg-success fs-6">Terminado</span>
+                                    {% endif %}`;
+                                
+                            return span;
+                    }
+                },
+                {
+                    targets: [6], //Personalizar la colummna numero 6
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        var buttons = `<button rel="verTicket" type="button" class='btn btn-secondary btn-sm btn-flat'>
+                                        <i class="bi bi-eye-fill fs-6"></i></button>`;
+                            return buttons;
+                    }
+                },
+            ],
+        });
+    }
+
+
+    //==================================================validar formulario=======================================================
+    $("#btn").on("click", function () {
+
+        if ($("#title").val() == "") {
+            alert("Falta el titulo del ticket");
+
+        } else if ($("#description").val() == "") {
+            alert("Falta la descripcion");
+
+        } else {
+            submit_with_ajax("", "");
+        }
+        return false;
+    });
+
+    //================================================Función AJAX======================================================
+
+    function submit_with_ajax(url, parametros) {
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', $('#action').val());
+
+        parametros.append('title', $("#title").val());
+        parametros.append('description', $("#description").val());
+        parametros.append('id', parseInt($("#id_ticket").val()));
+
+        parametros.append('imagen', $("#imagen")[0].files[0]);
+
+        parametros.append('csrfmiddlewaretoken', token);
+
+        $.ajax({
+            url: window.location.pathname, //window.location.pathname
+            type: 'POST',
+            data: parametros, // parametros,
+
+            dataType: 'json',
+            contentType: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                //alert("Correcto");
+                if (result.correcto) {
+                    $('#form_ticket')[0].reset();
+                    $("#modalTicket").modal("hide");
+                    tablaTicket.ajax.reload(null, false);
+
+                    switch (result.tipo_accion) {
+                        case "crear":
+                            texto = "Datos guardado con éxito";
+                            break;
+                        case "editar":
+                            texto = "Datos editados con éxito";
+                            break;
+                        case "eliminar":
+                            texto = "Registro eliminado con éxito";
+                            break;
+                        default:
+                            texto = "";
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Correcto',
+                        text: texto
+                    });
+
+                } else {
+                    tablaTicket.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al realizar la acción'
+                    });
+                }
+
+            },
+            error: function (error) {
+                //alert(error.responseJSON.Message);
+
+            },
+            failure: function () {
+                //alert('Failure');
+            }
+        });
+    }
+
+</script>
 {% endblock content %}

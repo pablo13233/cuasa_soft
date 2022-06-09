@@ -219,7 +219,7 @@ Tickets
         $("#imagen_ver").attr("src", data.img_ticket);
         $("#title_ver").val(data.title);
         $("#description_ver").val(data.description);
-        $("#assigned_ver").val(data.assignee);
+        $("#assigned_ver").val(data.assignee.usuario);
 
         $("#modalVerTicket").modal("show");
     });
