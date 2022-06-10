@@ -60,19 +60,6 @@ class Proveedor(models.Model):
         ordering = ['nombre_proveedor']
 
 
-class Modelo(models.Model):
-    id = models.AutoField(primary_key=True)
-    nombre_modelo = models.CharField(max_length=50)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='modelo_created_by')
-
-    def __str__(self):
-        return self.nombre_modelo
-    
-    class Meta:
-        verbose_name = 'Modelo'
-        verbose_name_plural = 'Modelos'
-        ordering = ['nombre_modelo']
-
 class Estado(models.Model):
     id = models.AutoField(primary_key=True)
     name_estado = models.CharField(max_length=50)
