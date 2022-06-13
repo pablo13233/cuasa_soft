@@ -16,8 +16,9 @@ def ticketViews (request):
         try:
             #========================   select   =========================
             action = request.POST['action']
+            id_user = request.user.id
             if action =='buscardatos':
-                for i in Ticket.objects.filter(user_id=request.user.id):
+                for i in Ticket.objects.filter(user_id = id_user):
                     data.append(i.toJSON())
 
                     #========================   Crear   =========================
@@ -27,7 +28,7 @@ def ticketViews (request):
                 dato_Ticket.title = request.POST['title']
                 dato_Ticket.description = request.POST['description']
 
-                dato_Ticket.user_id = User.objects.get(pk=request.user.id)
+                dato_Ticket.user_id = User.objects.get(pk=id_user)
                 dato_Ticket.save()
 
                 if request.FILES:
@@ -70,7 +71,7 @@ def AdminTicketViews (request):
 
                 dato_Ticket = Ticket.objects.get(pk=request.POST['id'])
                 dato_Ticket.status = request.POST['status']
-                dato_Ticket.assignee = request.POST['assignee']
+                dato_Ticket.assignee_id = request.POST['assignee_id']
 
                 dato_Ticket.save()
                 data = {'tipo_accion': 'update', 'correcto': True}

@@ -219,7 +219,7 @@ Tickets
         $("#imagen_ver").attr("src", data.img_ticket);
         $("#title_ver").val(data.title);
         $("#description_ver").val(data.description);
-        $("#assigned_ver").val(data.assignee.usuario);
+        $("#assigned_ver").val(data.assignee_id.usuario);
 
         $("#modalVerTicket").modal("show");
     });
@@ -277,17 +277,12 @@ Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var span = ` {% if data.status == OPEN %}
-                                        <span class="badge rounded-pill bg-primary fs-6">Abierto</span>
-                                    {% elif data.status == IN_PROGRESS %}
-                                        <span class="badge rounded-pill bg-warning text-dark fs-6">En Progreso</span>
-                                    {% elif data.status == IN_REVIEW %}
-                                        <span class="badge rounded-pill bg-info text-dark fs-6">En Revision</span>
-                                    {% elif data.status == DONE %}
-                                        <span class="badge rounded-pill bg-success fs-6">Terminado</span>
-                                    {% endif %}`;
-                                
-                            return span;
+                            if (data == 'OPEN')
+                                return '<span class="badge rounded-pill bg-primary fs-6">Abierto</span>';
+                            else if (data == 'IN_PROGRESS')
+                                return '<span class="badge rounded-pill bg-warning text-dark fs-6">En Progreso</span>';
+                            else if (data == 'DONE')
+                                return '<span class="badge rounded-pill bg-success fs-6">Terminado</span>';
                     }
                 },
                 {
@@ -303,6 +298,7 @@ Tickets
             ],
         });
     }
+
 
     //==================================================validar formulario=======================================================
     $("#btn").on("click", function () {

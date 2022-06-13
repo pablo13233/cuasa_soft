@@ -79,7 +79,11 @@ Administracion Tickets
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Usuario
+                                        Creado por
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Asignado a
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -129,7 +133,11 @@ Administracion Tickets
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Usuario
+                                        Creado por
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Asignado a
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -248,9 +256,7 @@ Administracion Tickets
             $('#modalTicket').modal('show');
         });
         $('#datatable').DataTable();
-        ticketsopen();
-        ticketsprogress();
-        ticketdone();
+        ObtenerDatos();
     }
 
     //=================================================Data table=============================================================
@@ -262,14 +268,15 @@ Administracion Tickets
         $("#imagen_ver").attr("src", data.img_ticket);
         $("#title_ver").val(data.title);
         $("#description_ver").val(data.description);
-        $("#assigned_ver").val(data.assignee);
+        $("#assigned_ver").val(data.assignee_id);
 
         $("#modalVerTicket").modal("show");
     });
 
-    //================================================== Obtener Tickets Abiertos===========================================================
-    function ticketsopen() {
+    //================================================== Obtener Ticket ===========================================================
+    function ObtenerDatos() {
         token = $('input[name="csrfmiddlewaretoken"]').val();
+        //============================== TIckets en Abiertos ===========================================================
         tablaTicket = $('#tableOpen').DataTable({
             responsive: true,
             autoWidth: false,
@@ -320,17 +327,7 @@ Administracion Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var span = ` {% if data.status == OPEN %}
-                                        <span class="badge rounded-pill bg-primary fs-6">Abierto</span>
-                                    {% elif data.status == IN_PROGRESS %}
-                                        <span class="badge rounded-pill bg-warning text-dark fs-6">En Progreso</span>
-                                    {% elif data.status == IN_REVIEW %}
-                                        <span class="badge rounded-pill bg-info text-dark fs-6">En Revision</span>
-                                    {% elif data.status == DONE %}
-                                        <span class="badge rounded-pill bg-success fs-6">Terminado</span>
-                                    {% endif %}`;
-                                
-                            return span;
+                            return '<span class="badge rounded-pill bg-primary fs-6">Abierto</span>';;
                     }
                 },
                 {
@@ -345,11 +342,7 @@ Administracion Tickets
                 },
             ],
         });
-    }
-
-    //================================================== Obtener Ticket Progreso ===========================================================
-    function ticketprogress() {
-        token = $('input[name="csrfmiddlewaretoken"]').val();
+        //============================== TIckets en Progreso ===========================================================
         tablaTicket = $('#tableProgress').DataTable({
             responsive: true,
             autoWidth: false,
@@ -363,7 +356,7 @@ Administracion Tickets
                 url: window.location.pathname, //Obtenemos la url obsoluta
                 type: 'POST',
                 data: {
-                    'action': 'ticketprogress', //Mandamos la accion para que django sepa que tiene que buscar
+                    'action': 'ticketsprogress', //Mandamos la accion para que django sepa que tiene que buscar
                     'csrfmiddlewaretoken': token
                 }, // parametros
                 dataSrc: ""
@@ -376,7 +369,7 @@ Administracion Tickets
                     "data": "user_id.usuario"
                 },
                 {
-                    "data": "assignee.usuario"
+                    "data": "assignee_id.usuario"
                 },
                 {
                     "data": "description"
@@ -403,17 +396,7 @@ Administracion Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var span = ` {% if data.status == OPEN %}
-                                        <span class="badge rounded-pill bg-primary fs-6">Abierto</span>
-                                    {% elif data.status == IN_PROGRESS %}
-                                        <span class="badge rounded-pill bg-warning text-dark fs-6">En Progreso</span>
-                                    {% elif data.status == IN_REVIEW %}
-                                        <span class="badge rounded-pill bg-info text-dark fs-6">En Revision</span>
-                                    {% elif data.status == DONE %}
-                                        <span class="badge rounded-pill bg-success fs-6">Terminado</span>
-                                    {% endif %}`;
-                                
-                            return span;
+                        return '<span class="badge rounded-pill bg-warning text-dark fs-6">En Progreso</span>';
                     }
                 },
                 {
@@ -428,11 +411,7 @@ Administracion Tickets
                 },
             ],
         });
-    }
-
-    //================================================== Obtener Ticket Progreso ===========================================================
-    function ticketsdone() {
-        token = $('input[name="csrfmiddlewaretoken"]').val();
+        //=================================  Tickets Cerrados ============================================================
         tablaTicket = $('#tableClose').DataTable({
             responsive: true,
             autoWidth: false,
@@ -446,7 +425,7 @@ Administracion Tickets
                 url: window.location.pathname, //Obtenemos la url obsoluta
                 type: 'POST',
                 data: {
-                    'action': 'ticketsdone', //Mandamos la accion para que django sepa que tiene que buscar
+                    'action': 'ticketdone', //Mandamos la accion para que django sepa que tiene que buscar
                     'csrfmiddlewaretoken': token
                 }, // parametros
                 dataSrc: ""
@@ -459,7 +438,7 @@ Administracion Tickets
                     "data": "user_id.usuario"
                 },
                 {
-                    "data": "assignee.usuario"
+                    "data": "assignee_id.usuario"
                 },
                 {
                     "data": "description"
@@ -486,17 +465,7 @@ Administracion Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var span = ` {% if data.status == OPEN %}
-                                        <span class="badge rounded-pill bg-primary fs-6">Abierto</span>
-                                    {% elif data.status == IN_PROGRESS %}
-                                        <span class="badge rounded-pill bg-warning text-dark fs-6">En Progreso</span>
-                                    {% elif data.status == IN_REVIEW %}
-                                        <span class="badge rounded-pill bg-info text-dark fs-6">En Revision</span>
-                                    {% elif data.status == DONE %}
-                                        <span class="badge rounded-pill bg-success fs-6">Terminado</span>
-                                    {% endif %}`;
-                                
-                            return span;
+                        return '<span class="badge rounded-pill bg-success fs-6">Terminado</span>';
                     }
                 },
                 {
@@ -513,7 +482,7 @@ Administracion Tickets
         });
     }
 
-
+    
     //==================================================validar formulario=======================================================
     $("#btn").on("click", function () {
 
