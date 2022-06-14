@@ -170,67 +170,50 @@ Administracion Tickets
 </div>
 
 <!-- Inicio Editar -->
-<div class="modal fade" id="editarTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-
+<div class="modal fade" id="modalEditarTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-
         <div class="modal-content">
-
             <div class="modal-header">
-                <h5 class="modal-title" id="">
-                    <i class="fa-solid fa-plus"></i> <span>Asignar Ticket</span></h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="exampleModalLongTitle">Editar Ticket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-
             <div class="modal-body">
-
-                <form method="post" action="." id="form_ticket" enctype="multipart/form-data">
-                    <div class="form-group row">
-                        {% csrf_token %}
-                        <input type="text" class="d-none" name="action" id="action" value="crear" />
-                        <input type="text" class="d-none" id="id_ticket" value="0" />
-
-
-                        <div class="col-md-12">
-                            <label for="">Titulo</label>
-                            <input type="text" class="form-control" name="title" id="title" required
-                                placeholder="Titulo del Ticket" />
-                        </div>
+                <form id="formEditarTicket"> {% csrf_token %}
+                    <div class="form-group">
+                        <label for="">Titulo</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Titulo" disabled>
                     </div>
-
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label for="">Descripción</label>
-                            <textArea id="description" name="description" class="form-control"
-                                placeholder="Descripción del Ticket" style="resize: none">
-
-                      </textArea>
-                        </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Descripcion</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="descripcion"></textarea>
                     </div>
-
-                    <div class="form-group row ">
-
-                        <div class="col-md-12">
-                            <label for="">Imagen</label>
-                            <input type="file" id="imagen" name="imagen" accept="image/*">
-                        </div>
+                    <div class="form-group">
+                        <label for="">Estado</label>
+                        <select class="form-control" id="estado" name="estado">
+                            <option value="OPEN">Abierto</option>
+                            <option value="IN_PROGRESS">En Progreso</option>
+                            <option value="DONE">Cerrado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Asignado a</label>
+                        <select class="form-control" id="asignado" name="asignado">
+                            <option value="">Seleccione</option>
+                            {% for user in users %}
+                                <option value="{{user.id}}">{{user.name}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </form>
-
             </div>
-
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" id="btn">Guardar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnEditarTicket">Guardar</button>
             </div>
-
         </div>
-
     </div>
-
 </div>
 <!-- Fin Editar -->
 
@@ -241,25 +224,27 @@ Administracion Tickets
     var tablaTicket;
 
     window.onload = function () {
-
         //alert("Pagina cargada");
         $('#datatable').DataTable();
         ObtenerDatos();
     }
 
-    //=================================================Data table=============================================================
 
-    $('#datatable tbody').on('click', 'button[rel="btnEditTicket"]', function () {
+    //================================================= Editar Ticket =============================================================
+
+    $('#tableOpen tbody').on('click', 'a[rel="btnEditarTicket"', function(){
+        
         var tr = tablaTicket.cell($(this).closest('td, li')).index();
         var data = tablaTicket.row(tr.row).data();
-        //console.log(data.imagen_Carrusel);
-        $("#imagen_ver").attr("src", data.img_ticket);
-        $("#title_ver").val(data.title);
-        $("#description_ver").val(data.description);
-        $("#assigned_ver").val(data.assignee_id.usuario);
 
-        $("#editarTicket").modal("show");
+        $('#action').val('editar');
+        $('#id').val(data.id);
+        $('#status').val(data.status);
+        $('#assignee').val(data.assignee_id);
+
+        $('#modalEditarTicket').modal('show');
     });
+
 
     //================================================== Obtener Ticket ===========================================================
     function ObtenerDatos() {
@@ -323,8 +308,8 @@ Administracion Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var buttons = `<button rel="editarTicket" type="button" class='btn btn-secondary btn-sm btn-flat' id="btnEditTicket">
-                                        <i class="bi bi-eye-fill fs-6"></i></button>`;
+                        var buttons = `<a rel="btnEditarTicket" class='btn btn-secondary btn-sm btn-flat test-popup-link'>
+                                        <i class="bi bi-eye-fill fs-6"></i></a>`;
                             return buttons;
                     }
                 },

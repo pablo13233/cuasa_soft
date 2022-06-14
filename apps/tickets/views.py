@@ -67,14 +67,14 @@ def AdminTicketViews (request):
                 for i in Ticket.objects.filter(status='DONE'):
                     data.append(i.toJSON())
                     #========================   Crear   =========================
-            elif action =='update':
+            elif action =='editar':
 
                 dato_Ticket = Ticket.objects.get(pk=request.POST['id'])
                 dato_Ticket.status = request.POST['status']
                 dato_Ticket.assignee_id = request.POST['assignee_id']
 
                 dato_Ticket.save()
-                data = {'tipo_accion': 'update', 'correcto': True}
+                data = {'tipo_accion': 'editar', 'correcto': True}
 
             
         except Exception as e:
