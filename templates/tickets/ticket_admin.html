@@ -170,7 +170,7 @@ Administracion Tickets
 </div>
 
 <!-- Inicio Editar -->
-<div class="modal fade" id="modalTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+<div class="modal fade" id="editarTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
 
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -179,7 +179,7 @@ Administracion Tickets
 
             <div class="modal-header">
                 <h5 class="modal-title" id="">
-                    <i class="fa-solid fa-plus"></i> <span>Crear Ticket</span></h5>
+                    <i class="fa-solid fa-plus"></i> <span>Asignar Ticket</span></h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -243,34 +243,22 @@ Administracion Tickets
     window.onload = function () {
 
         //alert("Pagina cargada");
-        $("#btnAdd").on("click", function () {
-            modalTitulo.find('span').html('Agregar Ticket');
-            modalTitulo.find('i').removeClass().addClass('fas fa-plus');
-            $('#action').val("crear");
-            $('#form_ticket')[0].reset();
-            $('#description').val("");
-            $('#title').val("");
-
-            $('#titulo').focus();
-
-            $('#modalTicket').modal('show');
-        });
         $('#datatable').DataTable();
         ObtenerDatos();
     }
 
     //=================================================Data table=============================================================
 
-    $('#datatable tbody').on('click', 'button[rel="verTicket"]', function () {
+    $('#datatable tbody').on('click', 'button[rel="btnEditTicket"]', function () {
         var tr = tablaTicket.cell($(this).closest('td, li')).index();
         var data = tablaTicket.row(tr.row).data();
         //console.log(data.imagen_Carrusel);
         $("#imagen_ver").attr("src", data.img_ticket);
         $("#title_ver").val(data.title);
         $("#description_ver").val(data.description);
-        $("#assigned_ver").val(data.assignee_id);
+        $("#assigned_ver").val(data.assignee_id.usuario);
 
-        $("#modalVerTicket").modal("show");
+        $("#editarTicket").modal("show");
     });
 
     //================================================== Obtener Ticket ===========================================================
@@ -335,7 +323,7 @@ Administracion Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var buttons = `<button rel="verTicket" type="button" class='btn btn-secondary btn-sm btn-flat'>
+                        var buttons = `<button rel="editarTicket" type="button" class='btn btn-secondary btn-sm btn-flat' id="btnEditTicket">
                                         <i class="bi bi-eye-fill fs-6"></i></button>`;
                             return buttons;
                     }
