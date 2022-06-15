@@ -220,7 +220,6 @@ Administracion Tickets
 <script>
     //==================================================Carga del Modal========================================================
 
-    var modalTitulo = $('.modal-title');
     var tablaTicket;
 
     window.onload = function () {
@@ -228,22 +227,6 @@ Administracion Tickets
         $('#datatable').DataTable();
         ObtenerDatos();
     }
-
-
-    //================================================= Editar Ticket =============================================================
-
-    $('#tableOpen tbody').on('click', 'a[rel="btnEditarTicket"', function(){
-        
-        var tr = tablaTicket.cell($(this).closest('td, li')).index();
-        var data = tablaTicket.row(tr.row).data();
-
-        $('#action').val('editar');
-        $('#id').val(data.id);
-        $('#status').val(data.status);
-        $('#assignee').val(data.assignee_id);
-
-        $('#modalEditarTicket').modal('show');
-    });
 
 
     //================================================== Obtener Ticket ===========================================================
@@ -308,7 +291,7 @@ Administracion Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var buttons = `<a rel="btnEditarTicket" class='btn btn-secondary btn-sm btn-flat test-popup-link'>
+                        var buttons = `<a rel="Editar" class='btn btn-secondary btn-sm btn-flat test-popup-link'>
                                         <i class="bi bi-eye-fill fs-6"></i></a>`;
                             return buttons;
                     }
@@ -541,6 +524,21 @@ Administracion Tickets
             }
         });
     }
+
+    //================================================= Editar Ticket =============================================================
+
+    $('#tableOpen tbody').on('click', 'a[rel="Editar"]', function(){
+        
+        var tr = tablaTicket.cell($(this).closest('td, li')).index();
+        var data = tablaTicket.row(this).data();
+
+        $('#action').val('editar');
+        $('#id').val(data.id);
+        $('#status').val(data.status);
+        $('#assignee').val(data.assignee_id);
+
+        $('#modalEditarTicket').modal('show');
+    });
 
 </script>
 {% endblock content %}
