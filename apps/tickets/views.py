@@ -53,6 +53,7 @@ def AdminTicketViews (request):
         try:
             #========================   select Tickets Abiertos  =========================
             action = request.POST['action']
+
             if action =='ticketsopen':
                 for i in Ticket.objects.filter(status='OPEN'):
                     data.append(i.toJSON())
@@ -67,19 +68,25 @@ def AdminTicketViews (request):
                 for i in Ticket.objects.filter(status='DONE'):
                     data.append(i.toJSON())
                     #========================   Crear   =========================
-            elif action =='editar':
-
+            elif action =='actualizarOpen':
+                print(request.POST['id'])
                 dato_Ticket = Ticket.objects.get(pk=request.POST['id'])
-                dato_Ticket.status = request.POST['status']
-                dato_Ticket.assignee_id = request.POST['assignee_id']
+                
+                dato_Ticket.status = "IN_PROGRESS"
+
+                if int(request.POST['assignee_id'])>0:
+                    dato_Ticket.assignee_id = User.objects.get(pk=request.POST['assignee_id'])
+                
 
                 dato_Ticket.save()
-                data = {'tipo_accion': 'editar', 'correcto': True}
+                data = {'tipo_accion': 'actualizarOpen', 'correcto': True}
 
             
-        except Exception as e:
+        except Exception as e: 
             data['error'] = str(e)
             data = {'tipo_accion': 'error','correcto': False, 'error': str(e)}
+
         return JsonResponse(data,safe=False)
     elif request.method =="GET":
-        return render(request, 'tickets/ticket_admin.html')
+        users = User.objects.filter(is_staff=True)
+        return render(request, 'tickets/ticket_admin.html',{'users':users})

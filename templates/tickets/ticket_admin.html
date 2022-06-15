@@ -27,24 +27,22 @@ Administracion Tickets
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         # Ticket
                                     </th>
-                                    <th
-                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Usuario
                                     </th>
-                                    <th
-                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> 
+                                        Titulo
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Descripcion
                                     </th>
-                                    <th
-                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Fecha
                                     </th>
-                                    <th
-                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Estado
                                     </th>
-                                    <th
-                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Accion
                                     </th>
                                 </tr>
@@ -182,27 +180,27 @@ Administracion Tickets
             <div class="modal-body">
                 <form id="formEditarTicket"> {% csrf_token %}
                     <div class="form-group">
-                        <label for="">Titulo</label>
-                        <input type="text" class="form-control" id="title" name="title" placeholder="Titulo" disabled>
+                        <div class="row">
+                            <div class="col-9 col-sm-8">
+                                <label for="">Titulo</label>
+                                <input type="text" class="form-control" id="titulo_ticket" name="titulo_ticket" disabled>
+                            </div>
+                            <div class="col-3 col-sm-4">
+                                <label for="">Num. Ticket</label>
+                                <input type="text" class="form-control" id="id_ticket" name="id_ticket">
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlTextarea1">Descripcion</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="descripcion"></textarea>
+                        <textarea class="form-control" id="description_ticket" name="description_ticket" rows="3" name="descripcion" disabled></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="">Estado</label>
-                        <select class="form-control" id="estado" name="estado">
-                            <option value="OPEN">Abierto</option>
-                            <option value="IN_PROGRESS">En Progreso</option>
-                            <option value="DONE">Cerrado</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Asignado a</label>
-                        <select class="form-control" id="asignado" name="asignado">
-                            <option value="">Seleccione</option>
-                            {% for user in users %}
-                                <option value="{{user.id}}">{{user.name}}</option>
+                        <label for="">Asignar a</label>
+                        <select class="form-select" id="asignar_usuario" aria-label="Default select example">
+                            <option value="0" selected> -- Seleccione -- </option>
+                            {% for us in users %}
+                                <option value="{{us.id}}">{{us.username}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -218,9 +216,11 @@ Administracion Tickets
 <!-- Fin Editar -->
 
 <script>
-    //==================================================Carga del Modal========================================================
+    //==================================================Carga del Modal=================================================
 
-    var tablaTicket;
+    var tablaTicketOpen;
+    var tablaTicketInProgress;
+    var tablaTicketDone;
 
     window.onload = function () {
         //alert("Pagina cargada");
@@ -229,11 +229,11 @@ Administracion Tickets
     }
 
 
-    //================================================== Obtener Ticket ===========================================================
+    //================================================== Obtener Ticket ================================================
     function ObtenerDatos() {
         token = $('input[name="csrfmiddlewaretoken"]').val();
         //============================== TIckets en Abiertos ===========================================================
-        tablaTicket = $('#tableOpen').DataTable({
+        tablaTicketOpen = $('#tableOpen').DataTable({
             responsive: true,
             autoWidth: false,
             destroy: true,
@@ -259,6 +259,9 @@ Administracion Tickets
                     "data": "user_id.usuario"
                 },
                 {
+                    "data": "title"
+                },
+                {
                     "data": "description"
                 },
                 {
@@ -279,7 +282,7 @@ Administracion Tickets
                     }
                 },
                 {
-                    targets: [4], //Personalizar la colummna numero 5
+                    targets: [5], //Personalizar la colummna numero 5
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
@@ -287,11 +290,11 @@ Administracion Tickets
                     }
                 },
                 {
-                    targets: [5], //Personalizar la colummna numero 6
+                    targets: [6], //Personalizar la colummna numero 6
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var buttons = `<a rel="Editar" class='btn btn-secondary btn-sm btn-flat test-popup-link'>
+                        var buttons = `<a rel="actualizarOpen" class='btn btn-secondary btn-sm btn-flat test-popup-link'>
                                         <i class="bi bi-eye-fill fs-6"></i></a>`;
                             return buttons;
                     }
@@ -299,7 +302,7 @@ Administracion Tickets
             ],
         });
         //============================== TIckets en Progreso ===========================================================
-        tablaTicket = $('#tableProgress').DataTable({
+        tablaTicketInProgress = $('#tableProgress').DataTable({
             responsive: true,
             autoWidth: false,
             destroy: true,
@@ -368,7 +371,7 @@ Administracion Tickets
             ],
         });
         //=================================  Tickets Cerrados ============================================================
-        tablaTicket = $('#tableClose').DataTable({
+        tablaTicketDone = $('#tableClose').DataTable({
             responsive: true,
             autoWidth: false,
             destroy: true,
@@ -440,14 +443,10 @@ Administracion Tickets
 
     
     //==================================================validar formulario=======================================================
-    $("#btn").on("click", function () {
+    $("#btnEditarTicket").on("click", function () {
 
-        if ($("#title").val() == "") {
+        if ($("#asignar_usuario").val() == "") {
             alert("Falta el titulo del ticket");
-
-        } else if ($("#description").val() == "") {
-            alert("Falta la descripcion");
-
         } else {
             submit_with_ajax("", "");
         }
@@ -461,12 +460,9 @@ Administracion Tickets
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
 
-        parametros.append('title', $("#title").val());
-        parametros.append('description', $("#description").val());
         parametros.append('id', parseInt($("#id_ticket").val()));
-
-        parametros.append('imagen', $("#imagen")[0].files[0]);
-
+        parametros.append('assignee_id', $("#asignar_usuario").val());
+        
         parametros.append('csrfmiddlewaretoken', token);
 
         $.ajax({
@@ -481,16 +477,13 @@ Administracion Tickets
             success: function (result) {
                 //alert("Correcto");
                 if (result.correcto) {
-                    $('#form_ticket')[0].reset();
-                    $("#modalTicket").modal("hide");
-                    tablaTicket.ajax.reload(null, false);
+                    $('#formEditarTicket')[0].reset();
+                    $("#modalEditarTicket").modal("hide");
+                    tablaTicketOpen.ajax.reload(null, false);
 
                     switch (result.tipo_accion) {
-                        case "crear":
-                            texto = "Datos guardado con éxito";
-                            break;
-                        case "editar":
-                            texto = "Datos editados con éxito";
+                        case "actualizarOpen":
+                            texto = "Ticket asignado con éxito";
                             break;
                         case "eliminar":
                             texto = "Registro eliminado con éxito";
@@ -506,7 +499,7 @@ Administracion Tickets
                     });
 
                 } else {
-                    tablaTicket.ajax.reload(null, false);
+                    tablaTicketOpen.ajax.reload(null, false);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -527,15 +520,16 @@ Administracion Tickets
 
     //================================================= Editar Ticket =============================================================
 
-    $('#tableOpen tbody').on('click', 'a[rel="Editar"]', function(){
+    $('#tableOpen tbody').on('click', 'a[rel="actualizarOpen"]', function(){
         
-        var tr = tablaTicket.cell($(this).closest('td, li')).index();
-        var data = tablaTicket.row(this).data();
+        var tr = tablaTicketOpen.cell($(this).closest('td, li')).index();
+        var data = tablaTicketOpen.row(tr.row).data();
 
-        $('#action').val('editar');
-        $('#id').val(data.id);
-        $('#status').val(data.status);
-        $('#assignee').val(data.assignee_id);
+        $('#action').val('actualizarOpen');
+        
+        $('#titulo_ticket').val(data.title);
+        $('#id_ticket').val(data.id);
+        $('#description_ticket').val(data.description);
 
         $('#modalEditarTicket').modal('show');
     });
