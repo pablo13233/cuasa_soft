@@ -172,15 +172,16 @@ Administracion Tickets
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Editar Ticket</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="exampleModalLongTitle">Asignar Ticket</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="formEditarTicket"> {% csrf_token %}
+                <form method="post" action="." id="formEditarTicket" enctype="multipart/form-data"> {% csrf_token %}
                     <div class="form-group">
                         <div class="row">
+                            <input type="text" class="d-none" name="action" id="action" value="actualizarOpen"/>
                             <div class="col-9 col-sm-8">
                                 <label for="">Titulo</label>
                                 <input type="text" class="form-control" id="titulo_ticket" name="titulo_ticket" disabled>
@@ -195,6 +196,9 @@ Administracion Tickets
                         <label for="exampleFormControlTextarea1">Descripcion</label>
                         <textarea class="form-control" id="description_ticket" name="description_ticket" rows="3" name="descripcion" disabled></textarea>
                     </div>
+                    <div class="from-group">
+                        <button type="button" class="btn" id="verImagen"><i class="bi bi-image fs-1"></i></button>
+                    </div>
                     <div class="form-group">
                         <label for="">Asignar a</label>
                         <select class="form-select" id="asignar_usuario" aria-label="Default select example">
@@ -207,13 +211,23 @@ Administracion Tickets
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary" id="btnEditarTicket">Guardar</button>
             </div>
         </div>
     </div>
 </div>
 <!-- Fin Editar -->
+
+<!-- Modal ver Imagen     -->
+    <div class="modal fade" id="modalImagen">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="id_imagen">
+            </div>
+        </div>
+    </div>
+<!-- Fin Modal ver Imagen -->
 
 <script>
     //==================================================Carga del Modal=================================================
@@ -445,8 +459,8 @@ Administracion Tickets
     //==================================================validar formulario=======================================================
     $("#btnEditarTicket").on("click", function () {
 
-        if ($("#asignar_usuario").val() == "") {
-            alert("Falta el titulo del ticket");
+        if ($("#asignar_usuario").val() == "0") {
+            alert("Falta asignar el usuario");
         } else {
             submit_with_ajax("", "");
         }
@@ -464,7 +478,6 @@ Administracion Tickets
         parametros.append('assignee_id', $("#asignar_usuario").val());
         
         parametros.append('csrfmiddlewaretoken', token);
-
         $.ajax({
             url: window.location.pathname, //window.location.pathname
             type: 'POST',
@@ -532,6 +545,15 @@ Administracion Tickets
         $('#description_ticket').val(data.description);
 
         $('#modalEditarTicket').modal('show');
+    });
+
+    //========================================= ver imagen ===============================
+    $("#verImagen").on("click", function () {
+        var id_ticket = $(this).attr("#id_ticket");
+        alert("id_ticket");
+        $("#id_imagen").attr("src", data.img_ticket);
+        $("#modalImagen").modal("show");
+        
     });
 
 </script>
