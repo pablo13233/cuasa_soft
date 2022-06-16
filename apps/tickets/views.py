@@ -69,18 +69,21 @@ def AdminTicketViews (request):
                     data.append(i.toJSON())
                     #========================   Crear   =========================
             elif action =='actualizarOpen':
-                print(request.POST['id'])
                 dato_Ticket = Ticket.objects.get(pk=request.POST['id'])
                 
                 dato_Ticket.status = "IN_PROGRESS"
 
                 if int(request.POST['assignee_id'])>0:
                     dato_Ticket.assignee_id = User.objects.get(pk=request.POST['assignee_id'])
-                
+                    dato_Ticket.save()
+                    data = {'tipo_accion': 'actualizarOpen', 'correcto': True}
+
+            elif action =='actualizarProgress':
+                dato_Tickets = Ticket.objects.get(pk=request.POST['id'])
+                dato_Tickets.status = "DONE"
 
                 dato_Ticket.save()
-                data = {'tipo_accion': 'actualizarOpen', 'correcto': True}
-
+                data = {'tipo_accion': 'actualizarProgress', 'correcto': True}
             
         except Exception as e: 
             data['error'] = str(e)

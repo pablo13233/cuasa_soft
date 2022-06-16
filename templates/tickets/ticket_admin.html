@@ -167,7 +167,7 @@ Administracion Tickets
 
 </div>
 
-<!-- Inicio Editar -->
+<!-- Inicio Asignar -->
 <div class="modal fade" id="modalEditarTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -198,6 +198,15 @@ Administracion Tickets
                     </div>
                     <div class="from-group">
                         <button type="button" class="btn" id="verImagen"><i class="bi bi-image fs-1"></i></button>
+                        <!-- Modal ver Imagen     -->
+                            <div class="modal fade" id="modalImagen">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="id_imagen">
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- Fin Modal ver Imagen -->
                     </div>
                     <div class="form-group">
                         <label for="">Asignar a</label>
@@ -219,15 +228,57 @@ Administracion Tickets
 </div>
 <!-- Fin Editar -->
 
-<!-- Modal ver Imagen     -->
-    <div class="modal fade" id="modalImagen">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="id_imagen">
+<!-- Inicio Terminar -->
+<div class="modal fade" id="modalTerminarTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Terminar Ticket</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="." id="formTerminarTicket" enctype="multipart/form-data"> {% csrf_token %}
+                    <div class="form-group">
+                        <div class="row">
+                            <input type="text" class="d-none" name="action" id="action" value="actualizarProgress"/>
+                            <div class="col-9 col-sm-8">
+                                <label for="">Titulo</label>
+                                <input type="text" class="form-control" id="titulo_ticketDone" name="titulo_ticket" disabled>
+                            </div>
+                            <div class="col-3 col-sm-4">
+                                <label for="">Num. Ticket</label>
+                                <input type="text" class="form-control" id="id_ticketDone" name="id_ticket">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Descripcion</label>
+                        <textarea class="form-control" id="description_ticketDone" name="description_ticket" rows="3" name="descripcion" disabled></textarea>
+                    </div>
+                    <div class="from-group">
+                        <button type="button" class="btn" id="verImagen"><i class="bi bi-image fs-1"></i></button>
+                        <!-- Modal ver Imagen     -->
+                            <div class="modal fade" id="modalImagen">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="id_imagenDone">
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- Fin Modal ver Imagen -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnTerminarTicket">Terminar</button>
             </div>
         </div>
     </div>
-<!-- Fin Modal ver Imagen -->
+</div>
+<!-- Fin Terminar -->
 
 <script>
     //==================================================Carga del Modal=================================================
@@ -377,8 +428,8 @@ Administracion Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var buttons = `<button rel="verTicket" type="button" class='btn btn-secondary btn-sm btn-flat'>
-                                        <i class="bi bi-eye-fill fs-6"></i></button>`;
+                        var buttons = `<a rel="actualizarProgress" class='btn btn-secondary btn-sm btn-flat test-popup-link'>
+                                        <i class="bi bi-eye-fill fs-6"></i></a>`;
                             return buttons;
                     }
                 },
@@ -467,6 +518,16 @@ Administracion Tickets
         return false;
     });
 
+    $("#btnTerminarTicket").on("click", function () {
+
+    if ($("#asignar_usuario").val() == "0") {
+        alert("Falta asignar el usuario");
+    } else {
+        submit_with_ajax("", "");
+    }
+    return false;
+    });
+
     //================================================Función AJAX======================================================
 
     function submit_with_ajax(url, parametros) {
@@ -492,14 +553,18 @@ Administracion Tickets
                 if (result.correcto) {
                     $('#formEditarTicket')[0].reset();
                     $("#modalEditarTicket").modal("hide");
-                    tablaTicketOpen.ajax.reload(null, false);
+                    $('#formTerminarTicket')[0].reset();
+                    $('#modalTerminarTicket').modal("hide");
+                    tablaTicketOpen.ajax.reload(null, false); //Recargamos las tablas
+                    tablaTicketInProgress.ajax.reload(null, false);
+                    tablaTicketInDone.ajax.reload(null, false); 
 
                     switch (result.tipo_accion) {
                         case "actualizarOpen":
                             texto = "Ticket asignado con éxito";
                             break;
-                        case "eliminar":
-                            texto = "Registro eliminado con éxito";
+                        case "actualizarProgress":
+                            texto = "Ticket finalizado con éxito";
                             break;
                         default:
                             texto = "";
@@ -512,7 +577,9 @@ Administracion Tickets
                     });
 
                 } else {
-                    tablaTicketOpen.ajax.reload(null, false);
+                    tablaTicketOpen.ajax.reload(null, false); //Recargamos las tablas
+                    tablaTicketInProgress.ajax.reload(null, false);
+                    tablaTicketInDone.ajax.reload(null, false); 
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -543,15 +610,29 @@ Administracion Tickets
         $('#titulo_ticket').val(data.title);
         $('#id_ticket').val(data.id);
         $('#description_ticket').val(data.description);
+        $('#id_imagen').attr("src",data.img_ticket);
 
         $('#modalEditarTicket').modal('show');
     });
 
+    $('#tableProgress tbody').on('click', 'a[rel="actualizarProgress"]', function(){
+        
+        var tr = tablaTicketInProgress.cell($(this).closest('td, li')).index();
+        var data = tablaTicketInProgress.row(tr.row).data();
+
+        $('#action').val('actualizarProgress');
+        
+        $('#titulo_ticketDone').val(data.title);
+        $('#id_ticketDone').val(data.id);
+        $('#description_ticketDone').val(data.description);
+        $('#id_imagenDone').attr("src",data.img_ticket);
+
+        $('#modalTerminarTicket').modal('show');
+    });
+
     //========================================= ver imagen ===============================
     $("#verImagen").on("click", function () {
-        var id_ticket = $(this).attr("#id_ticket");
-        alert("id_ticket");
-        $("#id_imagen").attr("src", data.img_ticket);
+        
         $("#modalImagen").modal("show");
         
     });
