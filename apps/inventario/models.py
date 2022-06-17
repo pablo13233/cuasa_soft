@@ -85,7 +85,7 @@ class Item(models.Model):
     precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True) 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='item_created_by')
     fecha_compra = models.DateField(null=True, blank=True)
-    fehca_garantia = models.DateField(null=True, blank=True)
+    fecha_garantia = models.DateField(null=True, blank=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE, related_name='item_estado')
     caracteristica = models.TextField(max_length=500, default="", blank=False, null=False)
     comentarios = models.TextField(max_length=500, default="", blank=True, null=True)

@@ -79,8 +79,8 @@ def AdminTicketViews (request):
                     data = {'tipo_accion': 'actualizarOpen', 'correcto': True}
 
             elif action =='actualizarProgress':
-                dato_Tickets = Ticket.objects.get(pk=request.POST['id'])
-                dato_Tickets.status = "DONE"
+                dato_Ticket = Ticket.objects.get(pk=request.POST['id'])
+                dato_Ticket.status = "DONE"
 
                 dato_Ticket.save()
                 data = {'tipo_accion': 'actualizarProgress', 'correcto': True}
