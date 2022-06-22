@@ -23,7 +23,7 @@ class Ticket(models.Model):
 
     def __str__(self):
         return "{}-{}".format(self.pk, self.title)
-
+ 
     def toJSON(self):
         item = model_to_dict(self) #convertir el objeto a un diccionario
         item['img_ticket'] = self.img_ticket.url #agregar la url de la imagen

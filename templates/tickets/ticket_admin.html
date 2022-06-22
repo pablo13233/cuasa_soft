@@ -563,7 +563,7 @@ Administracion Tickets
                     $('#modalTerminarTicket').modal("hide");
                     tablaTicketOpen.ajax.reload(null, false); //Recargamos las tablas
                     tablaTicketInProgress.ajax.reload(null, false);
-                    tablaTicketInDone.ajax.reload(null, false); 
+                    tablaTicketDone.ajax.reload(null, false); 
 
                     switch (result.tipo_accion) {
                         case "actualizarOpen":
@@ -585,7 +585,7 @@ Administracion Tickets
                 } else {
                     tablaTicketOpen.ajax.reload(null, false); //Recargamos las tablas
                     tablaTicketInProgress.ajax.reload(null, false);
-                    tablaTicketInDone.ajax.reload(null, false); 
+                    tablaTicketDone.ajax.reload(null, false); 
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',

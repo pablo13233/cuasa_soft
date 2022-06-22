@@ -96,10 +96,8 @@ class Item(models.Model):
     def __str__(self):
         return self.nombre_item
     
-    class Meta:
-        verbose_name = 'Item'
-        verbose_name_plural = 'Items' 
-        ordering = ['correlativo']
+    def toJSON(self):
+        item = model_to_dict(self)
 
 
 def get_user_notes_assigned_folder(instance, filename):
