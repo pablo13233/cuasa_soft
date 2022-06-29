@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Categorias
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid py-4 col-12 ">
+    <div class="row mb-4">
+        <div class="col-12 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-7">
+                            <h3><i class="bi bi-tags opacity-10 fs-1"></i> Categorias</h3>
+                        </div>
+                        <div class="col-lg-6 col-5 my-auto text-end">
+                            <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
+                                <i class="bi bi-person-plus-fill opacity-10 fs-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="table-responsive">
+                        <table class="table align-items-center mb-0" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        # Categoria
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Nombre Categorias
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Accion
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

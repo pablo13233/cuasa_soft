@@ -11,10 +11,10 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre_categoria
     
-    class Meta:
-        verbose_name = 'Categoria'
-        verbose_name_plural = 'Categorias'
-        ordering = ['nombre_categoria']
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
+        return item
 
 class Marca(models.Model):
     id = models.AutoField(primary_key=True)
@@ -25,10 +25,11 @@ class Marca(models.Model):
     def __str__(self):
         return self.nombre_marca
     
-    class Meta:
-        verbose_name = 'Marca'
-        verbose_name_plural = 'Marcas'
-        ordering = ['nombre_marca']
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['image'] = self.image.url
+        item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
+        return item
     
 class ModeloItem(models.Model):
     id = models.AutoField(primary_key=True)
@@ -39,10 +40,11 @@ class ModeloItem(models.Model):
     def __str__(self):
         return self.nombre_modelo
     
-    class Meta:
-        verbose_name = 'Modelo'
-        verbose_name_plural = 'Modelos'
-        ordering = ['nombre_modelo']
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['marca'] = {'id': self.marca.id, 'nombre': self.marca.nombre_marca}
+        item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
+        return item
 
 class Proveedor(models.Model):
     id = models.AutoField(primary_key=True)
@@ -54,10 +56,10 @@ class Proveedor(models.Model):
     def __str__(self):
         return self.nombre_proveedor
     
-    class Meta:
-        verbose_name = 'Proveedor'
-        verbose_name_plural = 'Proveedores'
-        ordering = ['nombre_proveedor']
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
+        return item
 
 
 class Estado(models.Model):
@@ -68,10 +70,10 @@ class Estado(models.Model):
     def __str__(self):
         return self.name_estado
     
-    class Meta:
-        verbose_name = 'Estado'
-        verbose_name_plural = 'Estados'
-        ordering = ['name_estado']
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
+        return item
 
 def get_item_image_folder(instance, filename):
     return '{0}/{1}/{2}/{3}'.format('items', instance.categoria.nombre_categoria, instance.correlativo , filename)
@@ -92,12 +94,31 @@ class Item(models.Model):
     serial_number = models.CharField(max_length=60, blank=False, null=False, unique=True)
     ubicacion = models.TextField(max_length=500, default="", blank=False, null=False)
     imagen_item = models.ImageField(upload_to=get_item_image_folder, default='img_defecto.jpg', null=True, blank=True, verbose_name='Image')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
         return self.nombre_item
     
     def toJSON(self):
         item = model_to_dict(self)
+        item['categoria'] = {'id': self.categoria.id, 'name': self.categoria.nombre_categoria}
+        item['ModeloItem'] = {'id': self.ModeloItem.id, 'nombre_modelo': self.ModeloItem.nombre_modelo}
+        item['proveedor'] = {'id': self.proveedor.id, 'nombre_proveedor': self.proveedor.nombre_proveedor}
+        item['estado'] = {'id': self.estado.id, 'nombre_estado': self.estado.nombre_estado}
+        item['imagen_item']  = self.imagen_item.url
+        item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
+        item['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        item['updated_at'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+        if self.fecha_compra == None:
+            item['fecha_compra'] = ''
+        else:
+            item['fecha_compra'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        if self.fecha_garantia == None:
+            item['fecha_garantia'] = ''
+        else:
+            item['fecha_garantia'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+        return item
 
 
 def get_user_notes_assigned_folder(instance, filename):
@@ -123,7 +144,17 @@ class Historial_Asignacion(models.Model):
     def __str__(self):
         return self.item.id
     
-    class Meta:
-        verbose_name = 'Historial_Asignacion'
-        verbose_name_plural = 'Historial_Asignaciones'
-        ordering = ['assigned_date']
+    def toJSON(self):
+        items = model_to_dict(self)
+        items['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
+        items['item'] = {'id': self.item.id, 'nombre_item': self.item.nombre_item}
+        items['assigned_by'] = {'id': self.assigned_by.id, 'username': self.assigned_by.username}
+        items['assigned_to'] = {'id': self.assigned_to.id,'username': self.assigned_to.username}
+        items['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        items['updated_at'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+        items['assigned_date'] = self.assigned_date.strftime("%Y-%m-%d %H:%M:%S")
+        items['unassigned_date'] = self.unassigned_date.strftime("%Y-%m-%d %H:%M:%S")
+        items['nota_asignacion'] = self.nota_asignacion.url
+        items['nota_descargo'] = self.nota_descargo.url
+        return items
+
