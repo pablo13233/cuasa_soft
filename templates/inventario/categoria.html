@@ -90,6 +90,117 @@ Categorias
 <!-- fin modal -->
 
 <script>
-    
+    var tablaCategoria;
+    var modalTitulo = $('.modal-title');
+
+    window.onload = function() {
+        $("#btnAdd").on("click", function(){
+            modalTitulo.find('span').html('Crear Categoria');
+            modalTitulo.find('i').removeClass().addClass('fas fa-plus fs-3');
+            $('#action').val('crear');
+            $('#formCategoria')[0].reset();
+            $('#nombre').focus();
+
+            $('#modalCategoria').modal('show');
+        });
+        $('#datatable').DataTable();
+        obtenerDatos();
+    }
+
+    function submit_with_ajax(url, parametros){
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', $('#action').val());
+        parametros.append('nombre_categoria', $('#nombre').val());
+        parametros.append('id', parseInt($('#id_categoria').val()));
+        parametros.append('csrfmiddlewaretoketn', token);
+
+        $.ajax({
+            url: window.location.pathname, 
+            type: 'POST',
+            data: parametros,
+            dataType: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            success:function(result){
+                if(result.correcto){
+                    $('#formCategoria')[0].reset();
+                    $('#modalCategoria').modal("hide");
+                    tablaCategoria.ajax.reload(null, false);
+
+                    switch(result.tipo_accion){
+                        case "crear":
+                            texto = "Datos guardados con exito";
+                            break;
+                        case "editar":
+                            texto = "Datos editados con exito";
+                            break;
+                        case "eliminar":
+                            texto = "Dato eliminado con exito";
+                            break;
+                        default:
+                            texto = "";
+                    }
+
+                    Swal.fire({
+                    icon: 'success',
+                    title: 'Correcto',
+                    text: texto
+                    });
+
+                }else{
+                    tablaCategoria.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al realizar la acción'
+                    });
+                }
+            }
+        })
+
+    }
+
+    function obtenerDatos(){
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaCategoria = $('#datatable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            lenguage: {"url":"//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"},
+            ajax: {
+                url:window.location.pathname, 
+                type: 'POST',
+                data: {
+                    'action': 'buscardatos',
+                    'csrfmiddlewaretoken': token
+                },
+                dataSrc: ""
+            },
+            columns: [
+                {"data":"id"},
+                {"data":"nombre_categoria"},
+                {"data":"crated_by.username"},
+                {"data":"id"}
+            ],
+            columnDefs: [
+                {
+                    targets: [3],
+                    class: 'text-center',
+                    ordenable: false,
+                    render: function(data, type, row){
+                        var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
+                                    <i class="fas fa-edit"></i></a> `;
+
+                        buttons += `<a  rel="eliminar" class='btn btn-danger btn-sm btn-flat'>
+                                    <i class="fa-solid fa-trash-can"></i></a>`;
+                        return buttons;
+                    }
+                },
+            ],
+        });
+    }
 </script>
 {% endblock content %}
