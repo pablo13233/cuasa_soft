@@ -77,18 +77,18 @@ class Estado(models.Model):
 
 def get_item_image_folder(instance, filename):
     return '{0}/{1}/{2}/{3}'.format('items', instance.categoria.nombre_categoria, instance.correlativo , filename)
-class Item(models.Model):
+class Inventario_Item(models.Model):
     id = models.AutoField(primary_key=True)
     correlativo = models.CharField(max_length=8, unique=True)
     nombre_item = models.CharField(max_length=50, blank=False, null=False)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='item_categoria')
-    ModeloItem = models.ForeignKey(ModeloItem, on_delete=models.CASCADE, related_name='item_modelo')
-    proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='item_proveedor')
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='inventario_item_categoria')
+    ModeloItem = models.ForeignKey(ModeloItem, on_delete=models.CASCADE, related_name='inventario_item_modelo')
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='inventario_item_proveedor')
     precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True) 
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='item_created_by')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inventario_item_created_by')
     fecha_compra = models.DateField(null=True, blank=True)
     fecha_garantia = models.DateField(null=True, blank=True)
-    estado = models.ForeignKey(Estado, on_delete=models.CASCADE, related_name='item_estado')
+    estado = models.ForeignKey(Estado, on_delete=models.CASCADE, related_name='inventario_item_estado')
     caracteristica = models.TextField(max_length=500, default="", blank=False, null=False)
     comentarios = models.TextField(max_length=500, default="", blank=True, null=True)
     serial_number = models.CharField(max_length=60, blank=False, null=False, unique=True)
@@ -129,7 +129,7 @@ def get_user_notes_unassinged_folder(instance, filename):
 
 class Historial_Asignacion(models.Model):
     id = models.AutoField(primary_key=True) 
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='articulo')
+    inventario_item = models.ForeignKey(Inventario_Item, on_delete=models.CASCADE, related_name='articulo')
     assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='asignado_a')
     assigned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='asignado_por')
     created_at = models.DateField(null=True, blank=True)
@@ -142,19 +142,19 @@ class Historial_Asignacion(models.Model):
     nota_descargo = models.FileField(upload_to=get_user_notes_unassinged_folder, null=True, blank=True)
 
     def __str__(self):
-        return self.item.id
+        return self.inventario_item.id
     
     def toJSON(self):
-        items = model_to_dict(self)
-        items['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
-        items['item'] = {'id': self.item.id, 'nombre_item': self.item.nombre_item}
-        items['assigned_by'] = {'id': self.assigned_by.id, 'username': self.assigned_by.username}
-        items['assigned_to'] = {'id': self.assigned_to.id,'username': self.assigned_to.username}
-        items['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
-        items['updated_at'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
-        items['assigned_date'] = self.assigned_date.strftime("%Y-%m-%d %H:%M:%S")
-        items['unassigned_date'] = self.unassigned_date.strftime("%Y-%m-%d %H:%M:%S")
-        items['nota_asignacion'] = self.nota_asignacion.url
-        items['nota_descargo'] = self.nota_descargo.url
-        return items
+        item = model_to_dict(self)
+        item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
+        item['inventario_item'] = {'id': self.inventario_item.id, 'nombre_item': self.inventario_item.nombre_item}
+        item['assigned_by'] = {'id': self.assigned_by.id, 'username': self.assigned_by.username}
+        item['assigned_to'] = {'id': self.assigned_to.id,'username': self.assigned_to.username}
+        item['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        item['updated_at'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+        item['assigned_date'] = self.assigned_date.strftime("%Y-%m-%d %H:%M:%S")
+        item['unassigned_date'] = self.unassigned_date.strftime("%Y-%m-%d %H:%M:%S")
+        item['nota_asignacion'] = self.nota_asignacion.url
+        item['nota_descargo'] = self.nota_descargo.url
+        return item
 

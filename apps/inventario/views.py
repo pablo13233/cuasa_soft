@@ -74,6 +74,7 @@ def categoriaViews (request):
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
             data['error'] = str(e)
+            print(data['error'])
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
     elif request.method == 'GET':
