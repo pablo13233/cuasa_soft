@@ -533,7 +533,7 @@ Administracion Tickets
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
         var tipoaction = $('#action').val();
-        alert(tipoaction);
+        // alert(tipoaction);
         if (tipoaction == "actualizarOpen")
         {
             parametros.append('id', parseInt($("#id_ticket").val()));
@@ -640,6 +640,11 @@ Administracion Tickets
     $("#verImagenD").on("click", function () {
         
         $("#modalImagenD").modal("show");
+        
+    });
+    $("#verImagen").on("click", function () {
+        
+        $("#modalImagen").modal("show");
         
     });
 

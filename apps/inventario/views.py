@@ -18,7 +18,7 @@ def inventarioViews (request):
             action = request.POST['action']
             id_user = request.user.id
             if action == 'buscardatos':
-                for i in Item.objects.all():
+                for i in Inventario_Item.objects.all():
                     data.append(i.toJSON())
             #=====================  crear ================
             elif action == 'crear':
@@ -73,8 +73,11 @@ def categoriaViews (request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
+            print("alv =====================================")
+            print(str(e))
+            print(action)
+            print("alv =====================================")
             data['error'] = str(e)
-            print(data['error'])
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
     elif request.method == 'GET':

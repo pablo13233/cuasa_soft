@@ -37,6 +37,10 @@ Categorias
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Creado por
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Accion
                                     </th>
                                 </tr>
@@ -67,9 +71,9 @@ Categorias
             </div>
             <div class="modal-body">
                 <form method="post" action="." id="formCategoria" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="form-group row">
-                        {% csrf_token %}
-                        <input type="text" class="d-none" name="action" id="nombre" value="crear" />
+                        <input type="text" class="d-none" name="action" id="action" value="crear" />
                         <input type="text" class="d-none" name="action" id="id_categoria" value="0" />
 
                         <div class="col-md-12">
@@ -107,13 +111,37 @@ Categorias
         obtenerDatos();
     }
 
+    $("#btn").on("click", function(){
+        if($("#nombre").val == ""){
+            alert("No puede dejar campos vacios");
+        }else{
+            submit_with_ajax("", "");
+        }
+        return false;
+    });
+
+    $('#datatable tbody tr').on('click', 'a[rel="editar"]', function(){
+        var tr = tablaCategoria.cell($(this).closest('td,li')).index();
+        var data = tablaCategoria.row(tr.row).data();
+
+        modalTItulo.find('span').html('Editar Categoria');
+        modalTItulo.find('i').removeClass().addClass('fas fa-edit');
+
+        $('#action').val("editar");
+        $('#id_categoria').val(data.id);
+        $('#nombre_categoria').val(data.nombre_categoria);
+        $('#modalCategoria').modal('show');
+    }).on('click', 'a[rel="eliminar"', function () {
+        var tr = tablaCategoria.cell($(this).closest('td, li')).index();
+    })
+
     function submit_with_ajax(url, parametros){
         var parametros = new FormData();
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
         parametros.append('nombre_categoria', $('#nombre').val());
         parametros.append('id', parseInt($('#id_categoria').val()));
-        parametros.append('csrfmiddlewaretoketn', token);
+        parametros.append('csrfmiddlewaretoken', token);
 
         $.ajax({
             url: window.location.pathname, 
@@ -182,7 +210,7 @@ Categorias
             columns: [
                 {"data":"id"},
                 {"data":"nombre_categoria"},
-                {"data":"crated_by.username"},
+                {"data":"created_by.username"},
                 {"data":"id"}
             ],
             columnDefs: [
