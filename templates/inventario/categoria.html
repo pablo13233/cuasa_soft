@@ -120,20 +120,18 @@ Categorias
         return false;
     });
 
-    $('#datatable tbody tr').on('click', 'a[rel="editar"]', function(){
+    $('#datatable tbody').on('click', 'a[rel="editar"]', function(){
         var tr = tablaCategoria.cell($(this).closest('td,li')).index();
         var data = tablaCategoria.row(tr.row).data();
 
-        modalTItulo.find('span').html('Editar Categoria');
-        modalTItulo.find('i').removeClass().addClass('fas fa-edit');
+        modalTitulo.find('span').html(' Editar Categoria');
+        modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
 
         $('#action').val("editar");
         $('#id_categoria').val(data.id);
         $('#nombre_categoria').val(data.nombre_categoria);
         $('#modalCategoria').modal('show');
-    }).on('click', 'a[rel="eliminar"', function () {
-        var tr = tablaCategoria.cell($(this).closest('td, li')).index();
-    })
+    });
 
     function submit_with_ajax(url, parametros){
         var parametros = new FormData();
@@ -154,6 +152,7 @@ Categorias
                 if(result.correcto){
                     $('#formCategoria')[0].reset();
                     $('#modalCategoria').modal("hide");
+
                     tablaCategoria.ajax.reload(null, false);
 
                     switch(result.tipo_accion){
@@ -222,8 +221,8 @@ Categorias
                         var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
                                     <i class="fas fa-edit"></i></a> `;
 
-                        buttons += `<a  rel="eliminar" class='btn btn-danger btn-sm btn-flat'>
-                                    <i class="fa-solid fa-trash-can"></i></a>`;
+                        // buttons += `<a  rel="eliminar" class='btn btn-danger btn-sm btn-flat'>
+                        //             <i class="fa-solid fa-trash-can"></i></a>`;
                         return buttons;
                     }
                 },
