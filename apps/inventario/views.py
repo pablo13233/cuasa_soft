@@ -73,10 +73,8 @@ def categoriaViews (request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print("alv =====================================")
             print(str(e))
             print(action)
-            print("alv =====================================")
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
@@ -84,6 +82,56 @@ def categoriaViews (request):
         return render(request, 'inventario/categoria.html', {'titulo':'Inicio', 'entidad':'Creacion de categorias'})
 
 
+@login_required
+def marcasViews (request):
+    if request.method == 'POST' and request.is_ajax():
+        data=[]
+        try:
+            #=====================  select ================
+            action = request.POST['action']
+            id_user = request.user.id
+            if action == 'buscardatos':
+                for i in Marca.objects.all():
+                    data.append(i.toJSON())
+
+            #======================== crear =========================
+            elif action == 'crear':
+                ma = Marca()
+                ma.nombre_marca = request.POST['nombre_marca']
+                ma.created_by = User.objects.get(pk=id_user)
+                ma.save()
+
+                if request.FILES:
+                    imagen = request.FILES.get('image')
+                    imagen.name = str(ma.pk)+" "+imagen.name
+                    ma.image = imagen
+                    ma.save()
+                data = {'tipo_accion': 'crear', 'correcto': True}
+            elif action == 'editar': 
+                ma = Marca.objects.get(pk=request.POST['id'])
+                ma.nombre_marca = request.POST['nombre_marca']
+
+                if request.FILES:
+                    if ma.image.url != "/media/img_defecto.jpg":
+                        ma.image.delete()
+                    
+                    imagen = request.FILES.get('image')
+                    imagen.name = str(ma.pk)+" "+imagen.name
+                    ma.image = imagen
+
+                ma.save()
+
+                data = {'tipo_accion': 'editar', 'correcto':True}
+            else:
+                data['error'] = 'Ha ocurrido un error.'
+        except Exception as e:
+            print(str(e))
+            print(action)
+            data['error'] = str(e)
+            data = {'tipo_accion': 'error',  'correcto': True}
+        return JsonResponse(data, safe=False)
+    elif request.method == 'GET':
+        return render(request, 'inventario/marcas.html', {'titulo':'Inicio', 'entidad':'Creacion de marcas'})
 
 
 # Parametros

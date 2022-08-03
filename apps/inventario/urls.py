@@ -7,4 +7,5 @@ urlpatterns = [
     path('inventario', inventarioViews, name='inventario'),
     #catalogos / parametros
     path('categorias/', categoriaViews, name='categorias'),
+    path('marcas/', marcasViews, name='marcas'),
 ]

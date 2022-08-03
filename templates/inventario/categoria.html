@@ -145,13 +145,15 @@ Categorias
             url: window.location.pathname, 
             type: 'POST',
             data: parametros,
-            dataType: 'multipart/form-data',
+            
+            dataType: 'json',
+            contentType: 'multipart/form-data',
             processData: false,
-            contentType: false,
+            contentType: false, 
             success:function(result){
                 if(result.correcto){
                     $('#formCategoria')[0].reset();
-                    $('#modalCategoria').modal("hide");
+                    $('#modalCategoria').modal('hide');
 
                     tablaCategoria.ajax.reload(null, false);
 
