@@ -8,5 +8,242 @@ Marcas
 
 {% block content %}
 
+<div class="container-fluid py-4 col-12 ">
+    <div class="row mb-4">
+        <div class="col-12 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-7">
+                            <h3><i class="bi bi-award-fill opacity-10 fs-1"></i> Marcas</h3>
+                        </div>
+                        <div class="col-lg-6 col-5 my-auto text-end">
+                            <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
+                                <i class="bi bi-person-plus-fill opacity-10 fs-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-items-center mb-0" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        # Marca
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Nombre Marca
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Creado por
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Accion
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agregar Marcas-->
+<div class="modal fade" id="modalMarca" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">
+                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Marca</span>
+                </h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="." id="formMarca" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <input type="text" class="d-none" name="action" id="action" value="crear" />
+                        <input type="text" class="d-none" name="action" id="id_marca" value="0" />
+
+                        <div class="col-md-12">
+                            <label for="">Nombre:</label>
+                            <input type="text" class="form-control" name="nombre" id="nombre" required />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="">Imagen</label>
+                            <input type="file" id="imagen" name="imagen" accept="image/*">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btn">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Agregar Marcas-->
+
+<!-- Modal Ver Imagen-->
+<div class="modal fade" id="modalImagen">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="id_imagen">
+        </div>
+    </div>
+</div>
+<!-- Modal Ver Imagen-->
+
+<script>
+    var tablaMarca;
+    var modalTitulo = $('.modal-title');
+
+    window.onload = function() {
+        $("#btnAdd").on("click", function(){
+            modalTitulo.find('span').html('Crear Marca');
+            modalTitulo.find('i').removeClass().addClass('fas fa-plus fs-3');
+            $('#action').val('crear');
+            $('#formMarca')[0].reset();
+            $('#nombre').focus();
+
+            $('#modalMarca').modal('show');
+        });
+        $('#datatable').DataTable();
+        obtenerDatos();
+    }
+
+    $("#btn").on("click", function(){
+        if($("#nombre").val == ""){
+            alert("No puede dejar campos vacios");
+        }else{
+            submit_with_ajax("", "");
+        }
+        return false;
+    });
+
+    $('#datatable tbody').on('click', 'a[rel="editar"]', function(){
+        var tr = tablaMarca.cell($(this).closest('td,li')).index();
+        var data = tablaMarca.row(tr.row).data();
+
+        modalTitulo.find('span').html(' Editar Marca');
+        modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
+
+        $('#action').val("editar");
+        $('#id_marca').val(data.id);
+        $('#nombre_marca').val(data.nombre_Marca);
+        $('#modalMarca').modal('show');
+    });
+
+    function submit_with_ajax(url, parametros){
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', $('#action').val());
+        parametros.append('nombre_marca', $('#nombre').val());
+        parametros.append('id', parseInt($('#id_marca').val()));
+        parametros.append('csrfmiddlewaretoken', token);
+
+        $.ajax({
+            url: window.location.pathname, 
+            type: 'POST',
+            data: parametros,
+            
+            dataType: 'json',
+            contentType: 'multipart/form-data',
+            processData: false,
+            contentType: false, 
+            success:function(result){
+                if(result.correcto){
+                    $('#formMarca')[0].reset();
+                    $('#modalMarca').modal('hide');
+
+                    tablaCategoria.ajax.reload(null, false);
+
+                    switch(result.tipo_accion){
+                        case "crear":
+                            texto = "Datos guardados con exito";
+                            break;
+                        case "editar":
+                            texto = "Datos Actualizados con exito";
+                            break;
+                        default:
+                            texto = "";
+                    }
+
+                    Swal.fire({
+                    icon: 'success',
+                    title: 'Correcto',
+                    text: texto
+                    });
+
+                }else{
+                    tablaMarca.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al realizar la acción'
+                    });
+                }
+            }
+        })
+
+    }
+
+    function obtenerDatos(){
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaMarca = $('#datatable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            lenguage: {"url":"//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"},
+            ajax: {
+                url:window.location.pathname, 
+                type: 'POST',
+                data: {
+                    'action': 'buscardatos',
+                    'csrfmiddlewaretoken': token
+                },
+                dataSrc: ""
+            },
+            columns: [
+                {"data":"id"},
+                {"data":"nombre_marca"},
+                {"data":"created_by.username"},
+                {"data":"id"}
+            ],
+            columnDefs: [
+                {
+                    targets: [3],
+                    class: 'text-center',
+                    ordenable: false,
+                    render: function(data, type, row){
+                        var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
+                                    <i class="fas fa-edit"></i></a> `;
+
+                        buttons += `<a  rel="verImagen" class='btn btn-danger btn-sm btn-flat'>
+                                    <i class="fa-solid bi-eye"></i></a>`;
+                        return buttons;
+                    }
+                },
+            ],
+        });
+    }
+</script>
 
 {% endblock content %}
