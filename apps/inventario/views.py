@@ -102,7 +102,7 @@ def marcasViews (request):
                 ma.save()
 
                 if request.FILES:
-                    imagen = request.FILES.get('image')
+                    imagen = request.FILES.get("image")
                     imagen.name = str(ma.pk)+" "+imagen.name
                     ma.image = imagen
                     ma.save()
@@ -115,7 +115,7 @@ def marcasViews (request):
                     if ma.image.url != "/media/img_defecto.jpg":
                         ma.image.delete()
                     
-                    imagen = request.FILES.get('image')
+                    imagen = request.FILES.get("image")
                     imagen.name = str(ma.pk)+" "+imagen.name
                     ma.image = imagen
 
@@ -132,6 +132,47 @@ def marcasViews (request):
         return JsonResponse(data, safe=False)
     elif request.method == 'GET':
         return render(request, 'inventario/marcas.html', {'titulo':'Inicio', 'entidad':'Creacion de marcas'})
+
+@login_required
+def modeloViews (request):
+    if request.method == 'POST' and request.is_ajax():
+        data=[]
+        try:
+            #=====================  select ================
+            action = request.POST['action']
+            id_user = request.user.id
+            if action == 'buscardatos':
+                for i in ModeloItem.objects.all():
+                    data.append(i.toJSON())
+
+            #======================== crear =========================
+            elif action == 'crear':
+                mo = ModeloItem()
+                mo.nombre_modelo = request.POST['nombre_modelo']
+                mo.created_by = User.objects.get(pk=id_user)
+                if int(request.POST['id_marca']) > 0:
+                    mo.marca = Marca.objects.get(pk=request.POST['id_marca'])
+                mo.save()
+
+                data = {'tipo_accion': 'crear', 'correcto': True}
+            elif action == 'editar': 
+                mo = ModeloItem.objects.get(pk=request.POST['id'])
+                mo.nombre_modelo = request.POST['nombre_modelo']
+                if int(request.POST['id_marca']) > 0:
+                    mo.marca = Marca.objects.get(pk=request.POST['id_marca'])
+                mo.save()
+
+                data = {'tipo_accion': 'editar', 'correcto':True}
+            else:
+                data['error'] = 'Ha ocurrido un error.'
+        except Exception as e:
+            print(str(e))
+            print(action)
+            data['error'] = str(e)
+            data = {'tipo_accion': 'error',  'correcto': True}
+        return JsonResponse(data, safe=False)
+    elif request.method == 'GET':
+        return render(request, 'inventario/modeloitem.html', {'titulo':'Inicio', 'entidad':'Creacion de Modelos por Marca'})
 
 
 # Parametros

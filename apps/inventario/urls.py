@@ -8,4 +8,5 @@ urlpatterns = [
     #catalogos / parametros
     path('categorias/', categoriaViews, name='categorias'),
     path('marcas/', marcasViews, name='marcas'),
+    path('modelo/', modeloViews, name='modelo'),
 ]
