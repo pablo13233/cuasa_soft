@@ -3,11 +3,10 @@
 {% load static %}
 
 {% block title %}
-Modelos
+Proveedores
 {% endblock title %}
 
 {% block content %}
-
 <div class="container-fluid py-4 col-12 ">
     <div class="row mb-4">
         <div class="col-12 mb-md-0 mb-4">
@@ -15,7 +14,7 @@ Modelos
                 <div class="card-header pb-0">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h3><i class="bi bi-boxes opacity-10 fs-1"></i> Modelos</h3>
+                            <h3><i class="bi bi-truck opacity-10 fs-1"></i> Proveedores</h3>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
                             <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
@@ -30,15 +29,19 @@ Modelos
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        # Modelo
+                                        # Proveedor
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Nombre Modelo
+                                        Nombre
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Marca
+                                        Telefono
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Email
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -61,24 +64,24 @@ Modelos
     </div>
 </div>
 
-<!-- Modal Agregar Modelos-->
-<div class="modal fade" id="modalModelo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+<!-- Modal Agregar Proveedor-->
+<div class="modal fade" id="modalProveedor" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="">
-                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Marca</span>
+                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Prov</span>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="." id="formModelo" enctype="multipart/form-data">
+                <form method="post" action="." id="formProveedor" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group row">
                         <input type="text" class="d-none" name="action" id="action" value="crear" />
-                        <input type="text" class="d-none" name="action" id="id_modelo" value="0" />
+                        <input type="text" class="d-none" name="action" id="id_proveedor" value="0" />
 
                         <div class="col-md-12">
                             <label for="">Nombre:</label>
@@ -86,17 +89,15 @@ Modelos
                         </div>
                     </div>
                     <div class="form-group row">
-                        <div class="col-md-6">
-                            <label for="">Marca</label>
-                            <select name="marca" id="marca" class="form-control">
-                                <option value="0">--Seleccione--</option>
-                                {% for mar in marcas %}
-                                    <option value="{{mar.pk}}"> 
-                                        <img src="{{mar.image.url}}" alt="" height="50" width="50" class="border rounded my-2 mx-3"> 
-                                        {{mar.nombre_marca}}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                        <div class="col-md-12">
+                            <label for="">Telefono:</label>
+                            <input type="text" class="form-control" name="telefono" id="telefono" required />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label for="">Email:</label>
+                            <input type="text" class="form-control" name="email" id="email" required />
                         </div>
                     </div>
                 </form>
@@ -108,27 +109,27 @@ Modelos
         </div>
     </div>
 </div>
-<!-- Modal Agregar -->
 
+<!-- fin modal -->
 
 <script>
-    var tablaModelo;
+    var tablaProveedor;
     var modalTitulo = $('.modal-title');
 
     window.onload = function() {
         $("#btnAdd").on("click", function(){
-            modalTitulo.find('span').html('Crear Marca');
+            modalTitulo.find('span').html('Crear Proveedor');
             modalTitulo.find('i').removeClass().addClass('fas fa-plus fs-3');
             $('#action').val('crear');
-            $('#formModelo')[0].reset();
+            $('#formProveedor')[0].reset();
             $('#nombre').focus();
 
-            $('#modalModelo').modal('show');
+            $('#modalProveedor').modal('show');
         });
         $('#datatable').DataTable();
         obtenerDatos();
     }
-// -------------------------- boton en modal para agregar/editar ----------------------------------
+
     $("#btn").on("click", function(){
         if($("#nombre").val == ""){
             alert("No puede dejar campos vacios");
@@ -137,29 +138,31 @@ Modelos
         }
         return false;
     });
-// -------------------------------- ver imagenes -------------------------------------------------
 
     $('#datatable tbody').on('click', 'a[rel="editar"]', function(){
-        var tr = tablaModelo.cell($(this).closest('td,li')).index();
-        var data = tablaModelo.row(tr.row).data();
+        var tr = tablaProveedor.cell($(this).closest('td,li')).index();
+        var data = tablaProveedor.row(tr.row).data();
 
-        modalTitulo.find('span').html(' Editar Modelo');
+        modalTitulo.find('span').html(' Editar Proveedor');
         modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
 
         $('#action').val("editar");
-        $('#id_modelo').val(data.id);
-        $('#nombre').val(data.nombre_modelo);
-        $('#marca').val(data.marca.id);
-        $('#modalModelo').modal('show');
+        $('#id_proveedor').val(data.id);
+        $('#nombre').val(data.nombre_proveedor);
+        $('#telefono').val(data.telefono);
+        $('#email').val(data.email);
+        
+        $('#modalProveedor').modal('show');
     });
 
     function submit_with_ajax(url, parametros){
         var parametros = new FormData();
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
-        parametros.append('nombre_modelo', $('#nombre').val());
-        parametros.append('id', parseInt($('#id_modelo').val()));
-        parametros.append('id_marca', $("#marca").val())
+        parametros.append('nombre_proveedor', $('#nombre').val());
+        parametros.append('telefono', $('#telefono').val());
+        parametros.append('email', $('#email').val());
+        parametros.append('id', parseInt($('#id_proveedor').val()));
         parametros.append('csrfmiddlewaretoken', token);
 
         $.ajax({
@@ -173,17 +176,17 @@ Modelos
             contentType: false, 
             success:function(result){
                 if(result.correcto){
-                    $('#formModelo')[0].reset();
-                    $('#modalModelo').modal('hide');
+                    $('#formProveedor')[0].reset();
+                    $('#modalProveedor').modal('hide');
 
-                    tablaModelo.ajax.reload(null, false);
+                    tablaProveedor.ajax.reload(null, false);
 
                     switch(result.tipo_accion){
                         case "crear":
                             texto = "Datos guardados con exito";
                             break;
                         case "editar":
-                            texto = "Datos Actualizados con exito";
+                            texto = "Datos editados con exito";
                             break;
                         default:
                             texto = "";
@@ -196,7 +199,7 @@ Modelos
                     });
 
                 }else{
-                    tablaModelo.ajax.reload(null, false);
+                    tablaProveedor.ajax.reload(null, false);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -210,7 +213,7 @@ Modelos
 
     function obtenerDatos(){
         token = $('input[name="csrfmiddlewaretoken"]').val();
-        tablaModelo = $('#datatable').DataTable({
+        tablaProveedor = $('#datatable').DataTable({
             responsive: true,
             autoWidth: false,
             destroy: true,
@@ -228,14 +231,15 @@ Modelos
             },
             columns: [
                 {"data":"id"},
-                {"data":"nombre_modelo"},
-                {"data":"marca.nombre"},
+                {"data":"nombre_proveedor"},
+                {"data":"telefono"},
+                {"data":"email"},
                 {"data":"created_by.username"},
                 {"data":"id"}
             ],
             columnDefs: [
                 {
-                    targets: [4],
+                    targets: [5],
                     class: 'text-center',
                     ordenable: false,
                     render: function(data, type, row){
@@ -248,5 +252,4 @@ Modelos
         });
     }
 </script>
-
 {% endblock content %}
