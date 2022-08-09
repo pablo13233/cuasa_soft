@@ -70,8 +70,7 @@ Modelos
                 <h5 class="modal-title" id="">
                     <i class="fa-solid fa-plus fs-4"></i><span> Crear Marca</span>
                 </h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
@@ -91,8 +90,8 @@ Modelos
                             <label for="">Marca</label>
                             <select name="marca" id="marca" class="form-control">
                                 <option value="0">--Seleccione--</option>
-                                {% for marca in marcas %}
-                                    <option value="{{marca.pk}}">{{marca.nombre_marca}}</option>
+                                {% for mar in marcas %}
+                                    <option value="{{mar.pk}}">{{mar.nombre_marca}}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -112,7 +111,6 @@ Modelos
 <script>
     var tablaModelo;
     var modalTitulo = $('.modal-title');
-    var imgTitulo = $('.modal-img-title')
 
     window.onload = function() {
         $("#btnAdd").on("click", function(){
@@ -148,6 +146,7 @@ Modelos
         $('#action').val("editar");
         $('#id_modelo').val(data.id);
         $('#nombre').val(data.nombre_modelo);
+        $('#marca').val(data.marca.id);
         $('#modalModelo').modal('show');
     });
 
@@ -157,7 +156,7 @@ Modelos
         parametros.append('action', $('#action').val());
         parametros.append('nombre_modelo', $('#nombre').val());
         parametros.append('id', parseInt($('#id_modelo').val()));
-        parametros.append('image', $("#imagen")[0].files[0])
+        parametros.append('id_marca', $("#marca").val())
         parametros.append('csrfmiddlewaretoken', token);
 
         $.ajax({
@@ -227,6 +226,7 @@ Modelos
             columns: [
                 {"data":"id"},
                 {"data":"nombre_modelo"},
+                {"data":"marca.nombre"},
                 {"data":"created_by.username"},
                 {"data":"id"}
             ],
@@ -238,9 +238,6 @@ Modelos
                     render: function(data, type, row){
                         var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
                                     <i class="fas fa-edit"></i></a> `;
-
-                        buttons += `<a  rel="verImagen" class='btn btn-danger btn-sm btn-flat'>
-                                    <i class="fa-solid bi-eye"></i></a>`;
                         return buttons;
                     }
                 },

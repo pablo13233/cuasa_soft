@@ -42,7 +42,10 @@ class ModeloItem(models.Model):
     
     def toJSON(self):
         item = model_to_dict(self)
-        item['marca'] = {'id': self.marca.id, 'nombre': self.marca.nombre_marca}
+        if self.marca == None:
+            item['marca'] = {'id': 0, 'nombre': 'No registrado'}
+        else:
+            item['marca'] = {'id': self.marca.id, 'nombre': self.marca.nombre_marca}
         item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
         return item
 

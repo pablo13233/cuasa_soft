@@ -172,7 +172,8 @@ def modeloViews (request):
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
     elif request.method == 'GET':
-        return render(request, 'inventario/modeloitem.html', {'titulo':'Inicio', 'entidad':'Creacion de Modelos por Marca'})
+        marcas = Marca.objects.all()
+        return render(request, 'inventario/modeloitem.html',{'marcas':marcas})
 
 
 # Parametros
