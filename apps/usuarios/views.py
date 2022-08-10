@@ -6,6 +6,7 @@ from django.views.generic import (
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import Permission
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from apps.usuarios.models import User
