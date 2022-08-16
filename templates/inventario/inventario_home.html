@@ -9,8 +9,8 @@ Inventario
 {% block content %}
 
 <div class="container-fluid py-4 col-12 ">
-    <div class="row mb-4 border">
-        <div class="col-12 mb-md-0 mb-4 border">
+    <div class="row mb-4">
+        <div class="col-12 mb-md-0 mb-4">
             <div class="card col-12">
                 <div class="card-header pb-0">
                     <div class="row">
@@ -36,16 +36,178 @@ Inventario
                     <div class="col-md-3 col-sm-4">
                         <select name="marca" id="categoria_select" class="form-select form-select-sm">
                             <option value="0">--Seleccione--</option>
-                                <option value=""> 
-                                    
-                                </option>
+                            <option value="1">
+                                Camaras de Seguridad 
+                            </option>
                         </select>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">ss</div>
+        <div class="container">
+            <div class="row">
+                <div class="table-responsive col-12 col-md-12 col-sm-12">
+                    <table class="table table-hover align-items-center mb-0" id="datatable">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    # Item
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Correlativo
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Nombre
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Categoria
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Estado
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Serial
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Accion
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Modal Agregar Inventarios-->
+<div class="modal fade" id="modalInventario" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">
+                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Item</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="." id="formInventario" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <input type="text" class="d-none" name="action" id="action" value="crear" />
+                        <input type="text" class="d-none" name="action" id="id_inventario" value="0" />
+
+                        <div class="col-md-12">
+                            <div class="input-group-mb-3">
+                                <span class="input-group-text">Correlativo:</span>
+                                <input type="text" class="form-control" name="correlativo" id="correlativo" required aria-label="Numero de correlativo" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group-mb-3">
+                                <span class="input-group-text" >Nombre:</span>
+                                <input type="text" class="form-control" name="nombre" id="nombre" required aria-label="Nombre del articulo"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="categoria">Categoria:</label>
+                                <select name="categoria" id="categoria" class="form-control form-select form-select-sm">
+                                    <option selected value="0">--Seleccione--</option>
+                                    {% for cat in categorias %}
+                                        <option value="{{cat.pk}}"> 
+                                            {{cat.nombre_categoria}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="modelo">Modelo:</label>
+                                <select name="modelo" id="modelo" class="form-control form-select form-select-sm">
+                                    <option selected value="0">--Seleccione--</option>
+                                    {% for mod in modelos %}
+                                        <option value="{{mod.pk}}"> 
+                                            {{mod.nombre_modelo}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <label for="">Proveedor:</label>
+                                <select name="proveedor" id="proveedor" class="form-control form-select form-select-sm">
+                                    <option value="0">--Seleccione--</option>
+                                    {% for pro in proveedores %}
+                                        <option value="{{pro.pk}}"> 
+                                            {{pro.nombre_proveedor}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Lps.</span>
+                                <input type="text" class="form-control" name="nombre" id="nombre" aria-label="Precio"/>
+                                <span class="input-group-text">Ej. 1.23</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Fecha de Compra</span>
+                                <input type="text" class="form-control" name="fecha_compra" id="fecha_compra"/>
+                                <div class="input-group date" id="datepicker">
+                                    <input type="text" class="form-control" id="date"/>
+                                    <span class="input-group-append">
+                                      <span class="input-group-text bg-light d-block">
+                                        <i class="fa fa-calendar"></i>
+                                      </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btn">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Agregar -->
 {% endblock content %}

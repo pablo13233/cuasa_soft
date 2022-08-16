@@ -88,11 +88,10 @@ Modelos
                     <div class="form-group row">
                         <div class="col-md-6">
                             <label for="">Marca</label>
-                            <select name="marca" id="marca" class="form-control">
+                            <select name="marca" id="marca" class="form-control form-select form-select-sm">
                                 <option value="0">--Seleccione--</option>
                                 {% for mar in marcas %}
                                     <option value="{{mar.pk}}"> 
-                                        <img src="{{mar.image.url}}" alt="" height="50" width="50" class="border rounded my-2 mx-3"> 
                                         {{mar.nombre_marca}}
                                     </option>
                                 {% endfor %}
