@@ -105,16 +105,16 @@ class Inventario_Item(models.Model):
         item['proveedor'] = {'id': self.proveedor.id, 'nombre_proveedor': self.proveedor.nombre_proveedor}
         item['imagen_item']  = self.imagen_item.url
         item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
-        item['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
-        item['updated_at'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+        item['created_at'] = self.created_at.strftime("%Y-%m-%d")
+        item['updated_at'] = self.updated_at.strftime("%Y-%m-%d")
         if self.fecha_compra == None:
             item['fecha_compra'] = ''
         else:
-            item['fecha_compra'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            item['fecha_compra'] = self.created_at.strftime("%Y-%m-%d")
         if self.fecha_garantia == None:
             item['fecha_garantia'] = ''
         else:
-            item['fecha_garantia'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+            item['fecha_garantia'] = self.updated_at.strftime("%Y-%m-%d")
         return item
 
 
@@ -147,10 +147,10 @@ class Historial_Asignacion(models.Model):
         item['inventario_item'] = {'id': self.inventario_item.id, 'nombre_item': self.inventario_item.nombre_item}
         item['assigned_by'] = {'id': self.assigned_by.id, 'username': self.assigned_by.username}
         item['assigned_to'] = {'id': self.assigned_to.id,'username': self.assigned_to.username}
-        item['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
-        item['updated_at'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
-        item['assigned_date'] = self.assigned_date.strftime("%Y-%m-%d %H:%M:%S")
-        item['unassigned_date'] = self.unassigned_date.strftime("%Y-%m-%d %H:%M:%S")
+        item['created_at'] = self.created_at.strftime("%Y-%m-%d")
+        item['updated_at'] = self.updated_at.strftime("%Y-%m-%d")
+        item['assigned_date'] = self.assigned_date.strftime("%Y-%m-%d")
+        item['unassigned_date'] = self.unassigned_date.strftime("%Y-%m-%d")
         item['nota_asignacion'] = self.nota_asignacion.url
         item['nota_descargo'] = self.nota_descargo.url
         return item

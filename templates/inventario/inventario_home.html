@@ -41,6 +41,11 @@ Inventario
                             </option>
                         </select>
                     </div>
+                    <div class="col-lg-6 col-5 text-end">
+                        <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
+                            <i class="bi bi-person-plus-fill opacity-10 fs-5"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -109,7 +114,7 @@ Inventario
                         <input type="text" class="d-none" name="action" id="id_inventario" value="0" />
 
                         <div class="col-md-12">
-                            <div class="input-group-mb-3">
+                            <div class="input-group mb-3">
                                 <span class="input-group-text">Correlativo:</span>
                                 <input type="text" class="form-control" name="correlativo" id="correlativo" required aria-label="Numero de correlativo" />
                             </div>
@@ -118,7 +123,7 @@ Inventario
 
                     <div class="form-group row">
                         <div class="col-md-12">
-                            <div class="input-group-mb-3">
+                            <div class="input-group mb-3">
                                 <span class="input-group-text" >Nombre:</span>
                                 <input type="text" class="form-control" name="nombre" id="nombre" required aria-label="Nombre del articulo"/>
                             </div>
@@ -160,7 +165,7 @@ Inventario
                     <div class="form-group row">
                         <div class="col-md-6">
                             <div class="input-group mb-3">
-                                <label for="">Proveedor:</label>
+                                <label class="input-group-text" for="proveedor">Proveedor:</label>
                                 <select name="proveedor" id="proveedor" class="form-control form-select form-select-sm">
                                     <option value="0">--Seleccione--</option>
                                     {% for pro in proveedores %}
@@ -187,15 +192,7 @@ Inventario
                         <div class="col-md-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Fecha de Compra</span>
-                                <input type="text" class="form-control" name="fecha_compra" id="fecha_compra"/>
-                                <div class="input-group date" id="datepicker">
-                                    <input type="text" class="form-control" id="date"/>
-                                    <span class="input-group-append">
-                                      <span class="input-group-text bg-light d-block">
-                                        <i class="fa fa-calendar"></i>
-                                      </span>
-                                    </span>
-                                </div>
+                                <input size="16" type="text" name="fecha_compra" class="form-control" id="fecha_compra" readonly>
                             </div>
                         </div>
                     </div>
@@ -210,4 +207,31 @@ Inventario
     </div>
 </div>
 <!-- Modal Agregar -->
+
+
+<script>
+    var tablaInventario;
+    var modalTitulo = $('.modal-title');
+
+    window.onload = function() {
+        $("#btnAdd").on("click", function(){
+            modalTitulo.find('span').html('Crear Articulo');
+            modalTitulo.find('i').removeClass().addClass('fas fa-plus fs-3');
+            $('#action').val('crear');
+            $('#formInventario')[0].reset();
+            $('#nombre').focus();
+
+            $('#modalInventario').modal('show');
+        });
+        $('#datatable').DataTable();
+        $("#fecha_compra").datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayBtn: true
+    });
+        obtenerDatos();
+    };
+
+    
+</script>
 {% endblock content %}
