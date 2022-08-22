@@ -187,7 +187,7 @@ Administracion Tickets
                             </div>
                             <div class="col-3 col-sm-4">
                                 <label for="">Num. Ticket</label>
-                                <input type="text" class="form-control" id="id_ticket" name="id_ticket">
+                                <input type="text" class="form-control" id="id_ticket" name="id_ticket" readonly>
                             </div>
                         </div>
                     </div>
@@ -247,7 +247,7 @@ Administracion Tickets
                             </div>
                             <div class="col-3 col-sm-4">
                                 <label for="">Num. Ticket</label>
-                                <input type="text" class="form-control" id="id_ticketDone" name="id_ticket">
+                                <input type="text" class="form-control" id="id_ticketDone" name="id_ticket" readonly>
                             </div>
                         </div>
                     </div>
@@ -632,6 +632,22 @@ Administracion Tickets
         $('#id_imagenDone').attr("src",data.img_ticket);
 
         $('#modalTerminarTicket').modal('show');
+    });
+
+    $('#tableClose tbody').on('click', 'button[rel="verTicket"]', function(){
+        
+        var tr = tablaTicketDone.cell($(this).closest('td, li')).index();
+        var data = tablaTicketDone.row(tr.row).data();
+        
+        $('#titulo_ticket').val(data.title);
+        $('#id_ticket').val(data.id);
+        $('#description_ticket').val(data.description);
+        $('#id_imagen').attr("src",data.img_ticket);
+        $('#asignar_usuario').val(data.assignee_id.id);
+        $('#asignar_usuario').prop('disabled',true)
+        $('#btnEditarTicket').attr("hidden",true)
+
+        $('#modalEditarTicket').modal('show');
     });
 
     //========================================= ver imagen ===============================

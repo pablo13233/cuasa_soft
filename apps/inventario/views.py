@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
+from datetime import datetime
+from django.utils import formats
 
 from apps.usuarios.models import User
 from apps.inventario.models import *
@@ -55,13 +57,37 @@ def inventarioViews(request):
 
             # =====================  editar  ================
             elif action == 'editar':
+                updated_time = datetime.now()
+                inv = Inventario_Item.objects.get(pk=request.POST['id'])
+                inv.correlativo = request.POST['correlativo']
+                inv.nombre_item = request.POST['nombre_item']
+                if int(request.POST['id_categoria']) > 0:
+                    inv.categoria = Categoria.objects.get(pk=request.POST['id_categoria'])
+                if int(request.POST['id_modelo']) > 0:
+                    inv.ModeloItem = ModeloItem.objects.get(pk=request.POST['id_modelo'])
+                if int(request.POST['id_proveedor']) > 0:
+                    inv.proveedor = Proveedor.objects.get(pk=request.POST['id_proveedor'])
+                inv.precio = request.POST['precio']
+                inv.created_by = User.objects.get(pk=id_user)
+                inv.fecha_compra = request.POST['fecha_compra']
+                inv.fecha_garantia = request.POST['fecha_garantia']
+                if int(request.POST['id_estado']) > 0:
+                    inv.estado = Estado.objects.get(pk=request.POST['id_estado'])
+                inv.caracteristica = request.POST['caracteristica']
+                inv.comentarios = request.POST['comentarios']
+                inv.serial_number = request.POST['serial_number']
+                inv.ubicacion = request.POST['ubicacion']
+                inv.updated_at = formats.date_format(updated_time)
 
+                if request.FILES:
+                    if inv.imagen_item.url != "/media/img_defecto.jpg":
+                        inv.imagen_item.delete()
+                    imagen = request.FILES.get("imagen")
+                    imagen.name = str(inv.pk)+" "+imagen.name
+                    inv.imagen_item = imagen
+
+                inv.save()
                 data = {'tipo_accion': 'editar', 'correcto': True}
-
-            # =====================  baja  ================
-            elif action == 'baja':
-
-                data = {'tipo_accion': 'baja', 'correcto': True}
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:

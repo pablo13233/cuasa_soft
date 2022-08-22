@@ -281,10 +281,29 @@ Inventario
 </div>
 <!-- Modal Agregar -->
 
+<!-- Modal ver imagen -->
+<div class="modal fade" id="modalImagen">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-img-title" id="">
+                    <span> Inventario</span>
+                </h5>
+                <button type="button" class="btn btn-light btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="verImagen">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Ver Imagen -->
 
 <script>
     var tablaInventario;
     var modalTitulo = $('.modal-title');
+    var imgTitulo = $('.modal-img-title');
 
     window.onload = function() {
         $("#btnAdd").on("click", function(){
@@ -318,7 +337,42 @@ $("#btn").on('click', function(){
         submit_with_ajax("", "");
     }
     return false;
-})
+});
+
+//---------------------- editar y ver img -------------------------
+$('#datatable tbody').on('click', 'a[rel="editar"]', function(){
+        var tr = tablaInventario.cell($(this).closest('td,li')).index();
+        var data = tablaInventario.row(tr.row).data();
+
+        modalTitulo.find('span').html(' Editar Articulo');
+        modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
+
+        $('#action').val("editar");
+        $('#id_inventario').val(data.id);
+        $('#nombre').val(data.nombre_item);
+        $('#correlativo').val(data.correlativo);
+        $('#categoria').val(data.categoria.id);
+        $('#modelo').val(data.ModeloItem.id);
+        $('#proveedor').val(data.proveedor.id);
+        $('#precio').val(data.precio);
+        $('#fecha_compra').val(data.fecha_compra);
+        $('#fecha_garantia').val(data.fecha_garantia);
+        $('#estado').val(data.estado.id);
+        $('#caracteristica').val(data.caracteristica);
+        $('#comentarios').val(data.comentarios);
+        $('#serial_number').val(data.serial_number);
+        $('#ubicacion').val(data.ubicacion);
+        
+        $('#modalInventario').modal('show');
+    }).on('click', 'a[rel="verImagen"]', function(){
+        var tr = tablaInventario.cell($(this).closest('td, li')).index();
+        var data = tablaInventario.row(tr.row).data();
+        
+        imgTitulo.find('span').html(data.correlativo)
+        console.log(data.imagen_item);
+        $("#verImagen").attr("src", data.imagen_item);
+        $("#modalImagen").modal("show");
+    });
 
 //------------------------- submit -----------------------
 
