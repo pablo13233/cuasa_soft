@@ -24,6 +24,33 @@ def inventarioViews(request):
             # =====================  crear ================
             elif action == 'crear':
 
+                inv = Inventario_Item()
+                inv.correlativo = request.POST['correlativo']
+                inv.nombre_item = request.POST['nombre_item']
+                if int(request.POST['id_categoria']) > 0:
+                    inv.categoria = Categoria.objects.get(pk=request.POST['id_categoria'])
+                if int(request.POST['id_modelo']) > 0:
+                    inv.ModeloItem = ModeloItem.objects.get(pk=request.POST['id_modelo'])
+                if int(request.POST['id_proveedor']) > 0:
+                    inv.proveedor = Proveedor.objects.get(pk=request.POST['id_proveedor'])
+                inv.precio = request.POST['precio']
+                inv.created_by = User.objects.get(pk=id_user)
+                inv.fecha_compra = request.POST['fecha_compra']
+                inv.fecha_garantia = request.POST['fecha_garantia']
+                if int(request.POST['id_estado']) > 0:
+                    inv.estado = Estado.objects.get(pk=request.POST['id_estado'])
+                inv.caracteristica = request.POST['caracteristica']
+                inv.comentarios = request.POST['comentarios']
+                inv.serial_number = request.POST['serial_number']
+                inv.ubicacion = request.POST['ubicacion']
+                inv.save()
+
+                if request.FILES:
+                    imagen = request.FILES.get("imagen")
+                    imagen.name = str(inv.pk)+" "+imagen.name
+                    inv.imagen_item = imagen
+                    inv.save()
+
                 data = {'tipo_accion': 'crear', 'correcto': True}
 
             # =====================  editar  ================
@@ -38,10 +65,18 @@ def inventarioViews(request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
+            print(str(e))
+            print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
+        return JsonResponse(data, safe=False)
     elif request.method == 'GET':
-        return render(request, 'inventario/inventario_home.html', {'titulo': 'Inicio', 'entidad': 'Creacion de Items para inventario'})
+        categorias = Categoria.objects.all()
+        modelos = ModeloItem.objects.all()
+        proveedores = Proveedor.objects.all()
+        estado = Estado.objects.all()
+        return render(request, 'inventario/inventario_home.html', {'categorias': categorias, 'proveedores': proveedores, 
+                        'modelos':modelos, 'estados':estado})
 
 
 # =============================================================== Parametros ===========================================================================
@@ -219,4 +254,41 @@ def proveedoresViews(request):
     elif request.method == 'GET':
         return render(request, 'inventario/proveedores.html',{'titulo': 'Inicio', 'entidad':'Creacion de Proveedores'})
 
+@login_required
+def estadosViews(request):
+    if request.method == 'POST' and request.is_ajax():
+        data = []
+        try:
+            # =====================  select ================
+            action = request.POST['action']
+            id_user = request.user.id
+            if action == 'buscardatos':
+                for i in Estado.objects.all():
+                    data.append(i.toJSON())
+
+            # ======================== crear =========================
+            elif action == 'crear':
+                prov = Estado()
+                prov.nombre_estado = request.POST['nombre_estado']
+                prov.created_by = User.objects.get(pk=id_user)
+                prov.save()
+
+                data = {'tipo_accion': 'crear', 'correcto': True}
+            elif action == 'editar':
+                prov = Estado.objects.get(pk=request.POST['id'])
+                prov.nombre_estado = request.POST['nombre_estado']
+                prov.created_by = User.objects.get(pk=id_user)
+                prov.save()
+
+                data = {'tipo_accion': 'editar', 'correcto': True}
+            else:
+                data['error'] = 'Ha ocurrido un error.'
+        except Exception as e:
+            print(str(e))
+            print(action)
+            data['error'] = str(e)
+            data = {'tipo_accion': 'error',  'correcto': True}
+        return JsonResponse(data, safe=False)
+    elif request.method == 'GET':
+        return render(request, 'inventario/estados.html',{'titulo': 'Inicio', 'entidad':'Creacion de Estados'})
 # Parametros

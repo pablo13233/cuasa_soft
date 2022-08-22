@@ -65,12 +65,18 @@ class Proveedor(models.Model):
         return item
 
 
-class Estado(models.TextChoices):
-    ASIGNADO = "ASIGNADO"
-    MANTENIMIENTO = "MANTENIMIENTO"
-    DESCARTADO = "DESCARTADO"
-    DISPONIBLE = "DISPONIBLE"
-    GARANTIA = "GARANTIA"
+class Estado(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre_estado = models.CharField(max_length=50, blank=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='estado_created_by')
+
+    def __str__(self):
+        return self.nombre_estado
+    
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
+        return item
 
 
 def get_item_image_folder(instance, filename):
@@ -86,7 +92,7 @@ class Inventario_Item(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inventario_item_created_by')
     fecha_compra = models.DateField(null=True, blank=True)
     fecha_garantia = models.DateField(null=True, blank=True)
-    estado = models.CharField(max_length=25, choices=Estado.choices, default=Estado.DISPONIBLE)
+    estado = models.ForeignKey(Estado, on_delete=models.CASCADE, related_name='inventario_item_estado')
     caracteristica = models.TextField(max_length=500, default="", blank=False, null=False)
     comentarios = models.TextField(max_length=500, default="", blank=True, null=True)
     serial_number = models.CharField(max_length=60, blank=False, null=False, unique=True)
@@ -103,6 +109,7 @@ class Inventario_Item(models.Model):
         item['categoria'] = {'id': self.categoria.id, 'name': self.categoria.nombre_categoria}
         item['ModeloItem'] = {'id': self.ModeloItem.id, 'nombre_modelo': self.ModeloItem.nombre_modelo}
         item['proveedor'] = {'id': self.proveedor.id, 'nombre_proveedor': self.proveedor.nombre_proveedor}
+        item['estado'] = {'id': self.estado.id, 'nombre_estado': self.estado.nombre_estado}
         item['imagen_item']  = self.imagen_item.url
         item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
         item['created_at'] = self.created_at.strftime("%Y-%m-%d")
