@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 from apps.usuarios.models import User
 from apps.tickets.models import Ticket
+from django.db.models import Q
  
 from django.http import JsonResponse
 # Create your views here.
@@ -17,8 +18,11 @@ def ticketViews (request):
             #========================   select   =========================
             action = request.POST['action']
             id_user = request.user.id
+            query = Q(status="OPEN")
+            query.add(Q(status="IN_PROGRESS"),Q.OR)
+            query.add(Q(user_id=id_user),Q.AND)
             if action =='buscardatos':
-                for i in Ticket.objects.filter(user_id = id_user):
+                for i in Ticket.objects.filter(query):
                     data.append(i.toJSON())
 
                     #========================   Crear   =========================
