@@ -1,3 +1,4 @@
+from enum import unique
 from django.db import models
 from apps.usuarios.models import User
 from apps.inventario.models import Inventario_Item
@@ -10,24 +11,46 @@ from django.forms import model_to_dict
 #     return '{0}/{1}/{2}/{3}/{4}'.format('notas_asignacion', instance.user_id.username, instance.created_at.year, instance.created_at.month , filename)
 
 #def get_user_notes_unassinged_folder(instance, filename):
-#     return '{0}/{1}/{2}/{3}/{4}'.format('notas_desasignacion', instance.user_id.username, instance.created_at.year, instance.created_at.month , filename)
+#     return '{0}/{1}/{2}/{3}/{4}'.format('notas_desasignacion', instance.user_id.username, instance.created_at.year, ins tance.created_at.month , filename)
 
 class control_Asignaciones(models.Model):
     id = models.AutoField(primary_key=True) 
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='asignado_a')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, unique=True, related_name='asignado_a')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creado_por')
+    created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     update_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actualizado por')
-    observaciones = models.TextField(max_length=500, default="", blank=True, null=True)
 
     def __str__(self):
-        return self.inventario_item.id
+        return self.id
     
     def toJSON(self):
         item = model_to_dict(self)
         item['created_by'] = {'id': self.created_by.id, 'username': self.created_by.username}
         item['assigned_by'] = {'id': self.assigned_by.id, 'username': self.assigned_by.username}
-        item['usuario'] = {'id': self.assigned_to.id,'username': self.assigned_to.username}
-        item['assigned_at'] = self.assigned_at.strftime("%Y-%m-%d")
+        item['usuario'] = {'id': self.usuario.id,'username': self.usuario.username}
+        item['created_at'] = self.created_at.strftime("%Y-%m-%d")
         item['updated_at'] = self.updated_at.strftime("%Y-%m-%d")
+        return item
+
+class historial_asignaciones(models.Model):
+    id = models.AutoField(primary_key=True)
+    control_id = models.ForeignKey(control_Asignaciones, null=False, blank=False)
+    inventario_item = models.ForeignKey(Inventario_Item, null=False, blank=False, unique=True)
+    assigned_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+    assigned_by = models.ForeignKey(User, null=False, blank=False)
+    updated_at = models.DateTimeField(auto_now=True, null=False, blank=False)
+    update_by = models.ForeignKey(User, null=False, blank=False)
+    observaciones = models.TextField(max_length=500, default="", blank=True, null=True)
+
+    def __str__(self):
+        return self.id
+
+    def  toJSON(self):
+        item = model_to_dict(self)
+        item['inventario_item']= {'id': self.inventario_item.id, 'correlativo': self.inventario_item.correlativo}
+        item['assigned_at'] = self.assigned_at.strftime("%Y-%m-%d")
+        item['assigned_by'] = {'id': self.assigned_by.id, 'username': self.assigned_by.username}
+        item['updated_at'] = self.updated_at.strftime("%Y-%m-%d")
+        item['update_by'] = {'id': self.update_by.id, 'username': self.update_by.username}
         return item
