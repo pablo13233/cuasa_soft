@@ -15,11 +15,11 @@ from django.forms import model_to_dict
 
 class control_Asignaciones(models.Model):
     id = models.AutoField(primary_key=True) 
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, unique=True, related_name='asignado_a')
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='asignado_a', null=False, blank=False)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creado_por')
     created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-    update_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actualizado por')
+    update_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actualizado_por')
 
     def __str__(self):
         return self.id
@@ -35,12 +35,12 @@ class control_Asignaciones(models.Model):
 
 class historial_asignaciones(models.Model):
     id = models.AutoField(primary_key=True)
-    control_id = models.ForeignKey(control_Asignaciones, null=False, blank=False)
-    inventario_item = models.ForeignKey(Inventario_Item, null=False, blank=False, unique=True)
+    control_id = models.ForeignKey(control_Asignaciones, on_delete=models.CASCADE, null=False, blank=False)
+    inventario_item = models.ForeignKey(Inventario_Item, on_delete=models.CASCADE, null=False, blank=False )
     assigned_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
-    assigned_by = models.ForeignKey(User, null=False, blank=False)
+    assigned_by = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False, related_name="asigna")
     updated_at = models.DateTimeField(auto_now=True, null=False, blank=False)
-    update_by = models.ForeignKey(User, null=False, blank=False)
+    update_by = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False, related_name="actualiza")
     observaciones = models.TextField(max_length=500, default="", blank=True, null=True)
 
     def __str__(self):

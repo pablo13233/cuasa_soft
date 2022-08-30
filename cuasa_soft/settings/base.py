@@ -47,6 +47,7 @@ LOCAL_APPS = (
     'apps.usuarios',
     'apps.login',
     'apps.inventario',
+    'apps.asignaciones',
 
 )
 
