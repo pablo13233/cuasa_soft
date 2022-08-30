@@ -24,6 +24,10 @@ def asignacionViews(request):
                     data.append(i.toJSON())
             #created
             elif action == 'crear':
+                control_act=[]
+                for i in control_Asignaciones.objects.filter(usuario=request.POST['usr_control']):
+                    control_act.append(i.toJSON())
+                
 
 
                 data = {'tipo_accion': 'crear', 'corrector': True}
