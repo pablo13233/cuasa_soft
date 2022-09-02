@@ -1,3 +1,4 @@
+from itertools import count
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse_lazy
@@ -14,6 +15,13 @@ from django.http import JsonResponse
 def ticketViews (request):
     if request.method == 'POST' and request.is_ajax():
         data = []
+        titulo=[]
+        datos=[]
+
+        queryset = Ticket.objects.values('status').annotate(ticket_sum=count('status')).order_by('status')
+        for entry in queryset:
+            titulo.append(entry['status'])
+            datos.append(entry['ticket_sum'])
         try:
             #========================   select   =========================
             action = request.POST['action']
@@ -21,10 +29,11 @@ def ticketViews (request):
             query = Q(status="OPEN")
             query.add(Q(status="IN_PROGRESS"),Q.OR)
             query.add(Q(user_id=id_user),Q.AND)
+
             if action =='buscardatos':
                 for i in Ticket.objects.filter(query):
                     data.append(i.toJSON())
-
+                    
                     #========================   Crear   =========================
             elif action =='crear':
 
@@ -47,7 +56,7 @@ def ticketViews (request):
             data = {'tipo_accion': 'error','correcto': False, 'error': str(e)}
         return JsonResponse(data,safe=False)
     elif request.method =="GET":
-        return render(request, 'tickets/ticket_home.html')
+        return render(request, 'tickets/ticket_home.html',{'labels':titulo, 'estados':datos})
 
 
 @login_required
