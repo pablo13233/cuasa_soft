@@ -17,7 +17,7 @@ def login(request):
         if user is not None:
             if user.is_active:#si esta activo
                 auth_login(request, user)
-                return redirect('tickets_app:ticket_view')
+                return redirect('home_app:home')
             else:
                 mensaje = 'USUARIO INACTIVO'
                 ctx = {'mensaje':mensaje}

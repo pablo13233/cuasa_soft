@@ -16,12 +16,8 @@ def ticketViews (request):
     if request.method == 'POST' and request.is_ajax():
         data = []
         titulo=[]
-        datos=[]
+        cantidad=[]
 
-        queryset = Ticket.objects.values('status').annotate(ticket_sum=count('status')).order_by('status')
-        for entry in queryset:
-            titulo.append(entry['status'])
-            datos.append(entry['ticket_sum'])
         try:
             #========================   select   =========================
             action = request.POST['action']
@@ -33,7 +29,11 @@ def ticketViews (request):
             if action =='buscardatos':
                 for i in Ticket.objects.filter(query):
                     data.append(i.toJSON())
-                    
+
+                queryset = Ticket.objects.values('status').annotate(ticket_sum=count('status')).order_by('status')
+                for entry in queryset:
+                    titulo.append(entry['status'])
+                    cantidad.append(entry['ticket_sum'])    
                     #========================   Crear   =========================
             elif action =='crear':
 
@@ -56,7 +56,7 @@ def ticketViews (request):
             data = {'tipo_accion': 'error','correcto': False, 'error': str(e)}
         return JsonResponse(data,safe=False)
     elif request.method =="GET":
-        return render(request, 'tickets/ticket_home.html',{'labels':titulo, 'estados':datos})
+        return render(request, 'tickets/ticket_home.html')
 
 
 @login_required

@@ -14,26 +14,6 @@ Tickets
                 <div class="card-header pb-0">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h3><i class="bi bi-ticket opacity-10 fs-1"></i> Tickets</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body px-0 pb-2">
-                    <div id="container" class="row mt-2" style="max-width: 75%">
-                        <div class="col-md-10">
-                            <canvas id="myChart" data-url="{% url 'ticket_view' %}"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mb-4">
-        <div class="col-12 mb-md-0 mb-4">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <div class="row">
-                        <div class="col-lg-6 col-7">
                             <h3><i class="bi bi-ticket opacity-10 fs-1"></i> Historial Tickets</h3>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
@@ -230,38 +210,6 @@ Tickets
         obtenerDatos();
 
     }
-
-    var $mychart = $("#myChart");
-    $.ajax({
-    url: $mychart.data("url"),
-    success: function (data) {
-
-        var ctx = $mychart[0].getContext("2d");
-
-        new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.labels,
-            datasets: [{
-            label: 'Estados',
-            backgroundColor: 'blue',
-            data: data.estados
-            }]          
-        },
-        options: {
-            responsive: true,
-            legend: {
-            position: 'top',
-            },
-            title: {
-            display: true,
-            text: 'Population Bar Chart'
-            }
-        }
-        });
-
-    }
-    });
 
     //=================================================Data table=============================================================
 
