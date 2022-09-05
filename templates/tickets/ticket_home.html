@@ -17,7 +17,10 @@ Tickets
                             <h3><i class="bi bi-ticket opacity-10 fs-1"></i> Historial Tickets</h3>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
-                            <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
+                            <a type="button" href="{% url 'tickets_app:categorias_ticket'%}" class="btn btn-success btn-sm mb-2 me-2">
+                                <i class="bi bi-bookmark-check opacity-10 fs-3"></i>
+                            </a>
+                            <button type="button" class="btn btn-success btn-sm mb-2 me-2" id="btnAdd">
                                 <i class="bi bi-person-plus-fill opacity-10 fs-3"></i>
                             </button>
                         </div>
@@ -37,7 +40,7 @@ Tickets
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Descripcion
+                                        Categoria
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -82,34 +85,52 @@ Tickets
             <div class="modal-body">
 
                 <form method="post" action="." id="form_ticket" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="form-group row">
-                        {% csrf_token %}
+                        <div class="col-md-8">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="categoria">Categoria:</label>
+                                <select name="categoria" id="categoria" class="form-control form-select form-select-sm">
+                                    <option selected value="0">--Seleccione--</option>
+                                    {% for cat in categorias %}
+                                        <option value="{{cat.pk}}"> 
+                                            {{cat.tittle}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <input type="text" class="d-none" name="action" id="action" value="crear" />
                         <input type="text" class="d-none" id="id_ticket" value="0" />
-
-
+                        <!-- sep -->
                         <div class="col-md-12">
-                            <label for="">Titulo</label>
-                            <input type="text" class="form-control" name="title" id="title" required
-                                placeholder="Titulo del Ticket" />
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Titulo</span>
+                                <input type="text" class="form-control" name="title" id="title" required
+                                    area-label="Titulo del Ticket" />
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <div class="col-md-12">
-                            <label for="">Descripción</label>
-                            <textArea id="description" name="description" class="form-control"
-                                placeholder="Descripción del Ticket" style="resize: none">
-
-                      </textArea>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Descripción</span>
+                                <textarea maxlength="500" type="text" class="form-control" id="description" name="description" class="form-control"
+                                required aria-label="Descripción del Ticket"></textarea>
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-group row ">
 
                         <div class="col-md-12">
-                            <label for="">Imagen</label>
-                            <input type="file" id="imagen" name="imagen" accept="image/*">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" for="imagen">Imagen</span>
+                                <input type="file" class="form-control" id="imagen" name="imagen">
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -144,33 +165,51 @@ Tickets
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group row">
-                            <label for="">Titulo</label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Categoria:</span>
+                            <input type="text" class="form-control" id="categoria_ver" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Titulo:</span>
                             <input type="text" class="form-control" id="title_ver" readonly />
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group row">
-                            <label for="">Descripción</label>
-                            <textArea id="description_ver" name="description" class="form-control" style="resize: none" readonly>
-                      </textArea>
+                            <div class="input-group mb-3">  
+                                <span class="input-group-text">Descripción:</span>
+                                <textarea id="description_ver" name="description" maxlength="500" type="text" class="form-control" style="resize: none" readonly>
+                                </textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group row">
-                            <label for="">Asignado a</label>
-                            <input type="text" class="form-control" id="assigned_ver" readonly />
+                            <div class="input-group mb-3">
+                                <span for="">Asignado a:</span>
+                                <input type="text" class="form-control" id="assigned_ver" readonly />
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group row">
-                            <label for="">Imagen</label>
-                            <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="imagen_ver">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" for="imagen_ver">Imagen:</span>
+                                <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="imagen_ver">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -200,6 +239,7 @@ Tickets
             $('#action').val("crear");
             $('#form_ticket')[0].reset();
             $('#description').val("");
+            $('#categoria').val("")
             $('#title').val("");
 
             $('#titulo').focus();
@@ -219,6 +259,7 @@ Tickets
         //console.log(data.imagen_Carrusel);
         $("#imagen_ver").attr("src", data.img_ticket);
         $("#title_ver").val(data.title);
+        $("#categoria_ver").val(data.categoria.titulo)
         $("#description_ver").val(data.description);
         $("#assigned_ver").val(data.assignee_id.usuario);
 
@@ -252,7 +293,7 @@ Tickets
                     "data": "user_id.usuario"
                 },
                 {
-                    "data": "description"
+                    "data": "categoria.titulo"
                 },
                 {
                     "data": "created_at"
@@ -308,6 +349,9 @@ Tickets
         } else if ($("#description").val() == "") {
             alert("Falta la descripcion");
 
+        } else if ($("#categoria").val() == "") {
+            alert("Seleccione una categoria");
+
         } else {
             submit_with_ajax("", "");
         }
@@ -324,7 +368,7 @@ Tickets
         parametros.append('title', $("#title").val());
         parametros.append('description', $("#description").val());
         parametros.append('id', parseInt($("#id_ticket").val()));
-
+        parametros.append('categoria', $('#categoria').val());
         parametros.append('imagen', $("#imagen")[0].files[0]);
 
         parametros.append('csrfmiddlewaretoken', token);
@@ -386,5 +430,4 @@ Tickets
     }
 
 </script>
-
 {% endblock content %}

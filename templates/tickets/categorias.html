@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Categorias
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid py-4 col-12 ">
+    <div class="row mb-4">
+        <div class="col-12 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-7">
+                            <h3><i class="bi bi-tags opacity-10 fs-1"></i> Categorias</h3>
+                        </div>
+                        <div class="col-lg-6 col-5 my-auto text-end">
+                            <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
+                                <i class="bi bi-person-plus-fill opacity-10 fs-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-items-center mb-0" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        # Categoria
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Nombre
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Descripcion
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Creado por
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Accion
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agregar Categorias-->
+<div class="modal fade" id="modalCategoria" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">
+                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Categoria</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="." id="formCategoria" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <input type="text" class="d-none" name="action" id="action" value="crear" />
+                        <input type="text" class="d-none" name="action" id="id_categoria" value="0" />
+                        
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" >Nombre:</span>
+                                <input type="text" class="form-control" name="nombre" id="nombre" required aria-label="Nombre del la categoria"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" >Descripcion:</span>
+                                <textarea maxlength="500" type="text" class="form-control" name="description" id="description" required aria-label="Descripcion de la categoria"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btn">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- fin modal -->
+
+<script>
+    var tablaCategoria;
+    var modalTitulo = $('.modal-title');
+
+    window.onload = function() {
+        $("#btnAdd").on("click", function(){
+            modalTitulo.find('span').html('Crear Categoria');
+            modalTitulo.find('i').removeClass().addClass('fas fa-plus fs-3');
+            $('#action').val('crear');
+            $('#formCategoria')[0].reset();
+            $('#nombre').focus();
+            $('#description').val("");
+
+            $('#modalCategoria').modal('show');
+        });
+        $('#datatable').DataTable();
+        obtenerDatos();
+    }
+
+    $("#btn").on("click", function(){
+        if(($("#nombre").val == "") || ($("#description").val == "")){
+            alert("No puede dejar campos vacios");
+        }else{
+            submit_with_ajax("", "");
+        }
+        return false;
+    });
+
+    $('#datatable tbody').on('click', 'a[rel="editar"]', function(){
+        var tr = tablaCategoria.cell($(this).closest('td,li')).index();
+        var data = tablaCategoria.row(tr.row).data();
+
+        modalTitulo.find('span').html(' Editar Categoria');
+        modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
+
+        $('#action').val("editar");
+        $('#id_categoria').val(data.id);
+        $('#nombre').val(data.nombre_categoria);
+        $('#description').val(data.description);
+        $('#modalCategoria').modal('show');
+    });
+
+    function submit_with_ajax(url, parametros){
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', $('#action').val());
+        parametros.append('tittle', $('#nombre').val());
+        parametros.append('description', $('#description').val());
+        parametros.append('id', parseInt($('#id_categoria').val()));
+        parametros.append('csrfmiddlewaretoken', token);
+
+        $.ajax({
+            url: window.location.pathname, 
+            type: 'POST',
+            data: parametros,
+            
+            dataType: 'json',
+            contentType: 'multipart/form-data',
+            processData: false,
+            contentType: false, 
+            success:function(result){
+                if(result.correcto){
+                    $('#formCategoria')[0].reset();
+                    $('#modalCategoria').modal('hide');
+
+                    tablaCategoria.ajax.reload(null, false);
+
+                    switch(result.tipo_accion){
+                        case "crear":
+                            texto = "Datos guardados con exito";
+                            break;
+                        case "editar":
+                            texto = "Datos editados con exito";
+                            break;
+                        case "eliminar":
+                            texto = "Dato eliminado con exito";
+                            break;
+                        default:
+                            texto = "";
+                    }
+
+                    Swal.fire({
+                    icon: 'success',
+                    title: 'Correcto',
+                    text: texto
+                    });
+
+                }else{
+                    tablaCategoria.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al realizar la acción'
+                    });
+                }
+            }
+        })
+
+    }
+
+    function obtenerDatos(){
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaCategoria = $('#datatable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            lenguage: {"url":"//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"},
+            ajax: {
+                url:window.location.pathname, 
+                type: 'POST',
+                data: {
+                    'action': 'buscardatos',
+                    'csrfmiddlewaretoken': token
+                },
+                dataSrc: ""
+            },
+            columns: [
+                {"data":"id"},
+                {"data":"tittle"},
+                {"data":"description"},
+                {"data":"created_by.usuario"},
+                {"data":"id"}
+            ],
+            columnDefs: [
+                {
+                    targets: [2],
+                    render: function (data, type, row) {
+                        return data.substr(0, 25) + "...";
+                    }
+                },
+                {
+                    targets: [4],
+                    class: 'text-center',
+                    ordenable: false,
+                    render: function(data, type, row){
+                        var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
+                                    <i class="fas fa-edit"></i></a> `;
+                        return buttons;
+                    }
+                },
+            ],
+        });
+    }
+</script>
+{% endblock content %}
