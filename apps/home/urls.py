@@ -1,8 +1,9 @@
 from django.urls import path
-from . import views
+from apps.home.views import *
 
 app_name = 'home_app' # namespace
 
 urlpatterns = [
-    path('home/', views.IndexHomeView.as_view(), name='home'),
+    path('home/', IndexHomeView, name='home'),
+    path('ticket_chart/', ticket_chart, name='ticket_chart'),
 ]

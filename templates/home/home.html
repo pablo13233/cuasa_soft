@@ -2,31 +2,154 @@
 
 {% load static %}
 
-{% block title %} 
-Inicio 
+{% block title %}
+Inicio
 {% endblock title %}
 
 {% block content %}
 
 <div class="container-fluid py-4">
     <div class="row mb-4">
-        <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+        <div class="col-lg-12 col-md-8 mb-md-0 mb-4">
             <div class="card">
                 <div class="card-header pb-0">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h6>Inicio</h6>
+                            <h4>Mis Tickets</h4>
                         </div>
-                        
+
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
-                    
+                    <div class="container" style="max-width: 60%; max-height: 100%;">
+                        <canvas id="ticketChart" data-url="{% url 'home_app:ticket_chart' %}"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-        
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-12 col-md-8 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-7">
+                            <h4>Preguntas Frecuentes</h4>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2 ms-2 me-2">
+                    <div class="wrapper bg-white rounded shadow">
+                        
+                        <div class="accordion accordion-flush border-top border-start border-end" id="myAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingOne"> <button
+                                        class="accordion-button collapsed border-0" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#flush-collapseOne"
+                                        aria-expanded="false" aria-controls="flush-collapseOne"> No funciona le red
+                                    </button> </h2>
+                                <div id="flush-collapseOne" class="accordion-collapse collapse border-0"
+                                    aria-labelledby="flush-headingOne" data-bs-parent="#myAccordion">
+                                    <div class="accordion-body p-0 ms-2 me-2 pb-1">
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nulla ligula, 
+                                            finibus eu libero eu, convallis blandit arcu. Vestibulum lorem sem, maximus 
+                                            id purus sed, aliquam lacinia massa. Vestibulum tellus risus, dictum sed mollis 
+                                            et, tincidunt eu arcu. Maecenas eget tincidunt felis, eget laoreet metus. Nulla 
+                                            ipsum justo, varius sit amet velit in, aliquam posuere felis. Donec scelerisque 
+                                            aliquet diam. Aenean eget fermentum metus. Nulla accumsan felis eget semper efficitur. 
+                                            Curabitur fringilla justo eu condimentum sodales. Quisque non convallis orci. 
+                                            Phasellus rhoncus mi felis, nec cursus nulla viverra vel. Curabitur id elit placerat, 
+                                            venenatis ante eget, accumsan massa. Nunc non.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingOne"> <button
+                                        class="accordion-button collapsed border-0" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo"
+                                        aria-expanded="false" aria-controls="flush-collapseTwo"> La computadora no enciende
+                                    </button> </h2>
+                                <div id="flush-collapseTwo" class="accordion-collapse collapse border-0"
+                                    aria-labelledby="flush-headingOne" data-bs-parent="#myAccordion">
+                                    <div class="accordion-body p-0 ms-2 me-2 pb-1">
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nulla ligula, 
+                                            finibus eu libero eu, convallis blandit arcu. Vestibulum lorem sem, maximus 
+                                            id purus sed, aliquam lacinia massa. Vestibulum tellus risus, dictum sed mollis 
+                                            et, tincidunt eu arcu. Maecenas eget tincidunt felis, eget laoreet metus. Nulla 
+                                            ipsum justo, varius sit amet velit in, aliquam posuere felis. Donec scelerisque 
+                                            aliquet diam. Aenean eget fermentum metus. Nulla accumsan felis eget semper efficitur. 
+                                            Curabitur fringilla justo eu condimentum sodales. Quisque non convallis orci. 
+                                            Phasellus rhoncus mi felis, nec cursus nulla viverra vel. Curabitur id elit placerat, 
+                                            venenatis ante eget, accumsan massa. Nunc non.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingOne"> <button
+                                        class="accordion-button collapsed border-0" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#flush-collapseThree"
+                                        aria-expanded="false" aria-controls="flush-collapseThree"> Tengo red pero no puedo acceder al sistema
+                                    </button> </h2>
+                                <div id="flush-collapseThree" class="accordion-collapse collapse border-0"
+                                    aria-labelledby="flush-headingOne" data-bs-parent="#myAccordion">
+                                    <div class="accordion-body p-0 ms-2 me-2 pb-1">
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nulla ligula, 
+                                            finibus eu libero eu, convallis blandit arcu. Vestibulum lorem sem, maximus 
+                                            id purus sed, aliquam lacinia massa. Vestibulum tellus risus, dictum sed mollis 
+                                            et, tincidunt eu arcu. Maecenas eget tincidunt felis, eget laoreet metus. Nulla 
+                                            ipsum justo, varius sit amet velit in, aliquam posuere felis. Donec scelerisque 
+                                            aliquet diam. Aenean eget fermentum metus. Nulla accumsan felis eget semper efficitur. 
+                                            Curabitur fringilla justo eu condimentum sodales. Quisque non convallis orci. 
+                                            Phasellus rhoncus mi felis, nec cursus nulla viverra vel. Curabitur id elit placerat, 
+                                            venenatis ante eget, accumsan massa. Nunc non.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    $(function () {
+
+        var $statusChart = $("#ticketChart");
+        $.ajax({
+            url: $statusChart.data("url"),
+            success: function (data) {
+
+                var ctx = $statusChart[0].getContext("2d");
+
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Estado',
+                            backgroundColor: ['#ffc107', '#0d6efd', '#198754'],
+                            data: data.data
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Grafico de Tickets'
+                        }
+                    }
+                });
+
+            }
+        });
+
+    });
+</script>
 
 {% endblock content %}

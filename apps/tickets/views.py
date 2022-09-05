@@ -15,8 +15,6 @@ from django.http import JsonResponse
 def ticketViews (request):
     if request.method == 'POST' and request.is_ajax():
         data = []
-        titulo=[]
-        cantidad=[]
 
         try:
             #========================   select   =========================
@@ -29,11 +27,7 @@ def ticketViews (request):
             if action =='buscardatos':
                 for i in Ticket.objects.filter(query):
                     data.append(i.toJSON())
-
-                queryset = Ticket.objects.values('status').annotate(ticket_sum=count('status')).order_by('status')
-                for entry in queryset:
-                    titulo.append(entry['status'])
-                    cantidad.append(entry['ticket_sum'])    
+  
                     #========================   Crear   =========================
             elif action =='crear':
 
