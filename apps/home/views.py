@@ -20,10 +20,11 @@ def ticket_chart(request):
     labels = []
     data = []
 
-    queryset = Ticket.objects.values('status').annotate(ticket_count=Count('status'))
+    queryset = Ticket.objects.values('status').annotate(ticket_count=Count('status')).order_by('-status') 
     for entry in queryset:
         labels.append(entry['status'])
         data.append(entry['ticket_count'])
+        print(str(entry['status']))
     
     return JsonResponse(data={
         'labels': labels,
