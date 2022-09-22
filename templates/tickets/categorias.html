@@ -18,7 +18,7 @@ Categorias
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
                             <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
-                                <i class="bi bi-person-plus-fill opacity-10 fs-3"></i>
+                                <i class="fa fa-plus opacity-10 fs-4" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
@@ -113,7 +113,7 @@ Categorias
     window.onload = function() {
         $("#btnAdd").on("click", function(){
             modalTitulo.find('span').html('Crear Categoria');
-            modalTitulo.find('i').removeClass().addClass('fas fa-plus fs-3');
+            modalTitulo.find('i').removeClass().addClass('fa fa-plus fs-3');
             $('#action').val('crear');
             $('#formCategoria')[0].reset();
             $('#nombre').focus();
@@ -244,7 +244,7 @@ Categorias
                     ordenable: false,
                     render: function(data, type, row){
                         var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
-                                    <i class="fas fa-edit"></i></a> `;
+                                    <i class="fa fa-edit"></i></a> `;
                         return buttons;
                     }
                 },

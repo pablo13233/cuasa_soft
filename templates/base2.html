@@ -1,0 +1,151 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+
+  <title>{% block title %} {% endblock title %}</title>
+
+
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css"
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" integrity="sha512-GQGU0fMMi238uA+a/bdWJfpUGKUkBdgfFdgBm72SUQ6BeyWjoY/ton0tEjH+OSH9iP4Dfh+7HM0I9f5eR0L/4w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.8/sweetalert2.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+  
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" 
+    crossorigin="anonymous"></script>
+
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/sidebars.css' %}" rel="stylesheet">
+</head>
+
+<body>
+
+  <main class="">
+    <div class="container-fluid">
+      <div class="row flex-nowrap">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+          <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+            <a href="" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+              <span class="fs-5 d-none d-sm-inline"><i class="bi bi-list fs-3"></i> Menu</span>
+            </a>
+            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+              <li class="nav-item">
+                <a href="{% url 'home_app:home'%}" class="nav-link align-middle px-0">
+                  <i class="bi bi-house fs-2"></i> <span class="ms-1 d-none d-sm-inline">Inicio</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'tickets_app:ticket_view' %}" class="nav-link align-middle px-0">
+                  <i class="bi bi-ticket-fill fs-2"></i> <span class="ms-1 d-none d-sm-inline">Tickets</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'inventario_app:inventario' %}" class="nav-link align-middle px-0">
+                  <i class="bi bi-pc-display fs-2"></i> <span class="ms-1 d-none d-sm-inline">Inventario</span>
+                </a>
+              </li>
+              <li>
+                <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                  <i class="fs-2 bi bi-x-diamond-fill"></i> <span class="ms-1 d-none d-sm-inline">Administracion</span> </a>
+                <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
+                    <li class="w-100">
+                        <a href="{% url 'tickets_app:admin_ticket' %}" class="nav-link">  <i class="bi bi-ticket-detailed fs-4"></i>  <span class="d-none d-sm-inline"> Tickets </span> </a>
+                    </li>
+                    <li>
+                      <a href="{% url 'asignaciones_app:asignaciones' %}" class="nav-link"> <i class="bi bi-people-fill fs-4"></i>  <span class="d-none d-sm-inline"> Asignaciones </span></a>
+                    </li>
+                    <li>
+                        <a href="{% url 'usuarios_app:lista_usuarios' %}" class="nav-link"> <i class="bi bi-people-fill fs-4"></i>  <span class="d-none d-sm-inline"> Usuarios </span></a>
+                    </li>
+                </ul>
+              </li>
+            </ul>
+            <hr>
+            <div class="dropdown pb-4">
+              <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-2"></i>
+                <span class="d-none d-sm-inline mx-1">{{request.user|title}}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" id="logout" href="#">Sign out</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col py-3">
+          {% block content %}
+
+          {% endblock content%}
+          {% include 'partials/_footer.html' %}
+        </div>
+      </div>
+    </div>
+  </main>
+
+  {% include 'partials/_scripts.html' %}
+</body>
+<script>
+  $("#logout").on('click', function () {
+    Swal.fire({
+      title: '¿Desea cerrar la sesión?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí',
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "{% url 'login_app:logout' %}";
+
+      }
+    })
+  });
+</script>
+<script>
+  var win = navigator.platform.indexOf('Win') > -1;
+  if (win && document.querySelector('#sidenav-scrollbar')) {
+    var options = {
+      damping: '0.5'
+    }
+    Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+  }
+</script>
+
+</html>
