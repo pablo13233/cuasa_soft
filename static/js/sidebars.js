@@ -1,44 +1,25 @@
-const body = document.querySelector('body'),
-      sidebar = body.querySelector('nav'),
-      toggle = body.querySelector(".toggle"),
-      searchBtn = body.querySelector(".search-box"),
-      modeSwitch = body.querySelector(".toggle-switch"),
-      modeText = body.querySelector(".mode-text");
+$(document).ready(function () {
 
-
-toggle.addEventListener("click" , () =>{
-    sidebar.classList.toggle("close");
-})
-
-searchBtn.addEventListener("click" , () =>{
-    sidebar.classList.remove("close");
-})
-
-modeSwitch.addEventListener("click" , () =>{
-    body.classList.toggle("dark");
-    
-    if(body.classList.contains("dark")){
-        modeText.innerText = "Light mode";
-    }else{
-        modeText.innerText = "Dark mode";
-        
-    }
-
-    
-})
-
-//* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
-var dropdown = document.getElementsByClassName("dropdown-btn");
-var i;
-
-for (i = 0; i < dropdown.length; i++) {
-  dropdown[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var dropdownContent = this.nextElementSibling;
-    if (dropdownContent.style.display === "block") {
-      dropdownContent.style.display = "none";
-    } else {
-      dropdownContent.style.display = "block";
-    }
+  $(".menu-bars").click(function () {
+      $("#slide-menu").addClass("active");
   });
-};
+
+  $(".slide-menu-close").click(function () {
+      $("#slide-menu").removeClass("active");
+  });
+
+  $(".skip-form-close").click(function () {
+      $(".skip-header-dd").removeClass("active");
+  });
+
+  var togle = false;
+  $(".dropdownmenu").click(function () {
+      if (togle == false) {
+          $(this).addClass("active");
+          togle = true;
+      } else {
+          $(this).removeClass("active");
+          togle = false;
+      }
+  });
+});
