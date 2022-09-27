@@ -1,0 +1,17 @@
+
+.page-up-fixed {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  text-align: center;
+  color: #fff;
+  width: 2.75rem;
+  height: 2.75rem;
+  background: rgba(90, 92, 105, .5);
+  line-height: 46px;
+  border-radius: .35rem;
+  -webkit-border-radius: .35rem;
+  -moz-border-radius: .35rem;
+  -ms-border-radius: .35rem;
+  -o-border-radius: .35rem;
+}
