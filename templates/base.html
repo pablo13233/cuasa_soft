@@ -20,7 +20,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro-v6@44659d9/css/all.min.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.8/sweetalert2.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css" />
   <link rel="stylesheet"
@@ -50,110 +50,75 @@
 
 <body>
 
-
-
-  <div id="wrapper">
-    <nav class="sidebar close">
-      <div class="nav-container">
-        <a class="navbar-brand" href="#">
-          <div class="sidebar-brand-icon">
-              <span class="image"> 
-                  <img src="{% static 'img/logo.png' %}" alt="">
-              </span>
-          </div>
-          <div class="sidebar-brand-text"><span>CUASA</span></div>
-        </a>
-        <hr class="sidebar-divider">
-        <ul class="navbar-nav" id="menu">
-          <li class="nav-item">
-            <a class="nav-link active" href="{% url 'home_app:home'%}">
-              <i class="fas fa-tachometer-alt fs-3"></i>
-              <span class="fs-5"> Inicio</span>
+  <main class="">
+    <div class="container-fluid">
+      <div class="row flex-nowrap">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+          <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+            <a href="" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+              <span class="fs-5 d-none d-sm-inline"><i class="fas fa-bars fs-3"></i>  CUASA</span>
             </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'tickets_app:ticket_view' %}">
-              <i class="fas fa-ticket-alt fs-3"></i>
-              <span class="fs-5"> Tickets</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'inventario_app:inventario' %}">
-              <i class="fas fa-boxes fs-3"></i>
-              <span class="fs-5"> Inventario</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-              <i class="fas fa-diamond fs-3"></i>
-              <span class="fs-5"> Administración</span>
-            </a>
-            <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
-              <li class="w-100">
-                <a href="{% url 'tickets_app:admin_ticket' %}" class="nav-link">
-                  <i class="fas fa-ticket-alt fs-4"></i>
-                  <span class="d-none d-sm-inline fs-4"> Ticket</span>
+            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+              <li class="nav-item">
+                <a href="{% url 'home_app:home'%}" class="nav-link align-middle px-0">
+                  <i class="fas fa-home fs-2"></i> <span class="ms-1 d-none d-sm-inline">Inicio</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'tickets_app:ticket_view' %}" class="nav-link align-middle px-0">
+                  <i class="fas fa-ticket-alt fs-2"></i> <span class="ms-1 d-none d-sm-inline">Tickets</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'inventario_app:inventario' %}" class="nav-link align-middle px-0">
+                  <i class="fas fa-desktop fs-2"></i> <span class="ms-1 d-none d-sm-inline">Inventario</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'usuarios_app:lista_usuarios' %}" class="nav-link">
-                  <i class="fas fa-users fs-4"></i>
-                  <span class="d-none d-sm-inline fs-4"> Usuarios</span>
-                </a>
+                <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                  <i class="fas fa-cog fs-2"></i> <span class="ms-1 d-none d-sm-inline">Administracion</span> </a>
+                <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
+                    <li class="w-100">
+                        <a href="{% url 'tickets_app:admin_ticket' %}" class="nav-link">  <i class="fas fa-clipboard-list fs-4"></i>  <span class="d-none d-sm-inline"> Tickets </span> </a>
+                    </li>
+                    <li>
+                      <a href="{% url 'asignaciones_app:asignaciones' %}" class="nav-link"> <i class="fas fa-dolly-flatbed fs-4"></i>  <span class="d-none d-sm-inline"> Asignaciones </span></a>
+                    </li>
+                    <li>
+                        <a href="{% url 'usuarios_app:lista_usuarios' %}" class="nav-link"> <i class="fas fa-users-cog fs-4"></i>  <span class="d-none d-sm-inline"> Usuarios </span></a>
+                    </li>
+                </ul>
               </li>
             </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <div id="content-wrapper">
-      <!--!Navbar Top-->
-      <div class="navbar-top d-flex" id="page-top">
-        <div class="container-fluid d-flex">
-          <button id="sidebarToggleTop" class="btn-link" type="button"><i class="fas fa-bars"></i></button>
+            <hr>
+            <div class="dropdown pb-4">
+              <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="far fa-user-circle fs-2"></i>
+                <span class="d-none d-sm-inline mx-1">{{request.user|title}}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                <li><a class="dropdown-item" href="#"><i class="fas fa-address-card fs-4"></i> Profile</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" id="logout" href="#"><i class="fas fa-sign-out-alt fs-4"></i> Salir</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <ul class="navbar-nav-ul d-flex">
-          <div class="topbar-divider"></div>
-          <li class="nav-item avatar-n">
-            <p><span class="avatar-text fs-4">{{request.user|title}}</span></p>
-            <i class="fas fa-user-circle fs-2"></i>
-          </li>
-        </ul>
-      </div>
-      <!--!Top Nav ends-->
-
-
-      <!--!Index's Main contents start here-->
-      <div class="index-content container-main">
-        <div class="dashboard-header  d-flex justify-between">
-          <!--!Dashboard header-->
-          <h3>Dashboard</h3>
-          <!-- <a href="#" class="generate-dash-btn"><i class="fas fa-download fa-sm text-white-50"></i>Generate Report</a> -->
-        </div>
-        <!--!Earning Row starts here-->
-        <div class="overview-row row d-flex">
-          <!--First-->
+        <div class="col py-3" id="page-top" style="overflow-y: scroll;">
           {% block content %}
 
           {% endblock content%}
-        </div>
-
-        <div class="footer">
           {% include 'partials/_footer.html' %}
+          <a class="page-up-fixed" href="#page-top"><i class="fas fa-angle-up"></i></a>
         </div>
       </div>
     </div>
-
-    <a class="page-up-fixed" href="#page-top"><i class="fas fa-angle-up"></i></a>
-
-  </div>
-
+  </main>
 </body>
 
-<script>
-
-</script>
 
 <script>
   $("#logout").on('click', function () {
@@ -173,5 +138,6 @@
     })
   });
 </script>
+
 
 </html>
