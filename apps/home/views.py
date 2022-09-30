@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.contrib.auth.models import User
-from apps.tickets.models import Ticket
+from apps.tickets.models import Ticket, TicketStatus
 
 from django.db.models import Count
 
@@ -14,19 +14,27 @@ from django.db.models import Count
 
 @login_required
 def IndexHomeView(request):
-    return render(request, 'home/home.html')
+    id_user = request.user.id
+    estado_ticket = ['OPEN','IN_PROGRES','DONE']
+    ticket_user = []
+    for e in estado_ticket:
+        est = {}
+        est['estado'] = estado_ticket[e]
+        est['cantidad'] = Ticket.objects.filter(user_id=id_user, status=estado_ticket[e]).count()
+        ticket_user.append(est)
+    ctx = {'estados':estado_ticket, 'ticket_user':ticket_user}
+    return render(request, 'home/home.html',ctx)
 
-def ticket_chart(request):
-    labels = []
-    data = []
+def ticket_box(request):
+    id_user = request.user.id
+    estado_ticket = Ticket.objects.all()
+    ticket_user = []
+    for e in estado_ticket:
+        if e.choices:
+            est = {}
+            est['estado'] = e.choices
+            est['cantidad'] = Ticket.objects.filter(user_id=id_user, status=e.choices).count()
+            ticket_user.append(est)
+    ctx = {'estados':estado_ticket, 'ticket_user':ticket_user}
+     
 
-    queryset = Ticket.objects.values('status').annotate(ticket_count=Count('status')).order_by('-status') 
-    for entry in queryset:
-        labels.append(entry['status'])
-        data.append(entry['ticket_count'])
-        print(str(entry['status']))
-    
-    return JsonResponse(data={
-        'labels': labels,
-        'data': data,
-    })

@@ -6,7 +6,13 @@ from django.forms import model_to_dict
 class TicketStatus(models.TextChoices):
     OPEN = 'OPEN'
     IN_PROGRESS = 'IN_PROGRESS'
-    DONE = 'DONE' 
+    DONE = 'DONE'
+
+    def __str__(self):
+        return self.name
+
+
+
 
 class categoria_ticket(models.Model):
     tittle = models.CharField(max_length=100, blank=False, null=False)

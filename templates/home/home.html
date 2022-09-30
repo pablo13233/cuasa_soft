@@ -22,8 +22,16 @@ Inicio
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
-                    <div class="container" style="max-width: 50%; max-height: 100%;">
-                        <canvas id="ticketChart" width="800" height="450" data-url="{% url 'home_app:ticket_chart' %}"></canvas>
+                    <div class="row">
+                        <div class="col-lg-3 col-10">
+                            {% for d in ticket_user %}
+                                {% if d.estado == OPEN %}
+                                    <div class="small-box bg-info">
+                                        <div class="inner"><h3>{{d.cantidad}}</h3><p>Tickets {{d.estado}}</p></div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -38,7 +46,6 @@ Inicio
                         <div class="col-lg-6 col-7">
                             <h4>Preguntas Frecuentes</h4>
                         </div>
-
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2 ms-2 me-2">
