@@ -23,7 +23,7 @@ Inicio
                 </div>
                 <div class="card-body px-0 pb-2">
                     <div class="container" style="max-width: 50%; max-height: 100%;">
-                        <canvas id="ticketChart" data-url="{% url 'home_app:ticket_chart' %}"></canvas>
+                        <canvas id="ticketChart" width="800" height="450" data-url="{% url 'home_app:ticket_chart' %}"></canvas>
                     </div>
                 </div>
             </div>
@@ -127,22 +127,20 @@ Inicio
                 var ctx = $statusChart[0].getContext("2d");
 
                 new Chart(ctx, {
-                    type: 'pie',
+                    type: 'bar',
                     data: {
                         labels: ['Abierto', 'En Progreso', 'Terminado'],
                         datasets: [{
-                            backgroundColor: ['#0d6efd', '#ffc107', '#198754'],
+                            label:"Cantidad",
+                            backgroundColor: ['#0d6efd'],
                             data: data.data
                         }]
                     },
                     options: {
-                        responsive: true,
-                        legend: {
-                            position: 'top',
-                        },
+                        legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Grafico de Tickets'
+                            text: 'Tickets Actual'
                         }
                     }
                 });
