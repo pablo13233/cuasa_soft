@@ -7,11 +7,21 @@ Inicio
 {% endblock title %}
 
 {% block content %}
+<style>
+    .cant {
+    width: 180px; 
+    height: 150px;
+    max-width: 180px;
+    max-height: 150px;
+    min-width: 135px; 
+    min-height: 150px;
+    }
+</style>
 
 <div class="container-fluid py-4">
     <div class="row mb-4">
-        <div class="col-lg-2 col-md-2"></div>
-        <div class="col-lg-8 col-md-8 mb-md-0 mb-4">
+        <div class="col-lg-1 col-md-1"></div>
+        <div class="col-lg-10 col-md-10 mb-md-0 mb-4">
             <div class="card">
                 <div class="card-header pb-0">
                     <div class="row">
@@ -21,22 +31,40 @@ Inicio
 
                     </div>
                 </div>
+                
                 <div class="card-body px-0 pb-2">
-                    <div class="row">
-                        <div class="col-lg-3 col-10">
-                            {% for d in ticket_user %}
-                                {% if d.estado == OPEN %}
-                                    <div class="small-box bg-info">
-                                        <div class="inner"><h3>{{d.cantidad}}</h3><p>Tickets {{d.estado}}</p></div>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
+                    <div class="row text-center">
+                        <div class="col-1"></div>
+                        <div class="cant col-3 col-sm-3 card text-white bg-primary mb-3 ms-2">
+                            <div class="card-header">Abiertos</div>
+                            <div class="card-body">
+                                <p class="card-text fs-1 text-center">
+                                    {{ticket_abiertos}} <i class="fa-regular fa-folder-open"></i>
+                                </p>
+                            </div>
                         </div>
+                        <div class="col-3 col-sm-3 card text-white bg-primary mb-3 ms-2 cant">
+                            <div class="card-header">En Progreso</div>
+                            <div class="card-body">
+                                <p class="card-text fs-1 text-center">
+                                    {{ticket_progreso}} <i class="fa-regular fa-folder-open"></i>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-3 col-sm-3 card text-white bg-primary mb-3 ms-2 cant">
+                            <div class="card-header">Cerrado</div>
+                            <div class="card-body">
+                                <p class="card-text fs-1 text-center">
+                                    {{ticket_cerrado}} <i class="fa-regular fa-folder-open"></i>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-1"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-2 col-md-2"></div>
+        <div class="col-lg-1 col-md-1"></div>
     </div>
     <div class="row mb-4">
         <div class="col-lg-12 col-md-8 mb-md-0 mb-4">
@@ -50,7 +78,7 @@ Inicio
                 </div>
                 <div class="card-body px-0 pb-2 ms-2 me-2">
                     <div class="wrapper bg-white rounded shadow">
-                        
+
                         <div class="accordion accordion-flush border-top border-start border-end" id="myAccordion">
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="flush-headingOne"> <button
@@ -61,14 +89,20 @@ Inicio
                                 <div id="flush-collapseOne" class="accordion-collapse collapse border-0"
                                     aria-labelledby="flush-headingOne" data-bs-parent="#myAccordion">
                                     <div class="accordion-body p-0 ms-2 me-2 pb-1">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nulla ligula, 
-                                            finibus eu libero eu, convallis blandit arcu. Vestibulum lorem sem, maximus 
-                                            id purus sed, aliquam lacinia massa. Vestibulum tellus risus, dictum sed mollis 
-                                            et, tincidunt eu arcu. Maecenas eget tincidunt felis, eget laoreet metus. Nulla 
-                                            ipsum justo, varius sit amet velit in, aliquam posuere felis. Donec scelerisque 
-                                            aliquet diam. Aenean eget fermentum metus. Nulla accumsan felis eget semper efficitur. 
-                                            Curabitur fringilla justo eu condimentum sodales. Quisque non convallis orci. 
-                                            Phasellus rhoncus mi felis, nec cursus nulla viverra vel. Curabitur id elit placerat, 
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nulla ligula,
+                                            finibus eu libero eu, convallis blandit arcu. Vestibulum lorem sem, maximus
+                                            id purus sed, aliquam lacinia massa. Vestibulum tellus risus, dictum sed
+                                            mollis
+                                            et, tincidunt eu arcu. Maecenas eget tincidunt felis, eget laoreet metus.
+                                            Nulla
+                                            ipsum justo, varius sit amet velit in, aliquam posuere felis. Donec
+                                            scelerisque
+                                            aliquet diam. Aenean eget fermentum metus. Nulla accumsan felis eget semper
+                                            efficitur.
+                                            Curabitur fringilla justo eu condimentum sodales. Quisque non convallis
+                                            orci.
+                                            Phasellus rhoncus mi felis, nec cursus nulla viverra vel. Curabitur id elit
+                                            placerat,
                                             venenatis ante eget, accumsan massa. Nunc non.</p>
                                     </div>
                                 </div>
@@ -77,19 +111,26 @@ Inicio
                                 <h2 class="accordion-header" id="flush-headingOne"> <button
                                         class="accordion-button collapsed border-0" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo"
-                                        aria-expanded="false" aria-controls="flush-collapseTwo"> La computadora no enciende
+                                        aria-expanded="false" aria-controls="flush-collapseTwo"> La computadora no
+                                        enciende
                                     </button> </h2>
                                 <div id="flush-collapseTwo" class="accordion-collapse collapse border-0"
                                     aria-labelledby="flush-headingOne" data-bs-parent="#myAccordion">
                                     <div class="accordion-body p-0 ms-2 me-2 pb-1">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nulla ligula, 
-                                            finibus eu libero eu, convallis blandit arcu. Vestibulum lorem sem, maximus 
-                                            id purus sed, aliquam lacinia massa. Vestibulum tellus risus, dictum sed mollis 
-                                            et, tincidunt eu arcu. Maecenas eget tincidunt felis, eget laoreet metus. Nulla 
-                                            ipsum justo, varius sit amet velit in, aliquam posuere felis. Donec scelerisque 
-                                            aliquet diam. Aenean eget fermentum metus. Nulla accumsan felis eget semper efficitur. 
-                                            Curabitur fringilla justo eu condimentum sodales. Quisque non convallis orci. 
-                                            Phasellus rhoncus mi felis, nec cursus nulla viverra vel. Curabitur id elit placerat, 
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nulla ligula,
+                                            finibus eu libero eu, convallis blandit arcu. Vestibulum lorem sem, maximus
+                                            id purus sed, aliquam lacinia massa. Vestibulum tellus risus, dictum sed
+                                            mollis
+                                            et, tincidunt eu arcu. Maecenas eget tincidunt felis, eget laoreet metus.
+                                            Nulla
+                                            ipsum justo, varius sit amet velit in, aliquam posuere felis. Donec
+                                            scelerisque
+                                            aliquet diam. Aenean eget fermentum metus. Nulla accumsan felis eget semper
+                                            efficitur.
+                                            Curabitur fringilla justo eu condimentum sodales. Quisque non convallis
+                                            orci.
+                                            Phasellus rhoncus mi felis, nec cursus nulla viverra vel. Curabitur id elit
+                                            placerat,
                                             venenatis ante eget, accumsan massa. Nunc non.</p>
                                     </div>
                                 </div>
@@ -98,19 +139,26 @@ Inicio
                                 <h2 class="accordion-header" id="flush-headingOne"> <button
                                         class="accordion-button collapsed border-0" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#flush-collapseThree"
-                                        aria-expanded="false" aria-controls="flush-collapseThree"> Tengo red pero no puedo acceder al sistema
+                                        aria-expanded="false" aria-controls="flush-collapseThree"> Tengo red pero no
+                                        puedo acceder al sistema
                                     </button> </h2>
                                 <div id="flush-collapseThree" class="accordion-collapse collapse border-0"
                                     aria-labelledby="flush-headingOne" data-bs-parent="#myAccordion">
                                     <div class="accordion-body p-0 ms-2 me-2 pb-1">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nulla ligula, 
-                                            finibus eu libero eu, convallis blandit arcu. Vestibulum lorem sem, maximus 
-                                            id purus sed, aliquam lacinia massa. Vestibulum tellus risus, dictum sed mollis 
-                                            et, tincidunt eu arcu. Maecenas eget tincidunt felis, eget laoreet metus. Nulla 
-                                            ipsum justo, varius sit amet velit in, aliquam posuere felis. Donec scelerisque 
-                                            aliquet diam. Aenean eget fermentum metus. Nulla accumsan felis eget semper efficitur. 
-                                            Curabitur fringilla justo eu condimentum sodales. Quisque non convallis orci. 
-                                            Phasellus rhoncus mi felis, nec cursus nulla viverra vel. Curabitur id elit placerat, 
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nulla ligula,
+                                            finibus eu libero eu, convallis blandit arcu. Vestibulum lorem sem, maximus
+                                            id purus sed, aliquam lacinia massa. Vestibulum tellus risus, dictum sed
+                                            mollis
+                                            et, tincidunt eu arcu. Maecenas eget tincidunt felis, eget laoreet metus.
+                                            Nulla
+                                            ipsum justo, varius sit amet velit in, aliquam posuere felis. Donec
+                                            scelerisque
+                                            aliquet diam. Aenean eget fermentum metus. Nulla accumsan felis eget semper
+                                            efficitur.
+                                            Curabitur fringilla justo eu condimentum sodales. Quisque non convallis
+                                            orci.
+                                            Phasellus rhoncus mi felis, nec cursus nulla viverra vel. Curabitur id elit
+                                            placerat,
                                             venenatis ante eget, accumsan massa. Nunc non.</p>
                                     </div>
                                 </div>
@@ -124,38 +172,38 @@ Inicio
 </div>
 
 <script>
-    $(function () {
+    // $(function () {
 
-        var $statusChart = $("#ticketChart");
-        $.ajax({
-            url: $statusChart.data("url"),
-            success: function (data) {
+    //     var $statusChart = $("#ticketChart");
+    //     $.ajax({
+    //         url: $statusChart.data("url"),
+    //         success: function (data) {
 
-                var ctx = $statusChart[0].getContext("2d");
+    //             var ctx = $statusChart[0].getContext("2d");
 
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Abierto', 'En Progreso', 'Terminado'],
-                        datasets: [{
-                            label:"Cantidad",
-                            backgroundColor: ['#0d6efd'],
-                            data: data.data
-                        }]
-                    },
-                    options: {
-                        legend: { display: false },
-                        title: {
-                            display: true,
-                            text: 'Tickets Actual'
-                        }
-                    }
-                });
+    //             new Chart(ctx, {
+    //                 type: 'bar',
+    //                 data: {
+    //                     labels: ['Abierto', 'En Progreso', 'Terminado'],
+    //                     datasets: [{
+    //                         label:"Cantidad",
+    //                         backgroundColor: ['#0d6efd'],
+    //                         data: data.data
+    //                     }]
+    //                 },
+    //                 options: {
+    //                     legend: { display: false },
+    //                     title: {
+    //                         display: true,
+    //                         text: 'Tickets Actual'
+    //                     }
+    //                 }
+    //             });
 
-            }
-        });
+    //         }
+    //     });
 
-    });
+    // });
 </script>
 
 {% endblock content %}

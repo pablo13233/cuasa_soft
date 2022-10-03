@@ -15,14 +15,29 @@ from django.db.models import Count
 @login_required
 def IndexHomeView(request):
     id_user = request.user.id
-    estado_ticket = ['OPEN','IN_PROGRES','DONE']
-    ticket_user = []
-    for e in estado_ticket:
-        est = {}
-        est['estado'] = estado_ticket[e]
-        est['cantidad'] = Ticket.objects.filter(user_id=id_user, status=estado_ticket[e]).count()
-        ticket_user.append(est)
-    ctx = {'estados':estado_ticket, 'ticket_user':ticket_user}
+    ticket_1 = 0
+    ticket_2 = 0
+    ticket_3 = 0
+
+    cnt_1 = Ticket.objects.filter(user_id=id_user, status="OPEN").count()
+    if cnt_1 > 0:
+        ticket_1 = cnt_1
+    else:
+        ticket_1 = 0
+
+    cnt_2 = Ticket.objects.filter(user_id=id_user, status="IN_PROGRESS").count()
+    if cnt_2 > 0:
+        ticket_2 = cnt_2
+    else:
+        ticket_2 = 0
+
+    cnt_3 = Ticket.objects.filter(user_id=id_user, status="DONE").count()
+    if cnt_3 > 0:
+        ticket_3 = cnt_3
+    else:
+        ticket_3 = 0
+
+    ctx = {'ticket_abiertos': ticket_1,'ticket_progreso': ticket_2,'ticket_cerrado': ticket_3}
     return render(request, 'home/home.html',ctx)
 
 def ticket_box(request):

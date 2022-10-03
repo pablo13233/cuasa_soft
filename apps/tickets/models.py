@@ -8,10 +8,6 @@ class TicketStatus(models.TextChoices):
     IN_PROGRESS = 'IN_PROGRESS'
     DONE = 'DONE'
 
-    def __str__(self):
-        return self.name
-
-
 
 
 class categoria_ticket(models.Model):
