@@ -5,5 +5,4 @@ app_name = 'home_app' # namespace
 
 urlpatterns = [
     path('home/', IndexHomeView, name='home'),
-    path('ticket_chart/', ticket_box, name='ticket_chart'),
 ]

@@ -15,4 +15,11 @@
   -ms-border-radius: .35rem;
   -o-border-radius: .35rem;
 }
-
+.cant {
+  width: 180px; 
+  height: 150px;
+  max-width: 180px;
+  max-height: 150px;
+  min-width: 135px; 
+  min-height: 150px;
+  }

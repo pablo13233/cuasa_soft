@@ -40,16 +40,5 @@ def IndexHomeView(request):
     ctx = {'ticket_abiertos': ticket_1,'ticket_progreso': ticket_2,'ticket_cerrado': ticket_3}
     return render(request, 'home/home.html',ctx)
 
-def ticket_box(request):
-    id_user = request.user.id
-    estado_ticket = Ticket.objects.all()
-    ticket_user = []
-    for e in estado_ticket:
-        if e.choices:
-            est = {}
-            est['estado'] = e.choices
-            est['cantidad'] = Ticket.objects.filter(user_id=id_user, status=e.choices).count()
-            ticket_user.append(est)
-    ctx = {'estados':estado_ticket, 'ticket_user':ticket_user}
      
 
