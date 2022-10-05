@@ -1,7 +1,9 @@
 .scrollarea {
-  overflow-y: auto;
-  overflow-x: auto;
+  position: relative;
+  display: block;
+  overflow: auto;
 }
 .noscroll-container{
-  position: fixed;
+  display: flex;
+  position: sticky;
 }
