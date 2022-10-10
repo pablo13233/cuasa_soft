@@ -85,7 +85,7 @@ def inventarioViews(request):
                     imagen = request.FILES.get("imagen")
                     imagen.name = str(inv.pk)+" "+imagen.name
                     inv.imagen_item = imagen
-
+#validad que si el estado a actualizar es descarte que el equipo se descargo anteriormente estado == 2
                 inv.save()
                 data = {'tipo_accion': 'editar', 'correcto': True}
             else:

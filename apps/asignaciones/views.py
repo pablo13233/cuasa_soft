@@ -6,11 +6,34 @@ from django.contrib.auth.decorators import login_required, permission_required
 from datetime import datetime
 from django.utils import formats
 from django.http import JsonResponse
+from xhtml2pdf import pisa
+from django.template.loader import get_template
+from io import BytesIO
+
+from django.views.generic import View
 
 from apps.asignaciones.models import *
 from apps.inventario.models import *
 from apps.usuarios.models import *
 # Create your views here.
+
+# html a pdf
+def html_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(),content_type="application/pdf")
+    return None
+#
+
+class asignacion_pdf(View):
+    def get(self, request, *args, **kwargs):
+        pdf= html_to_pdf('asignaciones/asignacion_pdf.html')
+        return HttpResponse(pdf, content_type="application/pdf")
+
+
 @login_required
 def asignacionViews(request):
     if request.method == 'POST' and request.is_ajax():
@@ -18,43 +41,51 @@ def asignacionViews(request):
         try:
             #select
             action = request.POST['action']
-            id_user = request.user_id
+            id_user = request.user.id
             updated_time = datetime.now()
-            equipo = request.POST['item_id']
-            inv = Inventario_Item.objects.get(pk=equipo)
             if action == 'buscardatos': 
                 for i in historial_asignaciones.objects.all().order_by('-id'):
                     data.append(i.toJSON())
             #created
-            elif (action == 'crear') and (inv.status == 2):
+            elif action == 'crear':
+                equipo = request.POST['item_id']
+                inv = Inventario_Item.objects.get(pk=equipo)
+                #-------------------------------------
+                if inv.status == 2:
+                    asg = historial_asignaciones()
+                    if int(request.POST['usuario_asignar']>0):
+                        asg.usuario = User.objects.get(pk=request.POST['usuario_asignar'])
+                    if int(request.POST['item_id']>0):
+                        asg.inventario_item = Inventario_Item.objects.get(pk=equipo)
+                    asg.status = 'ASIGNADO'
+                    asg.assigned_by = User.objects.get(pk=id_user)
+                    asg.update_by = User.objects.get(pk=id_user)
+                    asg.observaciones = request.POST.get('observaciones')
+                    asg.save()
+                    #-------------------------------------
+                    inv.status = 1
+                    inv.updated_at = updated_time
+                    inv.save()
+                    data = {'tipo_accion': 'crear', 'correcto': True}
                 
+            #editar
+            elif action == 'editar':
+                equipoe = request.POST['equipo_ver']
+                inve = Inventario_Item.objects.get(correlativo=equipoe)
+                #-------------------------------------
                 asg = historial_asignaciones()
                 if int(request.POST['usuario_asignar']>0):
-                    asg.usuario = User.objects.get(pk=request.POST['usuario_asignar'])
-                if int(request.POST['item_id']>0):
-                    asg.inventario_item = Inventario_Item.objects.get(pk=equipo)
-                asg.assigned_by = User.objects.get(pk=id_user)
+                    asg.usuario = User.objects.get(username=request.POST['usuario_ver'])
+                if int(request.POST['equipo_ver']>0):
+                    asg.inventario_item = Inventario_Item.objects.get(correlativo=equipo)
+                asg.status = 'DESCARGO'
                 asg.update_by = User.objects.get(pk=id_user)
                 asg.observaciones = request.POST.get('observaciones')
                 asg.save()
                 #-------------------------------------
-                inv.status = 1
-                inv.updated_at = updated_time
-                inv.save()
-
-                data = {'tipo_accion': 'crear', 'correcto': True}
-            #editar
-            elif action == 'editar':
-                
-                inv.status = 1
-                inv.updated_at = updated_time
-                inv.save()
-                #-------------------------------------
-                asg = historial_asignaciones.objects.get()
-                asg.estado = 'DESCARGO'
-                asg.updated_date = updated_time
-                asg.updated_by = User.objects.get(pk=id_user)
-                asg.save()
+                inve.status = 2
+                inve.updated_at = updated_time
+                inve.save()
 
                 data = {'tipo_accion': 'editar', 'correcto': True}
             else:

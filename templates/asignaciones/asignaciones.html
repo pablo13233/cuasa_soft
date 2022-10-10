@@ -17,17 +17,388 @@ Asignaciones
                         <div class="col-lg-6 col-7">
                             <h4>Asignaciones</h4>
                         </div>
+                        <div class="col-lg-6 col-5 my-auto text-end">
+                            <button type="button" class="btn btn-success btn-sm mb-2 me-2" id="btnAdd">
+                                <i class="fa-solid fa-plus opacity-10 fs-4" aria-hidden="true"></i>
+                            </button>
+                        </div>
 
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
-                    
+                    <table class="table align-items-center mb-0" id="datatable">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    # No.
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Usuario
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Equipo
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Fecha
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Tipo
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Nota
+                                </th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Accion
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<!-- Inicio Agregar -->
+<div class="modal fade" id="modalAsignacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="">
+                    <i class="fa-solid fa-plus"></i> <span>Asignar Equipo</span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <form method="post" action="." id="form_asignar" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="equipo">Equipo:</label>
+                                <select name="equipo" id="equipo" class="form-control form-select form-select-sm">
+                                    <option selected value="0">--Seleccione--</option>
+                                    {% for itm in invent %}
+                                        <option value="{{itm.pk}}"> 
+                                            {{itm.correlativo}} | {{itm.nombre_item}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <input type="text" class="d-none" name="action" id="action" value="crear" />
+                        <input type="text" class="d-none" id="id_asignacion" value="0" />
+                        <!-- sep -->
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text">Usuario:</label>
+                                <select name="usuario" id="usuario" class="form-control form-select form-select-sm">
+                                    <option selected value="0">--Seleccione--</option>
+                                    {% for usr in usuarios %}
+                                        <option value="{{usr.pk}}"> 
+                                            {{usr.username}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Nota</span>
+                                <textarea maxlength="500" type="text" class="form-control" id="nota" name="nota" class="form-control"
+                                required aria-label="Notas en la Asignacion"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <!-- agregar validacion de estado, si ya esta asignado no debe asignarse de nuevo -->
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" id="btn">Guardar</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- Fin Agregar -->
 
 
+<!-- Inicio ver asignacion-->
 
+<div class="modal fade" id="modalVerAsignacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">
+                    <i class="bi bi-eye"></i> <span>Asignacion</span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Equipo:</span>
+                            <input type="text" class="form-control" id="equipo_ver" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Asignado a:</span>
+                            <input type="text" class="form-control" id="usuario_ver" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                            <div class="input-group mb-3">  
+                                <span class="input-group-text">Nota:</span>
+                                <textarea id="nota_ver" name="nota_ver" maxlength="500" type="text" class="form-control" style="resize: none" readonly>
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnDescargo">Descargo</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin ver asignaacion-->
+
+<script>
+    var modalTitulo = $('.modal-title');
+    var tablaAsignacion;
+
+    window.onload = function () {
+
+        //alert("Pagina cargada");
+        $("#btnAdd").on("click", function () {
+            modalTitulo.find('span').html('Asignar Equipo');
+            modalTitulo.find('i').removeClass().addClass('fa fa-plus');
+            $('#action').val("crear");
+            $('#form_asignar')[0].reset();
+            $('#nota').val("");
+            $('#usuario').val("")
+            $('#equipo').val("");
+
+            $('#Equipo').focus();
+
+            $('#modalAsignacion').modal('show');
+        });
+        $('#datatable').DataTable();
+        obtenerDatos();
+
+    }
+
+    //=================================================Ver y descargar=============================================================
+
+    $('#datatable tbody').on('click', 'button[rel="verAsignacion"]', function () {
+            var tr = tablaAsignacion.cell($(this).closest('td, li')).index();
+            var data = tablaAsignacion.row(tr.row).data();
+            
+            $("#equipo_ver").attr("src", data.inventario_item_id);
+            $("#usuario_ver").val(data.usuario.username);
+            $("#nota_ver").val(data.observaciones);
+            $("#assigned_ver").val(data.assignee_id.usuario);
+
+            $("#modalVerAsignacion").modal("show");
+        }
+    );
+
+    //================================================== Obtener Datos===========================================================
+    function obtenerDatos() {
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaTicket = $('#datatable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            language: { "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"},
+            ajax: {
+                url: window.location.pathname, //Obtenemos la url obsoluta
+                type: 'POST',
+                data: {
+                    'action': 'buscardatos', //Mandamos la accion para que django sepa que tiene que buscar
+                    'csrfmiddlewaretoken': token
+                }, // parametros
+                dataSrc: ""
+            },
+            columns: [ //Columnas de nuestro modelo/Tabla aqui retorna o pinta los valores en la datables
+                {
+                    "data": "id"
+                },
+                {
+                    "data": "usuario.username"
+                },
+                {
+                    "data": "inventario_item.correlativo"
+                },
+                {
+                    "data": "status"
+                },
+                {
+                    "data": "assigned_date"
+                },
+                {
+                    "data": "observaciones"
+                },
+                {
+                    "data": "action"
+                }
+            ], 
+            columnDefs: [ //Personalizar una columna
+                {
+                    targets: [3],
+                    render: function (data, type, row) {
+                        return data.substr(0, 25) + "...";
+                    }
+                },
+                {
+                    targets: [4], //Personalizar la colummna numero 5
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                            if (data == 'ASIGNADO')
+                                return '<span class="badge rounded-pill bg-primary fs-6">Asignacion</span>';
+                            else if (data == 'DESCARGO')
+                                return '<span class="badge rounded-pill bg-warning text-dark fs-6">Descargo</span>';
+                    }
+                },
+                {
+                    targets: [6], //Personalizar la colummna numero 6
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        var buttons = `<button rel="verAsignacion" type="button" class='btn btn-secondary btn-sm btn-flat'>
+                                        <i class="fa fa-eye fs-6" aria-hidden="true"></i></button>`;
+                            return buttons;
+                    }
+                },
+            ],
+        });
+    }
+
+    //==================================================validar formularios=======================================================
+    $("#btn").on("click", function () {
+
+        if ($("#usuario").val() == "") {
+            alert("Falta el usuario al que se le asignara el equipo");
+
+        } else if ($("#equipo").val() == "") {
+            alert("Falta el equipo a asignar");
+
+        } else if ($("#nota").val() == "") {
+            alert("Faltan las observaciones del equipo a asignar");
+
+        } else {
+            submit_with_ajax("", "");
+        }
+        return false;
+    });
+
+    //================================================Función AJAX======================================================
+
+    function submit_with_ajax(url, parametros) {
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', $('#action').val());
+
+        parametros.append('usuario', $("#usuario").val());
+        parametros.append('description', $("#nota").val());
+        parametros.append('inventario_item', $("#equipo"));
+
+        parametros.append('csrfmiddlewaretoken', token);
+
+        $.ajax({
+            url: window.location.pathname, //window.location.pathname
+            type: 'POST',
+            data: parametros, // parametros,
+
+            dataType: 'json',
+            contentType: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                //alert("Correcto");
+                if (result.correcto) {
+                    $('#form_asignar')[0].reset();
+                    $("#modalAsignacion").modal("hide");
+                    tablaTicket.ajax.reload(null, false);
+
+                    switch (result.tipo_accion) {
+                        case "crear":
+                            texto = "Datos guardado con éxito";
+                            break;
+                        case "editar":
+                            texto = "Datos editados con éxito";
+                            break;
+                        case "eliminar":
+                            texto = "Registro eliminado con éxito";
+                            break;
+                        default:
+                            texto = "";
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Correcto',
+                        text: texto
+                    });
+
+                } else {
+                    tablaTicket.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al realizar la acción'
+                    });
+                }
+
+            },
+            error: function (error) {
+                //alert(error.responseJSON.Message);
+
+            },
+            failure: function () {
+                //alert('Failure');
+            }
+        });
+    }
+
+</script>
 {% endblock content %}
