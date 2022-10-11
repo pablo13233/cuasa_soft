@@ -303,7 +303,6 @@ def estadosViews(request):
             elif action == 'editar':
                 prov = Estado.objects.get(pk=request.POST['id'])
                 prov.nombre_estado = request.POST['nombre_estado']
-                prov.created_by = User.objects.get(pk=id_user)
                 prov.save()
 
                 data = {'tipo_accion': 'editar', 'correcto': True}

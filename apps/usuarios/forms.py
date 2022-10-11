@@ -1,4 +1,4 @@
-from .models import User
+from .models import User, Depto_User, Departamentos
 from django import forms
 from django.contrib.auth.password_validation import validate_password
 
@@ -48,6 +48,21 @@ class RegistroForm(forms.ModelForm):
             attrs={'placeholder': 'Apellidos', 'class': 'form-control rounded', 'type':'text', 'id': 'apellidos'}
         ),
     )
+    dni = forms.CharField(
+        label='Dni',
+        required=True,
+        widget=forms.TextInput(
+            attrs={'placeholder': 'Dni', 'class': 'form-control rounded', 'type':'text', 'id': 'dni', 'maxlength': '13','minlength': '13'}
+        ),
+    )
+    depto = forms.MultipleChoiceField(
+        label='Departamento',
+        required=True,
+        choices=[(t,t) for t in Departamentos.objects.all()],
+        widget=forms.SelectMultiple(
+            attrs={'class': 'form-control form-select form-select-sm', 'name': 'depto','id': 'depto'}
+        )
+    )
     class Meta:
         model = User
         fields = (
@@ -55,6 +70,11 @@ class RegistroForm(forms.ModelForm):
             'first_name',
             'last_name',
             'email',
+            'dni',
+        ),
+        model = Depto_User
+        fields = (
+            'depto',
         )
 
 class UpdateUserForm(forms.ModelForm):

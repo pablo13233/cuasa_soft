@@ -36,8 +36,8 @@ class historial_asignaciones(models.Model):
         item = model_to_dict(self)
         item['inventario_item']= {'id': self.inventario_item.id, 'correlativo': self.inventario_item.correlativo}
         item['usuario'] = {'id': self.usuario.id,'username': self.usuario.username}
-        item['assigned_date'] = self.assigned_at.strftime("%Y-%m-%d")
+        item['assigned_date'] = self.assigned_date.strftime("%Y-%m-%d")
         item['assigned_by'] = {'id': self.assigned_by.id, 'username': self.assigned_by.username}
-        item['updated_date'] = self.updated_at.strftime("%Y-%m-%d")
+        item['updated_date'] = self.updated_date.strftime("%Y-%m-%d")
         item['update_by'] = {'id': self.update_by.id, 'username': self.update_by.username}
         return item

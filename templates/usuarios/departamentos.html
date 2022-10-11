@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Marcas
+Estados
 {% endblock title %}
 
 {% block content %}
@@ -15,7 +15,7 @@ Marcas
                 <div class="card-header pb-0">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h3><i class="fa-solid fa-bookmark opacity-10 fs-1"></i> Marcas</h3>
+                            <h3><i class="fa-solid fa-sitemap opacity-10 fs-1"></i> Departamentos</h3>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
                             <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
@@ -30,11 +30,11 @@ Marcas
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        # Marca
+                                        # Depto
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Nombre Marca
+                                        Nombre Depto
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -57,37 +57,29 @@ Marcas
     </div>
 </div>
 
-<!-- Modal Agregar Marcas-->
-<div class="modal fade" id="modalMarca" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+<!-- Modal Agregar Estados-->
+<div class="modal fade" id="modalDepto" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="">
-                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Marca</span>
+                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Departamento</span>
                 </h5>
-                <button type="button" class="btn btn-light btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="." id="formMarca" enctype="multipart/form-data">
+                <form method="post" action="." id="formDepto" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group row">
                         <input type="text" class="d-none" name="action" id="action" value="crear" />
-                        <input type="text" class="d-none" name="action" id="id_marca" value="0" />
+                        <input type="text" class="d-none" name="action" id="id_depto" value="0" />
 
                         <div class="col-md-12">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="">Nombre:</label>
                                 <input type="text" class="form-control" name="nombre" id="nombre" required />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <div class="input-group mb-3">
-                                <label class="input-group-text" for="">Imagen</label>
-                                <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
                             </div>
                         </div>
                     </div>
@@ -100,41 +92,22 @@ Marcas
         </div>
     </div>
 </div>
-<!-- Modal Agregar Marcas-->
+<!-- Modal Agregar -->
 
-<!-- Modal Ver Imagen-->
-<div class="modal fade" id="modalImagen">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-img-title" id="">
-                    <span> Marca</span>
-                </h5>
-                <button type="button" class="btn btn-light btn-close" data-bs-dismiss="modal" aria-label="Close">
-                </button>
-            </div>
-            <div class="modal-body">
-                <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="verImagen">
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal Ver Imagen-->
 
 <script>
-    var tablaMarca;
+    var tablaDepto;
     var modalTitulo = $('.modal-title');
-    var imgTitulo = $('.modal-img-title');
 
     window.onload = function() {
         $("#btnAdd").on("click", function(){
-            modalTitulo.find('span').html('Crear Marca');
+            modalTitulo.find('span').html('Crear Estado');
             modalTitulo.find('i').removeClass().addClass('fas fa-plus fs-3');
             $('#action').val('crear');
-            $('#formMarca')[0].reset();
+            $('#formDepto')[0].reset();
             $('#nombre').focus();
 
-            $('#modalMarca').modal('show');
+            $('#modalDepto').modal('show');
         });
         $('#datatable').DataTable();
         obtenerDatos();
@@ -151,33 +124,24 @@ Marcas
 // -------------------------------- ver imagenes -------------------------------------------------
 
     $('#datatable tbody').on('click', 'a[rel="editar"]', function(){
-        var tr = tablaMarca.cell($(this).closest('td,li')).index();
-        var data = tablaMarca.row(tr.row).data();
+        var tr = tablaDepto.cell($(this).closest('td,li')).index();
+        var data = tablaDepto.row(tr.row).data();
 
-        modalTitulo.find('span').html(' Editar Marca');
+        modalTitulo.find('span').html(' Editar Modelo');
         modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
 
         $('#action').val("editar");
-        $('#id_marca').val(data.id);
-        $('#nombre').val(data.nombre_marca);
-        $('#modalMarca').modal('show');
-    }).on('click', 'a[rel="verImagen"]', function(){
-        var tr = tablaMarca.cell($(this).closest('td, li')).index();
-        var data = tablaMarca.row(tr.row).data();
-        
-        imgTitulo.find('span').html(data.nombre_marca)
-        console.log(data.image);
-        $("#verImagen").attr("src", data.image);
-        $("#modalImagen").modal("show");
+        $('#id_depto').val(data.id);
+        $('#nombre').val(data.nombre_depto);
+        $('#modalDepto').modal('show');
     });
 
     function submit_with_ajax(url, parametros){
         var parametros = new FormData();
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
-        parametros.append('nombre_marca', $('#nombre').val());
-        parametros.append('id', parseInt($('#id_marca').val()));
-        parametros.append('image', $("#imagen")[0].files[0]);
+        parametros.append('nombre_depto', $('#nombre').val());
+        parametros.append('id', parseInt($('#id_depto').val()));
         parametros.append('csrfmiddlewaretoken', token);
 
         $.ajax({
@@ -191,10 +155,10 @@ Marcas
             contentType: false, 
             success:function(result){
                 if(result.correcto){
-                    $('#formMarca')[0].reset();
-                    $('#modalMarca').modal('hide');
+                    $('#formDepto')[0].reset();
+                    $('#modalDepto').modal('hide');
 
-                    tablaMarca.ajax.reload(null, false);
+                    tablaDepto.ajax.reload(null, false);
 
                     switch(result.tipo_accion){
                         case "crear":
@@ -214,7 +178,7 @@ Marcas
                     });
 
                 }else{
-                    tablaMarca.ajax.reload(null, false);
+                    tablaDepto.ajax.reload(null, false);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -228,7 +192,7 @@ Marcas
 
     function obtenerDatos(){
         token = $('input[name="csrfmiddlewaretoken"]').val();
-        tablaMarca = $('#datatable').DataTable({
+        tablaDepto = $('#datatable').DataTable({
             responsive: true,
             autoWidth: false,
             destroy: true,
@@ -246,7 +210,7 @@ Marcas
             },
             columns: [
                 {"data":"id"},
-                {"data":"nombre_marca"},
+                {"data":"nombre_depto"},
                 {"data":"created_by.username"},
                 {"data":"id"}
             ],
@@ -258,9 +222,6 @@ Marcas
                     render: function(data, type, row){
                         var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
                                     <i class="fas fa-edit"></i></a> `;
-
-                        buttons += `<a  rel="verImagen" class='btn btn-secondary btn-sm btn-flat'>
-                                    <i class="fa-solid fa-eye"></i></a>`;
                         return buttons;
                     }
                 },

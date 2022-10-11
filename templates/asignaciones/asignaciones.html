@@ -42,11 +42,11 @@ Asignaciones
                                 </th>
                                 <th
                                     class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                    Fecha
+                                    Tipo
                                 </th>
                                 <th
                                     class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                    Tipo
+                                    Fecha
                                 </th>
                                 <th
                                     class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -283,13 +283,13 @@ Asignaciones
             ], 
             columnDefs: [ //Personalizar una columna
                 {
-                    targets: [3],
+                    targets: [5],
                     render: function (data, type, row) {
                         return data.substr(0, 25) + "...";
                     }
                 },
                 {
-                    targets: [4], //Personalizar la colummna numero 5
+                    targets: [3], //Personalizar la colummna numero 5
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
@@ -338,9 +338,9 @@ Asignaciones
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
 
-        parametros.append('usuario', $("#usuario").val());
-        parametros.append('description', $("#nota").val());
-        parametros.append('inventario_item', $("#equipo"));
+        parametros.append('usuario_asignar', $("#usuario").val());
+        parametros.append('observaciones', $("#nota").val());
+        parametros.append('item_id', $("#equipo").val());
 
         parametros.append('csrfmiddlewaretoken', token);
 
@@ -391,11 +391,11 @@ Asignaciones
 
             },
             error: function (error) {
-                //alert(error.responseJSON.Message);
+                alert(error.responseJSON.Message);
 
             },
             failure: function () {
-                //alert('Failure');
+                alert('Failure');
             }
         });
     }

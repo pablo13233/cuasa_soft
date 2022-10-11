@@ -51,11 +51,11 @@ def asignacionViews(request):
                 equipo = request.POST['item_id']
                 inv = Inventario_Item.objects.get(pk=equipo)
                 #-------------------------------------
-                if inv.status == 2:
+                if inv.estado.id == 2:
                     asg = historial_asignaciones()
-                    if int(request.POST['usuario_asignar']>0):
+                    if int(request.POST['usuario_asignar'])>0:
                         asg.usuario = User.objects.get(pk=request.POST['usuario_asignar'])
-                    if int(request.POST['item_id']>0):
+                    if int(equipo)>0:
                         asg.inventario_item = Inventario_Item.objects.get(pk=equipo)
                     asg.status = 'ASIGNADO'
                     asg.assigned_by = User.objects.get(pk=id_user)
@@ -63,11 +63,10 @@ def asignacionViews(request):
                     asg.observaciones = request.POST.get('observaciones')
                     asg.save()
                     #-------------------------------------
-                    inv.status = 1
+                    inv.estado = Estado.objects.get(pk=1)
                     inv.updated_at = updated_time
                     inv.save()
                     data = {'tipo_accion': 'crear', 'correcto': True}
-                
             #editar
             elif action == 'editar':
                 equipoe = request.POST['equipo_ver']
@@ -83,7 +82,7 @@ def asignacionViews(request):
                 asg.observaciones = request.POST.get('observaciones')
                 asg.save()
                 #-------------------------------------
-                inve.status = 2
+                inve.estado = 2
                 inve.updated_at = updated_time
                 inve.save()
 
