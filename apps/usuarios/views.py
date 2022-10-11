@@ -26,7 +26,7 @@ def Create_User(request):
         form = RegistroForm(request.POST)
         id_user = request.user.id
         usr_cr = User.objects.get(pk=id_user)
-        updated_time = datetime.now()
+        print("*************************** es formulario")
         if form.is_valid():
             username = form.cleaned_data['username']
             password1 = form.cleaned_data['password1']
@@ -37,6 +37,8 @@ def Create_User(request):
             dni = form.cleaned_data['dni']
             deptos = form.cleaned_data['depto']
 
+            print("***************************************************")
+            print("------------------------------------------------------ ",Departamentos.objects.get(nombre_depto=deptos))
             if password1 != password2:
                 check1 = True
                 messages.error(request, 'Las contraseñas no coinciden',
@@ -58,7 +60,7 @@ def Create_User(request):
                     username=username, password=password1, email=email, first_name=first_name, last_name=last_name, dni=dni
                 )
                 depto_user = Depto_User.objects.create(
-                    depto=Departamentos.objects.get(nombre_depto=deptos), usuario = User.objects.get(username = username), created_by = usr_cr, updated_by = usr_cr, created_date = updated_time
+                    depto=Departamentos.objects.get(nombre_depto=deptos), usuario = User.objects.get(username = username), created_by = usr_cr, updated_by = usr_cr
                 )
                 messages.success(request, f'El usuario {username} se creó correctamente',
                                  extra_tags='alert alert-success alert-dismissible fade show')

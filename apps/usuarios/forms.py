@@ -55,11 +55,11 @@ class RegistroForm(forms.ModelForm):
             attrs={'placeholder': 'Dni', 'class': 'form-control rounded', 'type':'text', 'id': 'dni', 'maxlength': '13','minlength': '13'}
         ),
     )
-    depto = forms.MultipleChoiceField(
+    depto = forms.ChoiceField(
         label='Departamento',
         required=True,
         choices=[(t,t) for t in Departamentos.objects.all()],
-        widget=forms.SelectMultiple(
+        widget=forms.Select(
             attrs={'class': 'form-control form-select form-select-sm', 'name': 'depto','id': 'depto'}
         )
     )
