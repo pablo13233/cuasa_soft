@@ -1,4 +1,4 @@
-from .models import User, Depto_User, Departamentos
+from .models import User, Departamentos
 from django import forms
 from django.contrib.auth.password_validation import validate_password
 
@@ -58,7 +58,7 @@ class RegistroForm(forms.ModelForm):
     depto = forms.ChoiceField(
         label='Departamento',
         required=True,
-        choices=[(t,t) for t in Departamentos.objects.all()],
+        choices=[(t.pk,t.nombre_depto) for t in Departamentos.objects.all()],
         widget=forms.Select(
             attrs={'class': 'form-control form-select form-select-sm', 'name': 'depto','id': 'depto'}
         )
@@ -71,9 +71,6 @@ class RegistroForm(forms.ModelForm):
             'last_name',
             'email',
             'dni',
-        ),
-        model = Depto_User
-        fields = (
             'depto',
         )
 

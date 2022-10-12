@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
 from django.contrib import messages
 from django.contrib.auth import authenticate
-from apps.usuarios.models import User,Departamentos,Depto_User
+from apps.usuarios.models import User,Departamentos
 from apps.usuarios.forms import RegistroForm, UpdateUserForm, UpdatePasswordForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import JsonResponse
@@ -25,8 +25,7 @@ def Create_User(request):
         check3 = False
         form = RegistroForm(request.POST)
         id_user = request.user.id
-        usr_cr = User.objects.get(pk=id_user)
-        print("*************************** es formulario")
+
         if form.is_valid():
             username = form.cleaned_data['username']
             password1 = form.cleaned_data['password1']
@@ -37,8 +36,7 @@ def Create_User(request):
             dni = form.cleaned_data['dni']
             deptos = form.cleaned_data['depto']
 
-            print("***************************************************")
-            print("------------------------------------------------------ ",Departamentos.objects.get(nombre_depto=deptos))
+
             if password1 != password2:
                 check1 = True
                 messages.error(request, 'Las contraseñas no coinciden',
@@ -57,10 +55,7 @@ def Create_User(request):
                 return redirect('usuarios_app:crear_usuarios')
             else:
                 user = User.objects.create_user(
-                    username=username, password=password1, email=email, first_name=first_name, last_name=last_name, dni=dni
-                )
-                depto_user = Depto_User.objects.create(
-                    depto=Departamentos.objects.get(nombre_depto=deptos), usuario = User.objects.get(username = username), created_by = usr_cr, updated_by = usr_cr
+                    username=username, password=password1, email=email, first_name=first_name, last_name=last_name, dni=dni, depto = deptos
                 )
                 messages.success(request, f'El usuario {username} se creó correctamente',
                                  extra_tags='alert alert-success alert-dismissible fade show')
@@ -112,15 +107,12 @@ def departamentosViews(request):
             elif action == 'crear':
                 dep = Departamentos()
                 dep.nombre_depto = request.POST['nombre_depto']
-                dep.created_by = usuario
-                dep.updated_by = usuario
                 dep.save()
 
                 data = {'tipo_accion': 'crear', 'correcto': True}
             elif action == 'editar':
                 dep = Departamentos.objects.get(pk=request.POST['id'])
                 dep.nombre_depto = request.POST['nombre_depto']
-                dep.updated_by = User.objects.get(pk=id_user)
                 dep.updated_date = updated_time
                 dep.save()
 
