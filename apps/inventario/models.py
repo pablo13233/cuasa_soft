@@ -98,7 +98,7 @@ class Inventario_Item(models.Model):
     serial_number = models.CharField(max_length=60, blank=False, null=False, unique=True)
     ubicacion = models.TextField(max_length=500, default="", blank=False, null=False)
     imagen_item = models.ImageField(upload_to=get_item_image_folder, default='img_defecto.jpg', null=True, blank=True, verbose_name='Image')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):

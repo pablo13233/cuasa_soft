@@ -97,7 +97,6 @@ def departamentosViews(request):
             # =====================  select ================
             action = request.POST['action']
             id_user = request.user.id
-            usuario = User.objects.get(pk=id_user)
             updated_time = datetime.now()
             if action == 'buscardatos':
                 for i in Departamentos.objects.all():

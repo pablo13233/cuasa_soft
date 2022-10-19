@@ -8,8 +8,8 @@ from django.forms import model_to_dict
 class Departamentos(models.Model):
     id = models.AutoField(primary_key=True)
     nombre_depto = models.CharField(max_length=50, unique=True, blank=False, null=False)
-    created_date = models.DateField(auto_now_add=True, blank=False, null=False)
-    updated_date = models.DateField(auto_now=True, blank=True, null=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     def __str__(self):
         return self.nombre_depto
