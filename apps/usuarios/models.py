@@ -17,8 +17,7 @@ class Departamentos(models.Model):
     def toJSON(self):
         item = model_to_dict(self)
         item['nombre_depto'] = self.nombre_depto
-        item['updated_date'] =  self.updated_date.strftime("%Y-%m-%d")
-        item['created_date'] = self.created_date.strftime("%Y-%m-%d")
+        item['created_date'] = self.created_date.strftime("%Y-%m-%d %H:%M:%S")
         return item
 class User(AbstractUser, PermissionsMixin):
     username = models.CharField(max_length=50, unique=True)

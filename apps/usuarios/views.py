@@ -34,7 +34,7 @@ def Create_User(request):
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             dni = form.cleaned_data['dni']
-            deptos = form.cleaned_data['depto']
+            deptos = int(form.cleaned_data['depto'])
 
 
             if password1 != password2:
@@ -55,7 +55,7 @@ def Create_User(request):
                 return redirect('usuarios_app:crear_usuarios')
             else:
                 user = User.objects.create_user(
-                    username=username, password=password1, email=email, first_name=first_name, last_name=last_name, dni=dni, depto = deptos
+                    username=username, password=password1, email=email, first_name=first_name, last_name=last_name, dni=dni, depto = deptos.pk
                 )
                 messages.success(request, f'El usuario {username} se creó correctamente',
                                  extra_tags='alert alert-success alert-dismissible fade show')
@@ -107,7 +107,7 @@ def departamentosViews(request):
                 dep = Departamentos()
                 dep.nombre_depto = request.POST['nombre_depto']
                 dep.save()
-
+                print('lol')
                 data = {'tipo_accion': 'crear', 'correcto': True}
             elif action == 'editar':
                 dep = Departamentos.objects.get(pk=request.POST['id'])

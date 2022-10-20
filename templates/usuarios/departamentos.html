@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Estados
+Departamentos
 {% endblock title %}
 
 {% block content %}
@@ -35,10 +35,6 @@ Estados
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Nombre Depto
-                                    </th>
-                                    <th
-                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Creado por
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -211,12 +207,11 @@ Estados
             columns: [
                 {"data":"id"},
                 {"data":"nombre_depto"},
-                {"data":"created_by.username"},
                 {"data":"id"}
             ],
             columnDefs: [
                 {
-                    targets: [3],
+                    targets: [2],
                     class: 'text-center',
                     ordenable: false,
                     render: function(data, type, row){
