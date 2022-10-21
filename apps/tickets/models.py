@@ -1,5 +1,5 @@
 from django.db import models
-from apps.usuarios.models import User
+from django.contrib.auth.models import User
 from django.forms import model_to_dict
 # Create your models here.
 
@@ -13,10 +13,10 @@ class TicketStatus(models.TextChoices):
 class categoria_ticket(models.Model):
     tittle = models.CharField(max_length=100, blank=False, null=False)
     description = models.TextField(max_length=500, default="", blank=False, null=False)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='categoria_creado_por')
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='categoria_creado_por')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='categoria_editado_por')
+    updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='categoria_editado_por')
 
     def __str__(self):
         return "{}-{}".format(self.pk, self.tittle)
@@ -34,16 +34,16 @@ def get_user_image_folder(instance, filename):
     return '{0}/{1}/{2}/{3}/{4}'.format('tickets', instance.user_id.username, instance.created_at.year, instance.created_at.month , filename)
 
 class Ticket(models.Model):
-    categoria = models.ForeignKey(categoria_ticket, on_delete=models.CASCADE, related_name='ticket_categoria_ticket')
+    categoria = models.ForeignKey(categoria_ticket, on_delete=models.PROTECT, related_name='ticket_categoria_ticket')
     title = models.CharField(max_length=100,blank=False, null=False)
-    assignee_id = models.ForeignKey(User, related_name='ticket_asignado' , null=True, blank=True, on_delete=models.CASCADE)
+    assignee_id = models.ForeignKey(User, related_name='ticket_asignado' , null=True, blank=True, on_delete=models.PROTECT)
     status = models.CharField(max_length=25, choices=TicketStatus.choices, default=TicketStatus.OPEN)
     description = models.TextField(max_length=500, default="", blank=False, null=False)
     img_ticket = models.ImageField(upload_to=get_user_image_folder, verbose_name='Image', default='img_defecto.jpg')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-    user_id = models.ForeignKey(User, related_name='ticket_creador', on_delete=models.CASCADE)
-    updated_by = models.ForeignKey(User, related_name='ticket_editado_por', on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, related_name='ticket_creador', on_delete=models.PROTECT)
+    updated_by = models.ForeignKey(User, related_name='ticket_editado_por', on_delete=models.PROTECT)
 
     def __str__(self):
         return "{}-{}".format(self.pk, self.title)

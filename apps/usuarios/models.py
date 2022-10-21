@@ -1,7 +1,6 @@
 from enum import unique
 from django.db import models
-from .managers import UserManager
-from django.contrib.auth.models import AbstractUser, PermissionsMixin
+from django.contrib.auth.models import *
 from django.forms import model_to_dict
 # Create your models here. 
 
@@ -19,34 +18,33 @@ class Departamentos(models.Model):
         item['nombre_depto'] = self.nombre_depto
         item['created_date'] = self.created_date.strftime("%Y-%m-%d %H:%M:%S")
         return item
-class User(AbstractUser, PermissionsMixin):
-    username = models.CharField(max_length=50, unique=True)
+class Empleado(models.Model):
+    dni = models.CharField(primary_key=True, max_length=13, blank=False, null=False)
     email = models.EmailField(max_length=50, unique=True)  
-    first_name = models.CharField(max_length=50, blank=True)
-    last_name = models.CharField(max_length=50, blank=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    dni = models.CharField(max_length=13, blank=False, null=False)
-    depto = models.ForeignKey(Departamentos, on_delete=models.CASCADE, null=True, blank=True, related_name="departamentos_usuarios")
-    
-    USERNAME_FIELD = 'username'
+    nombres = models.CharField(max_length=50, blank=True)
+    apellidos = models.CharField(max_length=50, blank=True)
+    depto = models.ForeignKey(Departamentos, on_delete=models.PROTECT, null=True, blank=True, related_name="departamentos_usuarios")
+    usuario = models.ForeignKey(User, on_delete=models.PROTECT, null=False, blank=False, related_name="empleado_usuario")
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT, null=False, blank=False, related_name="empleado_creado_por")
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='empleado_editado_por')
+    updated_date = models.DateTimeField(auto_now=True, null=True, blank=True)
 
-    REQUIRED_FIELDS = ['email',]
-
-    objects = UserManager()
-
-    def get_short_name(self):
-        return self.username
-    
     def get_full_name(self):
-        return self.first_name + " " + self.last_name
+        return self.nombres + " " + self.apellidos
     
     def __str__(self):
-        return self.username
+        return '{}-{}-{}'.format(self.dni, self.nombres, self.apellidos)
 
     def toJSON(self):
         item = model_to_dict(self) #convertir el objeto a un diccionario
-        item['name'] = self.get_full_name()
+        item['nombre_completo'] = self.get_full_name()
         item['dni'] = self.dni
+        item['email'] = self.email
+        item['depto'] = {'id': self.depto.id, 'nombre_depto': self.depto.nombre_depto}
+        item['usuario'] = {'id': self.usuario.pk, 'usuario': self.usuario.username}
+        item['created_by'] = {'id': self.created_by.pk, 'usuario': self.created_by.username}
+        item['updated_by'] = {'id': self.updated_by.pk, 'usuario': self.updated_by.username}
+        item['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S") #agregar la fecha de creacion
+        item['updated_at'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S") #agregar la fecha de actualizacion
         return item

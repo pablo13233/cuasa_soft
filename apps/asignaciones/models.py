@@ -1,6 +1,6 @@
 from enum import unique
 from django.db import models
-from apps.usuarios.models import User
+from django.contrib.auth.models import User
 from apps.inventario.models import Inventario_Item
 from django.forms import model_to_dict
 # Create your models here.

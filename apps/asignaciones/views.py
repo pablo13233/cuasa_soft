@@ -14,7 +14,7 @@ from django.views.generic import View
 
 from apps.asignaciones.models import *
 from apps.inventario.models import *
-from apps.usuarios.models import *
+from django.contrib.auth.models import User
 # Create your views here.
 
 # html a pdf

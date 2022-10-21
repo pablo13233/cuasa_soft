@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from datetime import datetime
 from django.utils import formats
 
-from apps.usuarios.models import User
+from django.contrib.auth.models import User
 from apps.inventario.models import *
 
 from django.http import JsonResponse
@@ -68,7 +68,7 @@ def inventarioViews(request):
                 if int(request.POST['id_proveedor']) > 0:
                     inv.proveedor = Proveedor.objects.get(pk=request.POST['id_proveedor'])
                 inv.precio = request.POST['precio']
-                inv.created_by = User.objects.get(pk=id_user)
+                inv.updated_by = User.objects.get(pk=id_user)
                 inv.fecha_compra = request.POST['fecha_compra']
                 inv.fecha_garantia = request.POST['fecha_garantia']
                 if int(request.POST['id_estado']) > 0:

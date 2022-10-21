@@ -2,7 +2,6 @@ from itertools import count
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
-from django.contrib.auth.models import User
 from apps.tickets.models import Ticket, TicketStatus
 
 from django.db.models import Count

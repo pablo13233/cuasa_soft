@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
 
-from apps.usuarios.models import User
+from django.contrib.auth.models import User
 from apps.tickets.models import *
 from django.db.models import Q
  
