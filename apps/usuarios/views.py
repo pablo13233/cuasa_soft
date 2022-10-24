@@ -111,24 +111,20 @@ def empleados_views(request):
                 emp.depto = request.POST['depto']
                 emp.created_by = User.objects.filter(pk=user_crea)
                 emp.save()
-
+                # --------------- Usuario --------------
                 n_usr = User()
                 n_usr.username = request.POST['nombre_usuario']
                 n_usr.password = request.POST['contrasena']
                 n_usr.email = request.POST['correo']
                 n_usr.first_name = request.POST['nombres']
                 n_usr.last_name = request.POST['apellidos']
-                n_usr.is_staff = False
+                n_usr.is_staff = request.POST['staff']
                 n_usr.is_superuser = False
-                n_usr.is_active = True
+                n_usr.is_active = request.POST['active']
                 n_usr.save()
 
                 data = {'tipo_accion': 'crear', 'correcto': True}
             elif action == 'editar':
-                dep = Departamentos.objects.get(pk=request.POST['id'])
-                dep.nombre_depto = request.POST['nombre_depto']
-                dep.updated_date = updated_time
-                dep.save()
 
                 depto = request.POST['depto']
                 emp = Empleado.objects.get(dni=request.POST['dni'])
@@ -151,7 +147,8 @@ def empleados_views(request):
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
     elif request.method == 'GET':
-        return render(request, 'usuarios/departamentos.html',{'titulo': 'Inicio', 'entidad':'Creacion de Departamentos'})
+        deptos = Departamentos.objects.all()
+        return render(request, 'usuarios/home_usuarios.html',{'departamentos': deptos})
 
 @login_required
 def departamentosViews(request):

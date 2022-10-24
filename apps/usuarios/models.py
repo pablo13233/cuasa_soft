@@ -29,7 +29,7 @@ class Empleado(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='empleado_editado_por')
     updated_date = models.DateTimeField(auto_now=True, null=True, blank=True)
-
+ 
     def get_full_name(self):
         return self.nombres + " " + self.apellidos
     
