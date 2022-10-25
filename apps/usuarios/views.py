@@ -89,6 +89,7 @@ from datetime import datetime
 #         form = UpdateUserForm(instance=user)
 #     return render(request, 'usuarios/edit_usuario.html', {'form': form})
 
+@login_required
 def empleados_views(request):
     if request.method == 'POST' and request.is_ajax():
         data = []
@@ -103,25 +104,48 @@ def empleados_views(request):
 
             # ======================== crear =========================
             elif action == 'crear':
+
+                # --------------- Usuario --------------
+                n_username = request.POST['nombre_usuario']
+                n_password = request.POST['contrasena']
+                n_email = request.POST['correo']
+                n_first_name = request.POST['nombres']
+                n_last_name = request.POST['apellidos']
+                if (request.POST['staff'] == 'false'):
+                    n_is_staff = False
+                elif (request.POST['staff'] == 'true'):
+                    n_is_staff = True
+                if (request.POST['active'] == 'false'):
+                    n_is_active = False
+                elif (request.POST['active'] == 'true'):
+                    n_is_active = True
+                n_is_superuser = False
+                User.objects.create_user(
+                    username = n_username,
+                    email = n_email,
+                    first_name = n_first_name,
+                    last_name = n_last_name,
+                    password = n_password,
+                    is_staff = n_is_staff,
+                    is_active = n_is_active,
+                    is_superuser = n_is_superuser,
+                )
+                
+                #---------------Empleado-----------------
                 emp = Empleado()
                 emp.nombres = request.POST['nombres']
                 emp.apellidos = request.POST['apellidos']
                 emp.email = request.POST['correo']
                 emp.dni = request.POST['dni']
-                emp.depto = request.POST['depto']
-                emp.created_by = User.objects.filter(pk=user_crea)
+                if int(request.POST['depto'])>0:
+                    emp.depto = Departamentos.objects.get(id=request.POST['depto'])
+                if int(user_crea) > 0:
+                    emp.created_by = User.objects.get(pk=user_crea)
+                if int(user_crea) > 0:
+                    emp.updated_by = User.objects.get(pk=user_crea)
+                emp.usuario = User.objects.get(username = request.POST['nombre_usuario'])
                 emp.save()
-                # --------------- Usuario --------------
-                n_usr = User()
-                n_usr.username = request.POST['nombre_usuario']
-                n_usr.password = request.POST['contrasena']
-                n_usr.email = request.POST['correo']
-                n_usr.first_name = request.POST['nombres']
-                n_usr.last_name = request.POST['apellidos']
-                n_usr.is_staff = request.POST['staff']
-                n_usr.is_superuser = False
-                n_usr.is_active = request.POST['active']
-                n_usr.save()
+                
 
                 data = {'tipo_accion': 'crear', 'correcto': True}
             elif action == 'editar':

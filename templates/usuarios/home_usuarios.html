@@ -38,26 +38,26 @@ Usuarios
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Usuario
+                                        USUARIO
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Nombre
+                                        NOMBRE
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Email
+                                        EMAIL
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Estado
+                                        ESTADO
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         DEPARTAMENTO
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Accion
+                                        ACCION
                                     </th>
                                 </tr>
                             </thead>
@@ -136,7 +136,7 @@ Usuarios
                         <div class="col-md-8">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="departamento">Departamento:</label>
-                                <select name="departamento" id="catedepartamentogoria" class="form-control form-select form-select-sm">
+                                <select name="departamento" id="departamento" class="form-control form-select form-select-sm">
                                     <option selected value="0">--Seleccione--</option>
                                     {% for dep in departamentos %}
                                         <option value="{{dep.id}}"> 
@@ -158,17 +158,17 @@ Usuarios
                     </div>
                     <div class="form-group row">
                         <div class="col-md-6">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" value="active" id="active">
-                                <label class="form-check-label">Activo</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="active" id="active">
+                                <label class="form-check-label" for="active">Activo</label>
                             </div>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-6">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" value="staff" id="staff">
-                                <label class="form-check-label">Administrador</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="staff" id="staff">
+                                <label class="form-check-label" for="staff">Administrador</label>
                             </div>
                         </div>
                     </div>
@@ -209,6 +209,8 @@ Usuarios
 <script>
     var modalTitulo = $('.modal-title');
     var tablaEmpleado;
+    var es_admin = false;
+    var esta_activo = false;
 
     window.onload = function() {
         $("#btnAdd").on("click", function() {
@@ -222,8 +224,8 @@ Usuarios
             $('#departamento').val("0");
             $('#email').val("");
             $('#username').val("");
-            $('#activo');
-            $('#staff').checked = false;
+            $('#active');
+            $('#staff');
             $('#contrasena').val("");
             $('#contrasena2').val("");
 
@@ -231,10 +233,209 @@ Usuarios
             
             $('#modalEmpleado').modal('show');
         });
-        // $('#datatable').Datatable();
-
+        $('#datatable').DataTable();
+        obtenerDatos();
     }
 
+// ==================================== Obtener 
+function obtenerDatos() {
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaEmpleado = $('#datatable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            language: { "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"},
+            ajax: {
+                url: window.location.pathname, 
+                type: 'POST',
+                data: {
+                    'action': 'buscardatos', 
+                    'csrfmiddlewaretoken': token
+                }, 
+                dataSrc: ""
+            },
+            columns: [ 
+                {
+                    "data": "dni"
+                },
+                {
+                    "data": "usuario.usuario"
+                },
+                {
+                    "data": "nombre_completo"
+                },
+                {
+                    "data": "email"
+                },
+                {
+                    "data": "estado.estado"
+                },
+                {
+                    "data": "depto.nombre_depto"
+                },
+                {
+                    "data": "action"
+                }
+            ], 
+            columnDefs: [ //Personalizar una columna
+                {
+                    targets: [2],
+                    render: function (data, type, row) {
+                        return data.substr(0, 25) + "...";
+                    }
+                },
+                {
+                    targets: [4], //Personalizar la colummna numero 5
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                            if (data == 'activo')
+                                return '<span class="badge rounded-pill bg-success fs-6">Activo</span>';
+                            else if (data == 'inactivo')
+                                return '<span class="badge rounded-pill bg-danger fs-6">Inactivo</span>';
+                    }
+                },
+                {
+                    targets: [5],
+                    render: function (data, type, row) {
+                        return data.substr(0, 25) + "...";
+                    }
+                },
+                {
+                    targets: [6], //Personalizar la colummna numero 6
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        var buttons = `<button rel="verEmpleado" type="button" class='btn btn-secondary btn-sm btn-flat'>
+                                        <i class="fa fa-eye fs-6" aria-hidden="true"></i></button>`;
+                            buttons += `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
+                                        <i class="fas fa-edit"></i></a> `;
+                            return buttons;
+                    }
+                },
+            ],
+        });
+    }
+// ==================================== validar form_empleado
+    $("#btn").on("click", function () {
+
+    if ($("#dni").val() == "") {
+        alert("Falta el numero de identidad");
+        $('#dni').focus();
+
+    } else if ($("#nombres").val() == "") {
+        alert("Falta el nombre");
+        $('#nombres').focus();
+
+    } else if ($("#apellidos").val() == "") {
+        alert("Falta el apellido");
+        $('#apellidos').focus();
+
+    } else if ($("#departamento").val() == "") {
+        alert("Seleccione un departamento");
+        $('#departamento').focus();
+
+    } else if ($("#email").val() == "") {
+        alert("agregue un correo");
+        $('#dni').focus();
+
+    } else if ($("#username").val() == "") {
+        alert("Falta un nombre de usuario");
+        $('#email').focus();
+
+    } else if ($("#contrasena2").val() != $("#contrasena").val()) {
+        alert("Las contraseñas no coinciden");
+        $('#contrasena2').focus();
+
+    }else {
+        submit_with_ajax("", "");
+    }
+    return false;
+    });
+
+//================================================ Summit AJAX
+
+function submit_with_ajax(url, parametros) {
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', $('#action').val());
+
+        parametros.append('nombres', $("#nombres").val());
+        parametros.append('apellidos', $("#apellidos").val());
+        parametros.append('dni', $("#dni").val());
+        parametros.append('correo', $('#email').val());
+        parametros.append('depto', $("#departamento").val());
+        parametros.append('nombre_usuario', $('#username').val());
+        parametros.append('contrasena', $('#contrasena').val());
+        if(document.getElementById('active').checked == true) {
+            parametros.append('active', true)
+        }else if (document.getElementById('active').checked == false) {
+            parametros.append('active', false)
+        }
+        if(document.getElementById('staff').checked == true) {
+            parametros.append('staff', true)
+        }else if (document.getElementById('staff').checked == false) {
+            parametros.append('staff', false)
+        }
+        parametros.append('csrfmiddlewaretoken', token);
+
+        $.ajax({
+            url: window.location.pathname, //window.location.pathname
+            type: 'POST',
+            data: parametros, // parametros,
+
+            dataType: 'json',
+            contentType: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                //alert("Correcto");
+                if (result.correcto) {
+                    $('#form_empleado')[0].reset();
+                    $("#modalEmpleado").modal("hide");
+                    tablaEmpleado.ajax.reload(null, false);
+
+                    switch (result.tipo_accion) {
+                        case "crear":
+                            texto = "Datos guardado con éxito";
+                            break;
+                        case "editar":
+                            texto = "Datos editados con éxito";
+                            break;
+                        case "eliminar":
+                            texto = "Registro eliminado con éxito";
+                            break;
+                        default:
+                            texto = "";
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Correcto',
+                        text: texto
+                    });
+
+                } else {
+                    tablaTicket.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al realizar la acción'
+                    });
+                }
+
+            },
+            error: function (error) {
+                //alert(error.responseJSON.Message);
+
+            },
+            failure: function () {
+                //alert('Failure');
+            }
+        });
+    }
 </script>
 
 {% endblock content %}

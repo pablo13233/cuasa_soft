@@ -43,8 +43,12 @@ class Empleado(models.Model):
         item['email'] = self.email
         item['depto'] = {'id': self.depto.id, 'nombre_depto': self.depto.nombre_depto}
         item['usuario'] = {'id': self.usuario.pk, 'usuario': self.usuario.username}
+        if self.usuario.is_active == True:
+            item['estado'] = {'estado': 'activo'}
+        else:
+            item['estado'] = {'estado': 'inactivo'}
         item['created_by'] = {'id': self.created_by.pk, 'usuario': self.created_by.username}
         item['updated_by'] = {'id': self.updated_by.pk, 'usuario': self.updated_by.username}
-        item['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S") #agregar la fecha de creacion
-        item['updated_at'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S") #agregar la fecha de actualizacion
+        item['created_date'] = self.created_date.strftime("%Y-%m-%d %H:%M:%S") #agregar la fecha de creacion
+        item['updated_date'] = self.created_date.strftime("%Y-%m-%d %H:%M:%S") #agregar la fecha de actualizacion
         return item
