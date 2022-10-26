@@ -38,7 +38,8 @@ class Empleado(models.Model):
 
     def toJSON(self):
         item = model_to_dict(self) #convertir el objeto a un diccionario
-        item['nombre_completo'] = self.get_full_name()
+        item['nombres'] = self.nombres
+        item['apellidos'] = self.apellidos
         item['dni'] = self.dni
         item['email'] = self.email
         item['depto'] = {'id': self.depto.id, 'nombre_depto': self.depto.nombre_depto}
@@ -47,6 +48,10 @@ class Empleado(models.Model):
             item['estado'] = {'estado': 'activo'}
         else:
             item['estado'] = {'estado': 'inactivo'}
+        if self.usuario.is_staff == True:
+            item['staff'] = {'staff': 'true'}
+        else:
+            item['staff'] = {'staff': 'false'}
         item['created_by'] = {'id': self.created_by.pk, 'usuario': self.created_by.username}
         item['updated_by'] = {'id': self.updated_by.pk, 'usuario': self.updated_by.username}
         item['created_date'] = self.created_date.strftime("%Y-%m-%d %H:%M:%S") #agregar la fecha de creacion

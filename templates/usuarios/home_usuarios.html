@@ -224,8 +224,8 @@ Usuarios
             $('#departamento').val("0");
             $('#email').val("");
             $('#username').val("");
-            $('#active');
-            $('#staff');
+            $('#active').attr("checked",true);
+            $('#staff').attr("checked",false);
             $('#contrasena').val("");
             $('#contrasena2').val("");
 
@@ -264,7 +264,7 @@ function obtenerDatos() {
                     "data": "usuario.usuario"
                 },
                 {
-                    "data": "nombre_completo"
+                    "data": "nombres"
                 },
                 {
                     "data": "email"
@@ -282,8 +282,8 @@ function obtenerDatos() {
             columnDefs: [ //Personalizar una columna
                 {
                     targets: [2],
-                    render: function (data, type, row) {
-                        return data.substr(0, 25) + "...";
+                    render: function (data) {
+                        return data.nombres + " " + data.apellidos
                     }
                 },
                 {
@@ -304,7 +304,7 @@ function obtenerDatos() {
                     }
                 },
                 {
-                    targets: [6], //Personalizar la colummna numero 6
+                    targets: [6], //Personalizar la colummna numero 7
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
@@ -321,38 +321,73 @@ function obtenerDatos() {
 // ==================================== validar form_empleado
     $("#btn").on("click", function () {
 
-    if ($("#dni").val() == "") {
-        alert("Falta el numero de identidad");
+        if ($("#dni").val() == "") {
+            alert("Falta el numero de identidad");
+            $('#dni').focus();
+
+        } else if ($("#nombres").val() == "") {
+            alert("Falta el nombre");
+            $('#nombres').focus();
+
+        } else if ($("#apellidos").val() == "") {
+            alert("Falta el apellido");
+            $('#apellidos').focus();
+
+        } else if ($("#departamento").val() == "") {
+            alert("Seleccione un departamento");
+            $('#departamento').focus();
+
+        } else if ($("#email").val() == "") {
+            alert("agregue un correo");
+            $('#dni').focus();
+
+        } else if ($("#username").val() == "") {
+            alert("Falta un nombre de usuario");
+            $('#email').focus();
+
+        } else if ($("#contrasena2").val() != $("#contrasena").val()) {
+            alert("Las contraseñas no coinciden");
+            $('#contrasena2').focus();
+
+        }else {
+            submit_with_ajax("", "");
+        }
+        return false;
+    });
+
+//=========================================== Editar
+$('#datatable tbody').on('click', 'a[rel="editar"]', function(){
+        var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
+        var data = tablaEmpleado.row(tr.row).data();
+
+        modalTitulo.find('span').html(' Editar Empleado');
+        modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
+
+        $('#action').val("editar");
+
+        $('#nombres').val(data.nombres);
+        $('#apellidos').val(data.apellidos);
+        $('#dni').val(data.dni);
+        $('#departamento').val(data.depto.id);
+        $('#email').val(data.email);
+        $('#username').val(data.usuario.usuario);
+        if(data.estado.estado == 'activo'){
+            $('#active').attr('checked', true);
+        }else{
+            $('#active').attr('checked', false);
+        }
+        if(data.staff.staff == 'true'){
+            $('#staff').attr('checked', true);
+        }else{
+            $('#staff').attr('checked', false);
+        }
+        $('#contrasena').val("");
+        $('#contrasena2').val("");
+        $('#username').attr('disabled',true);
+
         $('#dni').focus();
 
-    } else if ($("#nombres").val() == "") {
-        alert("Falta el nombre");
-        $('#nombres').focus();
-
-    } else if ($("#apellidos").val() == "") {
-        alert("Falta el apellido");
-        $('#apellidos').focus();
-
-    } else if ($("#departamento").val() == "") {
-        alert("Seleccione un departamento");
-        $('#departamento').focus();
-
-    } else if ($("#email").val() == "") {
-        alert("agregue un correo");
-        $('#dni').focus();
-
-    } else if ($("#username").val() == "") {
-        alert("Falta un nombre de usuario");
-        $('#email').focus();
-
-    } else if ($("#contrasena2").val() != $("#contrasena").val()) {
-        alert("Las contraseñas no coinciden");
-        $('#contrasena2').focus();
-
-    }else {
-        submit_with_ajax("", "");
-    }
-    return false;
+        $('#modalEmpleado').modal('show');
     });
 
 //================================================ Summit AJAX
