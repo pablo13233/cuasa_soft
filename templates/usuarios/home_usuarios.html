@@ -264,7 +264,7 @@ function obtenerDatos() {
                     "data": "usuario.usuario"
                 },
                 {
-                    "data": "nombres"
+                    "data": "nombre"
                 },
                 {
                     "data": "email"
@@ -282,8 +282,8 @@ function obtenerDatos() {
             columnDefs: [ //Personalizar una columna
                 {
                     targets: [2],
-                    render: function (data) {
-                        return data.nombres + " " + data.apellidos
+                    render: function (data, type, row) {
+                        return data.substr(0, 25) + "...";
                     }
                 },
                 {
@@ -451,23 +451,25 @@ function submit_with_ajax(url, parametros) {
                         title: 'Correcto',
                         text: texto
                     });
-
-                } else {
-                    tablaTicket.ajax.reload(null, false);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Ha ocurrido un error al realizar la acción'
-                    });
-                }
-
+                } 
             },
-            error: function (error) {
-                //alert(error.responseJSON.Message);
+            error: function (data) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: ('Ha ocurrido un error al realizar la acción: ',data.responseJSON.message)
+                });
 
             },
             failure: function () {
-                //alert('Failure');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ha ocurrido un error al realizar la acción'
+                });
+                $('#form_empleado')[0].reset();
+                $("#modalEmpleado").modal("hide");
+                tablaTicket.ajax.reload(null, false);
             }
         });
     }

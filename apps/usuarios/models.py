@@ -20,28 +20,24 @@ class Departamentos(models.Model):
         return item
 class Empleado(models.Model):
     dni = models.CharField(primary_key=True, max_length=13, blank=False, null=False)
-    email = models.EmailField(max_length=50, unique=True)  
-    nombres = models.CharField(max_length=50, blank=True)
-    apellidos = models.CharField(max_length=50, blank=True)
     depto = models.ForeignKey(Departamentos, on_delete=models.PROTECT, null=True, blank=True, related_name="departamentos_usuarios")
     usuario = models.ForeignKey(User, on_delete=models.PROTECT, null=False, blank=False, related_name="empleado_usuario")
     created_by = models.ForeignKey(User, on_delete=models.PROTECT, null=False, blank=False, related_name="empleado_creado_por")
     created_date = models.DateTimeField(auto_now_add=True)
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='empleado_editado_por')
     updated_date = models.DateTimeField(auto_now=True, null=True, blank=True)
- 
-    def get_full_name(self):
-        return self.nombres + " " + self.apellidos
     
+    def get_full_name(self):
+        return self.usuario.first_name + " " + self.usuario.last_name
+
     def __str__(self):
-        return '{}-{}-{}'.format(self.dni, self.nombres, self.apellidos)
+        return self.dni
 
     def toJSON(self):
         item = model_to_dict(self) #convertir el objeto a un diccionario
-        item['nombres'] = self.nombres
-        item['apellidos'] = self.apellidos
+        item['nombre'] = self.get_full_name()
         item['dni'] = self.dni
-        item['email'] = self.email
+        item['email'] = self.usuario.email
         item['depto'] = {'id': self.depto.id, 'nombre_depto': self.depto.nombre_depto}
         item['usuario'] = {'id': self.usuario.pk, 'usuario': self.usuario.username}
         if self.usuario.is_active == True:

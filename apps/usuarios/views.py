@@ -89,6 +89,9 @@ from datetime import datetime
 #         form = UpdateUserForm(instance=user)
 #     return render(request, 'usuarios/edit_usuario.html', {'form': form})
 
+
+
+
 @login_required
 def empleados_views(request):
     if request.method == 'POST' and request.is_ajax():
@@ -105,44 +108,57 @@ def empleados_views(request):
             # ======================== crear =========================
             elif action == 'crear':
 
-                # --------------- Usuario --------------
-                if (request.POST['staff'] == 'false'):
-                    n_is_staff = False
-                elif (request.POST['staff'] == 'true'):
-                    n_is_staff = True
-                if (request.POST['active'] == 'false'):
-                    n_is_active = False
-                elif (request.POST['active'] == 'true'):
-                    n_is_active = True
-                n_is_superuser = False
-                User.objects.create_user(
-                    username = request.POST['nombre_usuario'],
-                    email = request.POST['correo'],
-                    first_name = request.POST['nombres'],
-                    last_name = request.POST['apellidos'],
-                    password = request.POST['contrasena'],
-                    is_staff = n_is_staff,
-                    is_active = n_is_active,
-                    is_superuser = n_is_superuser,
-                )
-                
-                #---------------Empleado-----------------
-                emp = Empleado()
-                emp.nombres = request.POST['nombres']
-                emp.apellidos = request.POST['apellidos']
-                emp.email = request.POST['correo']
-                emp.dni = request.POST['dni']
-                if int(request.POST['depto'])>0:
-                    emp.depto = Departamentos.objects.get(id=request.POST['depto'])
-                if int(user_crea) > 0:
-                    emp.created_by = User.objects.get(pk=user_crea)
-                if int(user_crea) > 0:
-                    emp.updated_by = User.objects.get(pk=user_crea)
-                emp.usuario = User.objects.get(username = request.POST['nombre_usuario'])
-                emp.save()
-                
+                if (User.objects.filter(username = request.POST['nombre_usuario']).exists()):
+                    # nombre de usuario ya existe
+                    response = JsonResponse({"message":"El nombre de usuario ya existe"})
+                    response.status_code = 500
+                    return response
+                elif (Empleado.objects.filter(dni = request.POST['dni']).exists()):
+                    # el numero de identidad ya esta en usuario
+                    response = JsonResponse({"message":"El numero de identidad ya esta usado"})
+                    response.status_code = 500
+                    return response
+                elif (User.objects.filter(email = request.POST['correo']).exists()):
+                    # el correo ya existe
+                    response = JsonResponse({"message":"El correo ya esta en uso"})
+                    response.status_code = 500
+                    return response
+                else:
+                    # --------------- Usuario --------------
+                    if (request.POST['staff'] == 'false'):
+                        n_is_staff = False
+                    elif (request.POST['staff'] == 'true'):
+                        n_is_staff = True
+                    if (request.POST['active'] == 'false'):
+                        n_is_active = False
+                    elif (request.POST['active'] == 'true'):
+                        n_is_active = True
+                    n_is_superuser = False
+                    User.objects.create_user(
+                        username = request.POST['nombre_usuario'],
+                        email = request.POST['correo'],
+                        first_name = request.POST['nombres'],
+                        last_name = request.POST['apellidos'],
+                        password = request.POST['contrasena'],
+                        is_staff = n_is_staff,
+                        is_active = n_is_active,
+                        is_superuser = n_is_superuser,
+                    )
+                    
+                    #---------------Empleado-----------------
+                    emp = Empleado()
+                    emp.dni = request.POST['dni']
+                    if int(request.POST['depto'])>0:
+                        emp.depto = Departamentos.objects.get(id=request.POST['depto'])
+                    if int(user_crea) > 0:
+                        emp.created_by = User.objects.get(pk=user_crea)
+                    if int(user_crea) > 0:
+                        emp.updated_by = User.objects.get(pk=user_crea)
+                    emp.usuario = User.objects.get(username = request.POST['nombre_usuario'])
+                    emp.save()
 
-                data = {'tipo_accion': 'crear', 'correcto': True}
+                    data = {'tipo_accion': 'crear', 'correcto': True}
+                
             elif action == 'editar':
                 #---------------Empleado-----------------
                 depto = request.POST['depto']
@@ -151,11 +167,8 @@ def empleados_views(request):
                 
                 Empleado.objects.filter(dni=request.POST['dni']).update(
                     dni = request.POST['dni'],
-                    nombres = request.POST['nombres'],
-                    apellidos = request.POST['apellidos'],
-                    email = request.POST['correo'],
                     updated_date = updated_time,
-                    updated_by = User.objects.get(pk=user_crea),
+                    updated_by = User.objects.get(pk=user_crea), 
                     depto = u_depto
                 )
                 # --------------- Usuario --------------
@@ -167,22 +180,24 @@ def empleados_views(request):
                     u_is_active = False
                 elif (request.POST['active'] == 'true'):
                     u_is_active = True
-                User.objects.filter(username = request.POST['nombre_usuario']).update(
+                User.objects.filter(username = request.POST['nombre_usuario']).update_user(
                     email = request.POST['correo'],
                     first_name = request.POST['nombres'],
                     last_name = request.POST['apellidos'],
-                    password = request.POST['contrasena'],
                     is_staff = u_is_staff,
                     is_active = u_is_active,
                 )
 
                 #agregar upcion de solo activar y cambiar password
                 data = {'tipo_accion': 'editar', 'correcto': True}
+            elif action == 'cambiar_pass':
+                
+                data = {'tipo_accion': 'cambiar_pass', 'correcto': True}
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print(str(e))
-            print(action)
+            print("==================== ",str(e))
+            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
