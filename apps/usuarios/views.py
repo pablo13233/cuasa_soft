@@ -106,11 +106,6 @@ def empleados_views(request):
             elif action == 'crear':
 
                 # --------------- Usuario --------------
-                n_username = request.POST['nombre_usuario']
-                n_password = request.POST['contrasena']
-                n_email = request.POST['correo']
-                n_first_name = request.POST['nombres']
-                n_last_name = request.POST['apellidos']
                 if (request.POST['staff'] == 'false'):
                     n_is_staff = False
                 elif (request.POST['staff'] == 'true'):
@@ -121,11 +116,11 @@ def empleados_views(request):
                     n_is_active = True
                 n_is_superuser = False
                 User.objects.create_user(
-                    username = n_username,
-                    email = n_email,
-                    first_name = n_first_name,
-                    last_name = n_last_name,
-                    password = n_password,
+                    username = request.POST['nombre_usuario'],
+                    email = request.POST['correo'],
+                    first_name = request.POST['nombres'],
+                    last_name = request.POST['apellidos'],
+                    password = request.POST['contrasena'],
                     is_staff = n_is_staff,
                     is_active = n_is_active,
                     is_superuser = n_is_superuser,
@@ -149,18 +144,39 @@ def empleados_views(request):
 
                 data = {'tipo_accion': 'crear', 'correcto': True}
             elif action == 'editar':
-
+                #---------------Empleado-----------------
                 depto = request.POST['depto']
-                emp = Empleado.objects.get(dni=request.POST['dni'])
                 if int(depto) > 0:
-                    emp.depto = Departamentos.objects.filter(id=depto)
-                emp.nombres = request.POST['nombres']
-                emp.apellidos = request.POST['apellidos']
-                emp.email = request.POST['correo']
-                emp.updated_date = updated_time
-                emp.updated_by = User.objects.filter(pk=user_crea)
-                emp.save()
+                    u_depto = Departamentos.objects.get(id=depto)
+                
+                Empleado.objects.filter(dni=request.POST['dni']).update(
+                    dni = request.POST['dni'],
+                    nombres = request.POST['nombres'],
+                    apellidos = request.POST['apellidos'],
+                    email = request.POST['correo'],
+                    updated_date = updated_time,
+                    updated_by = User.objects.get(pk=user_crea),
+                    depto = u_depto
+                )
+                # --------------- Usuario --------------
+                if (request.POST['staff'] == 'false'):
+                    u_is_staff = False
+                elif (request.POST['staff'] == 'true'):
+                    u_is_staff = True
+                if (request.POST['active'] == 'false'):
+                    u_is_active = False
+                elif (request.POST['active'] == 'true'):
+                    u_is_active = True
+                User.objects.filter(username = request.POST['nombre_usuario']).update(
+                    email = request.POST['correo'],
+                    first_name = request.POST['nombres'],
+                    last_name = request.POST['apellidos'],
+                    password = request.POST['contrasena'],
+                    is_staff = u_is_staff,
+                    is_active = u_is_active,
+                )
 
+                #agregar upcion de solo activar y cambiar password
                 data = {'tipo_accion': 'editar', 'correcto': True}
             else:
                 data['error'] = 'Ha ocurrido un error.'
@@ -195,10 +211,10 @@ def departamentosViews(request):
                 print('lol')
                 data = {'tipo_accion': 'crear', 'correcto': True}
             elif action == 'editar':
-                dep = Departamentos.objects.get(pk=request.POST['id'])
-                dep.nombre_depto = request.POST['nombre_depto']
-                dep.updated_date = updated_time
-                dep.save()
+                Departamentos.objects.filter(pk=request.POST['id']).update(
+                    nombre_depto = request.POST['nombre_depto'],
+                    updated_date = updated_time
+                )
 
                 data = {'tipo_accion': 'editar', 'correcto': True}
             else:
