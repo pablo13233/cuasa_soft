@@ -180,19 +180,25 @@ def empleados_views(request):
                     u_is_active = False
                 elif (request.POST['active'] == 'true'):
                     u_is_active = True
-                User.objects.filter(username = request.POST['nombre_usuario']).update_user(
+                User.objects.filter(username = request.POST['nombre_usuario']).update(
                     email = request.POST['correo'],
                     first_name = request.POST['nombres'],
                     last_name = request.POST['apellidos'],
                     is_staff = u_is_staff,
-                    is_active = u_is_active,
                 )
 
                 #agregar upcion de solo activar y cambiar password
                 data = {'tipo_accion': 'editar', 'correcto': True}
-            elif action == 'cambiar_pass':
-                
-                data = {'tipo_accion': 'cambiar_pass', 'correcto': True}
+            elif action == 'desactivar_user':
+                 
+                User.objects.filter(username = request.POST['nombre_usuario']).update(is_active=False)
+
+                data = {'tipo_accion': 'desactivar_user', 'correcto': True}
+            elif action == 'activar_user':
+                 
+                User.objects.filter(username = request.POST['nombre_usuario']).update(is_active=True)
+
+                data = {'tipo_accion': 'activar_user', 'correcto': True}
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
