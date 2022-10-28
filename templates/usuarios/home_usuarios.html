@@ -206,6 +206,55 @@ Usuarios
 
 <!-- Fin agregar empleado -->
 
+<!-- Modal agregar -->
+
+<div class="modal fade" id="modalDesactivar" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="">
+                    <i class="fa-solid fa-user-lock"></i> <span>Desactivar Usuario</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <form method="post" action="." id="form_desactivar" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <input type="text" class="d-none" name="d_action" id="d_action" value="crear" />
+                        <!-- sep -->
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">El usuario a desactivar es: </span>
+                                    <input type="text" class="form-control" name="d_username" id="d_username" required disabled/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btn_d">Desactivar</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 <script>
     var modalTitulo = $('.modal-title');
     var tablaEmpleado;
@@ -292,9 +341,9 @@ function obtenerDatos() {
                     orderable: false,
                     render: function (data, type, row) {
                             if (data == 'activo')
-                                return '<span class="badge rounded-pill bg-success fs-6">Activo</span>';
+                                return '<button rel="desactivar" type="buton" class="btn badge rounded-pill bg-success fs-6 btn-sm btn-flat">Activo</button>';
                             else if (data == 'inactivo')
-                                return '<span class="badge rounded-pill bg-danger fs-6">Inactivo</span>';
+                                return '<button rel="activar" type="buton" class="btn badge rounded-pill bg-danger fs-6 btn-sm btn-flat">Inactivo</button>';
                     }
                 },
                 {
@@ -308,10 +357,10 @@ function obtenerDatos() {
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var buttons = `<button rel="verEmpleado" type="button" class='btn btn-secondary btn-sm btn-flat'>
-                                        <i class="fa fa-eye fs-6" aria-hidden="true"></i></button>`;
-                            buttons += `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
-                                        <i class="fas fa-edit"></i></a> `;
+                        var buttons = `<button rel="cambiar_pass" type="button" class='btn btn-secondary btn-sm btn-flat m-1'>
+                                        <i class="fa-solid fa-key"></i></button>`;
+                            buttons += `<button rel="editar" class="btn btn-warning btn-sm btn-flat">
+                                        <i class="fas fa-edit"></i></button> `;         
                             return buttons;
                     }
                 },
@@ -356,7 +405,7 @@ function obtenerDatos() {
     });
 
 //=========================================== Editar
-$('#datatable tbody').on('click', 'a[rel="editar"]', function(){
+$('#datatable tbody').on('click', 'button[rel="editar"]', function(){
         var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
         var data = tablaEmpleado.row(tr.row).data();
 
@@ -390,6 +439,76 @@ $('#datatable tbody').on('click', 'a[rel="editar"]', function(){
         $('#modalEmpleado').modal('show');
     });
 
+//================================================ desactivar usuarios
+
+$('#datatable tbody').on('click', 'button[rel="desactivar"]', function(){
+    var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
+    var data = tablaEmpleado.row(tr.row).data();
+    $('#action').val("desactivar");
+    $('#d_username').val(data.usuario.usuario);
+
+    $('#modalDesactivar').modal('show');  
+});
+
+$("#btn_d").on("click", function () {
+    d_users_ajax("", "");
+});
+
+function d_users_ajax(url, parametros){
+    var parametros = new FormData();
+    token = $('input[name="csrfmiddlewaretoken"]').val();
+    parametros.append('action', $('#d_action').val());
+    parametros.append('nombre_usuario', $('#d_username').val());
+    parametros.append('csrfmiddlewaretoken', token);
+    $.ajax({
+        url: window.location.pathname, //window.location.pathname
+        type: 'POST',
+        data: parametros, // parametros,
+
+        dataType: 'json',
+        contentType: 'multipart/form-data',
+        processData: false,
+        contentType: false,
+        success: function (result) {
+            //alert("Correcto");
+            if (result.correcto) {
+                tablaEmpleado.ajax.reload(null, false);
+
+                switch (result.tipo_accion) {
+                    case "desactivar":
+                        texto = "Usuario desactivado con éxito";
+                        break;
+                    default:
+                        texto = "";
+                }
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Correcto',
+                    text: texto
+                });
+            } 
+        },
+        error: function (data) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: ('Ha ocurrido un error al realizar la acción: ',data.responseJSON.message)
+            });
+
+        },
+        failure: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ha ocurrido un error al realizar la acción'
+            });
+            $('#form_empleado')[0].reset();
+            $("#modalEmpleado").modal("hide");
+            tablaTicket.ajax.reload(null, false);
+        }
+    }); 
+}
 //================================================ Summit AJAX
 
 function submit_with_ajax(url, parametros) {
