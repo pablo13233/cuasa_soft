@@ -326,7 +326,7 @@ Usuarios
 
 <script>
     var modalTitulo = $('.modal-title');
-    var botonFooter = $('.modal-footer');
+    var butonFooter = $('.modal-footer');
     var tablaEmpleado;
     var es_admin = false;
     var esta_activo = false;
@@ -514,7 +514,7 @@ Usuarios
 
     $('#datatable tbody').on('click', 'button[rel="activar"]', function () {
         modalTitulo.find('span').html('Activar Empleado');
-        botonFooter.find('span').html('Activar');
+        butonFooter.find('span').html('Activar');
         var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
         var data = tablaEmpleado.row(tr.row).data();
         $('#d_action').val("activar_user");
@@ -525,7 +525,7 @@ Usuarios
     //--------------------------
     $('#datatable tbody').on('click', 'button[rel="desactivar"]', function () {
         modalTitulo.find('span').html('Desactivar Empleado');
-        botonFooter.find('span').html('Desactivar');
+        butonFooter.find('span').html('Desactivar');
         var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
         var data = tablaEmpleado.row(tr.row).data();
         $('#d_action').val("desactivar_user");
