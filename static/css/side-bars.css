@@ -344,11 +344,9 @@ body.dark .switch::before{
 
 nav.close ~ .horizontal_content{
     left: 87px;
-    width: calc(100%);
-    margin-right: 10px;
-     display: block;
-  justify-content: center;
-  align-items: center;
+    width: calc(100% - 87px);
+    /*-width: calc(100%);
+    margin-right: 10px;-*/
 }
 
 .horizontal_content .nav_vertcal{
