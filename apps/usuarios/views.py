@@ -184,4 +184,7 @@ def departamentosViews(request):
     elif request.method == 'GET':
         return render(request, 'usuarios/departamentos.html',{'titulo': 'Inicio', 'entidad':'Creacion de Departamentos'})
 
-
+@login_required
+@permission_required()
+def permisos_view():
+    return
