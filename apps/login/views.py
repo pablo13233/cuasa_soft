@@ -20,13 +20,9 @@ def login(request):
                 return redirect('home_app:home')
             else:
                 mensaje = 'USUARIO INACTIVO'
-                ctx = {'mensaje':mensaje}
-                return render(request, 'login/login.html', ctx)
         else:
             mensaje = 'USUARIO O CONTRASEÑA INCORRECTOS'
-            ctx = {'mensaje':mensaje, 'username':username}
-            return render(request, 'login/login.html', ctx)
-    return render(request, 'login/login.html')
+    return render(request, 'login/login.html', {'mensaje': mensaje})
 
 #view cierre sesion
 def logout_view(request):

@@ -52,7 +52,8 @@ Usuarios
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         ESTADO
                                     </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         DEPARTAMENTO
                                     </th>
                                     <th
@@ -62,7 +63,7 @@ Usuarios
                                 </tr>
                             </thead>
                             <tbody class="text-center">
- 
+
                             </tbody>
                         </table>
                     </div>
@@ -136,12 +137,13 @@ Usuarios
                         <div class="col-md-8">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="departamento">Departamento:</label>
-                                <select name="departamento" id="departamento" class="form-control form-select form-select-sm">
+                                <select name="departamento" id="departamento"
+                                    class="form-control form-select form-select-sm">
                                     <option selected value="0">--Seleccione--</option>
                                     {% for dep in departamentos %}
-                                        <option value="{{dep.id}}"> 
-                                            {{dep.nombre_depto}}
-                                        </option>
+                                    <option value="{{dep.id}}">
+                                        {{dep.nombre_depto}}
+                                    </option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -206,7 +208,7 @@ Usuarios
 
 <!-- Fin agregar empleado -->
 
-<!-- Modal agregar -->
+<!-- Modal Desactivar / actviar -->
 
 <div class="modal fade" id="modalDesactivar" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
@@ -234,19 +236,20 @@ Usuarios
                             <div class="col-md-12">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">El usuario a desactivar es: </span>
-                                    <input type="text" class="form-control" name="d_username" id="d_username" required disabled/>
+                                    <input type="text" class="form-control" name="d_username" id="d_username" required
+                                        disabled />
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    
+
+
                 </form>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary" id="btn_d">Desactivar</button>
+                <a type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</a>
+                <button type="submit" class="btn btn-primary" id="btn_d"><span>Desactivar</span></button>
             </div>
 
         </div>
@@ -254,15 +257,82 @@ Usuarios
     </div>
 
 </div>
+<!-- Fin Modal cambiar contraseñas -->
+
+<!-- Modal cambiar contraseñas -->
+<div class="modal fade" id="modalPassword" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="">
+                    <i class="fa-solid fa-user-lock"></i> <span>cambiar Contraseña</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <form method="post" action="." id="form_password" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <input type="text" class="d-none" name="p_action" id="p_action" value="crear" />
+                        <!-- sep -->
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">Cambiar contraseña para el usuario: </span>
+                                    <input type="text" class="form-control" name="p_username" id="p_username" required
+                                        disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Contraseña</span>
+                                <input type="password" class="form-control" name="p_contrasena" id="p_contrasena"
+                                    required area-label="************" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Confirmar Contraseña</span>
+                                <input type="password" class="form-control" name="p_contrasena2" id="p_contrasena2"
+                                    required area-label="************" />
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <a type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</a>
+                <button type="submit" class="btn btn-primary" id="btn_p"><span>Cambiar</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin Modal cambiar contraseñas -->
 
 <script>
     var modalTitulo = $('.modal-title');
+    var botonFooter = $('.modal-footer');
     var tablaEmpleado;
     var es_admin = false;
     var esta_activo = false;
 
-    window.onload = function() {
-        $("#btnAdd").on("click", function() {
+    window.onload = function () {
+        $("#btnAdd").on("click", function () {
             modalTitulo.find('span').html('Agregar Empleado');
             modalTitulo.find('i').removeClass().addClass('fa-solid fa-plus');
             $('#action').val("Crear");
@@ -273,21 +343,21 @@ Usuarios
             $('#departamento').val("0");
             $('#email').val("");
             $('#username').val("");
-            $('#active').attr("checked",true);
-            $('#staff').attr("checked",false);
+            $('#active').attr("checked", true);
+            $('#staff').attr("checked", false);
             $('#contrasena').val("");
             $('#contrasena2').val("");
 
             $('#dni').focus();
-            
+
             $('#modalEmpleado').modal('show');
         });
         $('#datatable').DataTable();
         obtenerDatos();
     }
 
-// ==================================== Obtener 
-function obtenerDatos() {
+    // ==================================== Obtener 
+    function obtenerDatos() {
         token = $('input[name="csrfmiddlewaretoken"]').val();
         tablaEmpleado = $('#datatable').DataTable({
             responsive: true,
@@ -295,18 +365,19 @@ function obtenerDatos() {
             destroy: true,
             bSortable: true,
             deferRender: true,
-            language: { "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"},
+            language: {
+                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+            },
             ajax: {
-                url: window.location.pathname, 
+                url: window.location.pathname,
                 type: 'POST',
                 data: {
-                    'action': 'buscardatos', 
+                    'action': 'buscardatos',
                     'csrfmiddlewaretoken': token
-                }, 
+                },
                 dataSrc: ""
             },
-            columns: [ 
-                {
+            columns: [{
                     "data": "dni"
                 },
                 {
@@ -327,7 +398,7 @@ function obtenerDatos() {
                 {
                     "data": "action"
                 }
-            ], 
+            ],
             columnDefs: [ //Personalizar una columna
                 {
                     targets: [2],
@@ -340,10 +411,10 @@ function obtenerDatos() {
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                            if (data == 'activo')
-                                return '<button rel="desactivar" type="buton" class="btn badge rounded-pill bg-success fs-6 btn-sm btn-flat">Activo</button>';
-                            else if (data == 'inactivo')
-                                return '<button rel="activar" type="buton" class="btn badge rounded-pill bg-danger fs-6 btn-sm btn-flat">Inactivo</button>';
+                        if (data == 'activo')
+                            return '<button rel="desactivar" type="buton" class="btn badge rounded-pill bg-success fs-6 btn-sm btn-flat">Activo</button>';
+                        else if (data == 'inactivo')
+                            return '<button rel="activar" type="buton" class="btn badge rounded-pill bg-danger fs-6 btn-sm btn-flat">Inactivo</button>';
                     }
                 },
                 {
@@ -359,15 +430,15 @@ function obtenerDatos() {
                     render: function (data, type, row) {
                         var buttons = `<button rel="cambiar_pass" type="button" class='btn btn-secondary btn-sm btn-flat m-1'>
                                         <i class="fa-solid fa-key"></i></button>`;
-                            buttons += `<button rel="editar" class="btn btn-warning btn-sm btn-flat">
-                                        <i class="fas fa-edit"></i></button> `;         
-                            return buttons;
+                        buttons += `<button rel="editar" class="btn btn-warning btn-sm btn-flat">
+                                        <i class="fas fa-edit"></i></button> `;
+                        return buttons;
                     }
                 },
             ],
         });
     }
-// ==================================== validar form_empleado
+    // ==================================== validar form_empleado
     $("#btn").on("click", function () {
 
         if ($("#dni").val() == "") {
@@ -398,14 +469,14 @@ function obtenerDatos() {
             alert("Las contraseñas no coinciden");
             $('#contrasena2').focus();
 
-        }else {
+        } else {
             submit_with_ajax("", "");
         }
         return false;
     });
 
-//=========================================== Editar
-$('#datatable tbody').on('click', 'button[rel="editar"]', function(){
+    //=========================================== Editar
+    $('#datatable tbody').on('click', 'button[rel="editar"]', function () {
         var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
         var data = tablaEmpleado.row(tr.row).data();
 
@@ -420,98 +491,113 @@ $('#datatable tbody').on('click', 'button[rel="editar"]', function(){
         $('#departamento').val(data.depto.id);
         $('#email').val(data.email);
         $('#username').val(data.usuario.usuario);
-        if(data.estado.estado == 'activo'){
+        if (data.estado.estado == 'activo') {
             $('#active').attr('checked', true);
-        }else{
+        } else {
             $('#active').attr('checked', false);
         }
-        if(data.staff.staff == 'true'){
+        if (data.staff.staff == 'true') {
             $('#staff').attr('checked', true);
-        }else{
+        } else {
             $('#staff').attr('checked', false);
         }
         $('#contrasena').val("");
         $('#contrasena2').val("");
-        $('#username').attr('disabled',true);
+        $('#username').attr('disabled', true);
 
         $('#dni').focus();
 
         $('#modalEmpleado').modal('show');
     });
 
-//================================================ desactivar usuarios
+    //================================================ desactivar / activar usuarios
 
-$('#datatable tbody').on('click', 'button[rel="desactivar"]', function(){
-    var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
-    var data = tablaEmpleado.row(tr.row).data();
-    $('#action').val("desactivar");
-    $('#d_username').val(data.usuario.usuario);
+    $('#datatable tbody').on('click', 'button[rel="activar"]', function () {
+        modalTitulo.find('span').html('Activar Empleado');
+        botonFooter.find('span').html('Activar');
+        var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
+        var data = tablaEmpleado.row(tr.row).data();
+        $('#d_action').val("activar_user");
+        $('#d_username').val(data.usuario.usuario);
 
-    $('#modalDesactivar').modal('show');  
-});
+        $('#modalDesactivar').modal('show');
+    });
+    //--------------------------
+    $('#datatable tbody').on('click', 'button[rel="desactivar"]', function () {
+        modalTitulo.find('span').html('Desactivar Empleado');
+        botonFooter.find('span').html('Desactivar');
+        var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
+        var data = tablaEmpleado.row(tr.row).data();
+        $('#d_action').val("desactivar_user");
+        $('#d_username').val(data.usuario.usuario);
 
-$("#btn_d").on("click", function () {
-    d_users_ajax("", "");
-});
+        $('#modalDesactivar').modal('show');
+    });
 
-function d_users_ajax(url, parametros){
-    var parametros = new FormData();
-    token = $('input[name="csrfmiddlewaretoken"]').val();
-    parametros.append('action', $('#d_action').val());
-    parametros.append('nombre_usuario', $('#d_username').val());
-    parametros.append('csrfmiddlewaretoken', token);
-    $.ajax({
-        url: window.location.pathname, //window.location.pathname
-        type: 'POST',
-        data: parametros, // parametros,
+    $("#btn_d").on("click", function () {
+        d_users_ajax("", "");
+    });
+    // --------------------------summit activar/desactivar
+    function d_users_ajax(url, parametros) {
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', $('#d_action').val());
+        parametros.append('nombre_usuario', $('#d_username').val());
+        parametros.append('csrfmiddlewaretoken', token);
+        $.ajax({
+            url: window.location.pathname, //window.location.pathname
+            type: 'POST',
+            data: parametros, // parametros,
 
-        dataType: 'json',
-        contentType: 'multipart/form-data',
-        processData: false,
-        contentType: false,
-        success: function (result) {
-            //alert("Correcto");
-            if (result.correcto) {
-                tablaEmpleado.ajax.reload(null, false);
+            dataType: 'json',
+            contentType: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                //alert("Correcto");
+                if (result.correcto) {
+                    tablaEmpleado.ajax.reload(null, false);
+                    $('#form_desactivar')[0].reset();
+                    $("#modalDesactivar").modal("hide");
+                    switch (result.tipo_accion) {
+                        case "desactivar_user":
+                            texto = "Usuario desactivado con éxito";
+                            break;
+                        default:
+                            texto = "";
+                    }
 
-                switch (result.tipo_accion) {
-                    case "desactivar":
-                        texto = "Usuario desactivado con éxito";
-                        break;
-                    default:
-                        texto = "";
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Correcto',
+                        text: texto
+                    });
                 }
-
+            },
+            error: function (data) {
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Correcto',
-                    text: texto
+                    icon: 'error',
+                    title: 'Error',
+                    text: ('Ha ocurrido un error al realizar la acción: ', data.responseJSON
+                        .message)
                 });
-            } 
-        },
-        error: function (data) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: ('Ha ocurrido un error al realizar la acción: ',data.responseJSON.message)
-            });
 
-        },
-        failure: function () {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Ha ocurrido un error al realizar la acción'
-            });
-            $('#form_empleado')[0].reset();
-            $("#modalEmpleado").modal("hide");
-            tablaTicket.ajax.reload(null, false);
-        }
-    }); 
-}
-//================================================ Summit AJAX
+            },
+            failure: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ha ocurrido un error al realizar la acción'
+                });
+                $('#form_desactivar')[0].reset();
+                $("#modalDesactivar").modal("hide");
+                tablaEmpleado.ajax.reload(null, false);
+            }
+        });
+    }
+    //================================================ Summit principal
 
-function submit_with_ajax(url, parametros) {
+    function submit_with_ajax(url, parametros) {
         var parametros = new FormData();
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
@@ -523,14 +609,15 @@ function submit_with_ajax(url, parametros) {
         parametros.append('depto', $("#departamento").val());
         parametros.append('nombre_usuario', $('#username').val());
         parametros.append('contrasena', $('#contrasena').val());
-        if(document.getElementById('active').checked == true) {
+        parametros.append('contrasena2', $('#contrasena').val());
+        if (document.getElementById('active').checked == true) {
             parametros.append('active', true)
-        }else if (document.getElementById('active').checked == false) {
+        } else if (document.getElementById('active').checked == false) {
             parametros.append('active', false)
         }
-        if(document.getElementById('staff').checked == true) {
+        if (document.getElementById('staff').checked == true) {
             parametros.append('staff', true)
-        }else if (document.getElementById('staff').checked == false) {
+        } else if (document.getElementById('staff').checked == false) {
             parametros.append('staff', false)
         }
         parametros.append('csrfmiddlewaretoken', token);
@@ -570,13 +657,14 @@ function submit_with_ajax(url, parametros) {
                         title: 'Correcto',
                         text: texto
                     });
-                } 
+                }
             },
             error: function (data) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: ('Ha ocurrido un error al realizar la acción: ',data.responseJSON.message)
+                    text: ('Ha ocurrido un error al realizar la acción: ', data.responseJSON
+                        .message)
                 });
 
             },
@@ -588,10 +676,95 @@ function submit_with_ajax(url, parametros) {
                 });
                 $('#form_empleado')[0].reset();
                 $("#modalEmpleado").modal("hide");
-                tablaTicket.ajax.reload(null, false);
+                tablaEmpleado.ajax.reload(null, false);
             }
         });
     }
+
+    //=============================== Cambiar contraseñas
+    // ==================================== validar form_empleado
+    $("#btn_p").on("click", function () {
+
+        if ($("#p_contrasena2").val() != $("#p_contrasena").val()) {
+            alert("Las contraseñas no coinciden");
+            $('#contrasena2').focus();
+
+        } else {
+            password_ajax("", "");
+        }
+        return false;
+    });
+    //================================================
+
+    $('#datatable tbody').on('click', 'button[rel="cambiar_pass"]', function () {
+        var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
+        var data = tablaEmpleado.row(tr.row).data();
+        $('#p_action').val("cambiar_psw");
+        $('#p_username').val(data.usuario.usuario);
+
+        $('#modalPassword').modal('show');
+    });
+    // ================================= sumit password
+    function password_ajax(url, parametros) {
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', $('#p_action').val());
+        parametros.append('nombre_usuario', $('#p_username').val());
+        parametros.append('p_contrasena', $('#p_contrasena').val());
+        parametros.append('p_contrasena2', $('#p_contrasena2').val());
+        parametros.append('csrfmiddlewaretoken', token);
+        $.ajax({
+            url: window.location.pathname, //window.location.pathname
+            type: 'POST',
+            data: parametros, // parametros,
+
+            dataType: 'json',
+            contentType: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                if (result.correcto) {
+                    tablaEmpleado.ajax.reload(null, false);
+                    $('#form_password')[0].reset();
+                    $("#modalPassword").modal("hide");
+                    switch (result.tipo_accion) {
+                        case "cambiar_psw":
+                            texto = "USe cambio la contraseña con exito";
+                            break;
+                        default:
+                            texto = "";
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Correcto',
+                        text: texto
+                    });
+                }
+            },
+            error: function (data) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: ('Ha ocurrido un error al realizar la acción: ', data.responseJSON
+                        .message)
+                });
+
+            },
+            failure: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ha ocurrido un error al realizar la acción'
+                });
+                $('#form_password')[0].reset();
+                $("#modalPassword").modal("hide");
+                tablaEmpleado.ajax.reload(null, false);
+            }
+        });
+    }
+    
+
 </script>
 
 {% endblock content %}
