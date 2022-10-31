@@ -342,10 +342,31 @@ body.dark .switch::before{
     transition: var(--tran-05);
 }
 
+
 nav.close ~ .horizontal_content{
     left: 87px;
     /*-width: calc(100%);
     margin-right: 10px;-*/
+    
+    
+}
+
+nav.close ~ .horizontal_content .container{
+    
+     position: static;
+    top: 0;
+    left: 250px;
+    display: block;
+    
+    width: calc(100% - 250px);
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 14px;
+    
+    
+   
+    
+    
 }
 
 .horizontal_content .nav_vertcal{
