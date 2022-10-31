@@ -9,24 +9,32 @@
   <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
 
   <title>{% block title %} {% endblock title %}</title>
-
-
   <!--     Fonts and icons     -->
   <link rel="stylesheet" type="text/css"
     href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+  <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro-v6@44659d9/css/all.min.css" rel="stylesheet"
+    type="text/css" />
+
   <!-- CSS Files -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css"
     integrity="sha512-GQGU0fMMi238uA+a/bdWJfpUGKUkBdgfFdgBm72SUQ6BeyWjoY/ton0tEjH+OSH9iP4Dfh+7HM0I9f5eR0L/4w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
-  <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro-v6@44659d9/css/all.min.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.8/sweetalert2.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css" />
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
 
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/side-bars.css' %}" rel="stylesheet">
+  <link href="{% static 'css/common.css' %}" rel="stylesheet">
+
+  <!--Scripts -->
   {% include 'partials/_scripts.html' %}
+
+
+
   <style>
     .bd-placeholder-img {
       font-size: 1.125rem;
@@ -42,102 +50,213 @@
       }
     }
   </style>
-  <!-- Custom styles for this template -->
-  <link href="{% static 'css/side-bars.css' %}" rel="stylesheet">
-  <link href="{% static 'css/common.css' %}" rel="stylesheet">
-
 </head>
 
 <body>
-
-  <main class="">
-    <div class="container-fluid" >
-      <div class="row ">
-        <div class="col-3 col-md-3 col-xl-2 px-sm-2 px-0 bg-dark noscroll-container">
-          <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-            <a href="" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-              <span class="fs-5 d-none d-sm-inline"><i class="fas fa-bars fs-3"></i>  CUASA</span>
-            </a>
-            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-              <li class="nav-item">
-                <a href="{% url 'home_app:home'%}" class="nav-link align-middle px-0">
-                  <i class="fas fa-home fs-2"></i> <span class="ms-1 d-none d-sm-inline">Inicio</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'tickets_app:ticket_view' %}" class="nav-link align-middle px-0">
-                  <i class="fas fa-ticket-alt fs-2"></i> <span class="ms-1 d-none d-sm-inline">Tickets</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'inventario_app:inventario' %}" class="nav-link align-middle px-0">
-                  <i class="fas fa-desktop fs-2"></i> <span class="ms-1 d-none d-sm-inline">Inventario</span>
-                </a>
-              </li>
-              <li>
-                <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                  <i class="fas fa-cog fs-2"></i> <span class="ms-1 d-none d-sm-inline">Administracion</span> </a>
-                <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
-                    <li class="w-100">
-                        <a href="{% url 'tickets_app:admin_ticket' %}" class="nav-link">  <i class="fas fa-clipboard-list fs-4"></i>  <span class="d-none d-sm-inline"> Tickets </span> </a>
-                    </li>
-                    <li>
-                      <a href="{% url 'asignaciones_app:asignaciones' %}" class="nav-link"> <i class="fas fa-dolly-flatbed fs-4"></i>  <span class="d-none d-sm-inline"> Asignaciones </span></a>
-                    </li>
-                    <li>
-                        <a href="{% url 'usuarios_app:empleados' %}" class="nav-link"> <i class="fas fa-users-cog fs-4"></i>  <span class="d-none d-sm-inline"> Usuarios </span></a>
-                    </li>
-                </ul>
-              </li>
-            </ul>
-            <hr>
-            <div class="dropdown pb-4">
-              <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-                id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="far fa-user-circle fs-2"></i>
-                <span class="d-none d-sm-inline mx-1">{{request.user|title}}</span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                <li><a class="dropdown-item" href="#"><i class="fas fa-address-card fs-4"></i> Profile</a></li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item" id="logout" href="#"><i class="fas fa-sign-out-alt fs-4"></i> Salir</a></li>
-              </ul>
-            </div>
+  <!--Navbar Horizontal-->
+  <nav id="navbar" class="sidebar close ">
+    <div id="nav_vertcal">
+      <!--Encabezado del navbar-->
+      <header>
+        <div class="image-text">
+          <span class="image">
+            <img src="{% static 'img/logo.png' %}" alt="">
+          </span>
+          <div class="text logo-text">
+            <span class="name">Cuasa</span>
+            <span class="slogan">Cultivos con valor</span>
           </div>
         </div>
-        <div class="col-9 col-md-9 col-xl-10 py-3 scrollarea" id="page-top">
-          {% block content %}
+      </header>
 
-          {% endblock content%}
-          {% include 'partials/_footer.html' %}
-          <a class="page-up-fixed" href="#page-top"><i class="fas fa-angle-up"></i></a>
+      <!--Menu del navbar-->
+      <div class="menu-bar">
+        <div class="bottom-content" id="menu">
+          <li class="">
+            <a href="{% url 'home_app:home'%}">
+              <i class="fa-solid fa-house icon"></i>
+              <span class="text nav-text">Inicio</span>
+            </a>
+          </li>
+          <li class="">
+            <a href="{% url 'tickets_app:ticket_view' %}">
+              <i class="fa-solid fa-ticket icon"></i>
+              <span class="text nav-text">Tickets</span>
+            </a>
+          </li>
+
+          <li class="">
+            <a href="{% url 'inventario_app:inventario' %}">
+              <i class="fas fa-desktop icon"></i>
+              <span class="text nav-text">Inventario</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#btn_menu_admin" data-bs-toggle="collapse">
+              <i class="fas fa-cog fs-2 icon"></i>
+              <span class="text nav-text">Administración</span>
+              <i class="fa-solid fa-caret-down " style=" 
+                    min-width: 35px;
+                    border-radius: 60px;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 20px;
+                    color: var(--text-color);
+                transition: var(--tran-03);"></i>
+            </a>
+
+          </li>
+
+          <div class="collapse" id="btn_menu_admin" style="background-color: #2E7D32 ; border-radius: 6px;">
+
+
+            <li class="">
+              <a href="{% url 'tickets_app:admin_ticket' %}">
+                <i class="fas fa-clipboard-list fs-4 icon"></i>
+                <span class="text nav-text">Tickets</span>
+              </a>
+            </li>
+            <li class="">
+              <a href="{% url 'asignaciones_app:asignaciones' %}">
+                <i class="fas fa-dolly-flatbed fs-4 icon"></i>
+                <span class="text nav-text">Asignaciones</span>
+              </a>
+            </li>
+            <li class="">
+              <a href="{% url 'usuarios_app:empleados' %}">
+                <i class="icon fas fa-users-cog fs-4"></i>
+                <span class="text nav-text">Usuario</span>
+              </a>
+            </li>
+          </div>
+          <hr>
+
+          <li>
+            <a href="#btn_menu_loguser" data-bs-toggle="collapse">
+              <i class="icon"><img src="https://avatars.githubusercontent.com/u/18431291?s=400&v=4" alt="hugenerd"
+                  width="30" height="30" class="rounded-circle"></i>
+              <span class="text nav-text">{{request.user|title}}</span>
+            </a>
+
+          </li>
+
+          <div class="collapse" id="btn_menu_loguser" style="background-color: #2E7D32 ; border-radius: 6px;">
+
+            <li class="">
+              <a href="#">
+                <i class="fa-solid fa-id-card icon"></i>
+                <span class="text nav-text">Perfil</span>
+              </a>
+            </li>
+            <li type="button" id="logout" class="">
+              <a href="#">
+
+                <i href="#" class="fa-solid fa-right-from-bracket icon"></i>
+                <span class="text nav-text">Salir</span>
+              </a>
+            </li>
+
+          </div>
+          <li class="mode ">
+            <div class="sun-moon toggle">
+              <i class="fa-solid fa-moon icon moon" style="color: grey;"></i>
+              <i class="fa-solid fa-sun icon sun" style="color: yellow;"></i>
+            </div>
+            <span class="mode-text text " style="color: #3a3b3c;">Dark mode</span>
+
+            <div class="toggle-switch">
+              <span class="switch"></span>
+            </div>
+          </li>
+
         </div>
       </div>
     </div>
-  </main>
+  </nav>
+
+
+<!--contenido Horizontal de la pagina-->
+  <div class="horizontal_content "id="page-top">
+    <!--Navbar Vertical-->
+    <div class="nav_vertcal">
+      <i id="menu_sidebar" class="fa-solid fa-bars  sidebar-toggle "></i>
+      <div class="search-box">
+      </div>
+      <img src="https://avatars.githubusercontent.com/u/18431291?s=400&v=4" alt="">
+    </div>
+
+    <br><br>
+    <!--Rutas de navegacion-->
+    <div class="ruts">
+      <!--Encabezado del Contenido (Navegacion)-->
+      <div class="page-header">
+        <ul class="breadcrumbs ">
+          <li class="nav-home-route ">
+            <a href="#">
+              <i class="fas fa-home icon-route"></i>
+            </a>
+          </li>
+          <li class="separator ">
+            <i class="fas fa-chevron-right icon-route"></i>
+          </li>
+          <li class="nav-item-route ">
+            <a href="#" class="icon-route">Dashboard</a>
+          </li>
+        </ul>
+      </div><!-- FinEncabezado del Contenido (Navegacion)-->
+    </div>
+
+    <!--Contenido de la pagina-->
+
+    <div class="container">
+      <div  class="" >
+
+          
+          {% block content %}
+
+          {% endblock content%}
+
+          
+          
+        </div>
+        
+        {% include 'partials/_footer.html' %}
+          
+        <a class="page-up-fixed" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+  </div>
+
+
+
+  
+
 </body>
 
 
-<script>
-  $("#logout").on('click', function () {
-    Swal.fire({
-      title: '¿Desea cerrar la sesión?',
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí',
-      cancelButtonText: 'No'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = "{% url 'login_app:logout' %}";
 
-      }
-    })
-  });
+
+<script>
+$("#logout").on('click', function () {
+  Swal.fire({
+    title: '¿Desea cerrar la sesión?',
+    icon: 'info',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí',
+    cancelButtonText: 'No'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "{% url 'login_app:logout' %}";
+    }
+  })
+});
 </script>
+
+
 
 
 </html>
