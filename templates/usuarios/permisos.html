@@ -8,5 +8,193 @@ Permisos
 
 {% block content %}
 
+<div class="container-fluid py-4 col-12">
+    <div class="row mb-4">
+        <div class="col-12 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-7">
+                            <h3><i class="fa-solid fa-ballot-check fs-1"></i> Permisos</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container">
+            
+                        <form method="post" action="." id="form_empleado" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group row">
+                                <input type="text" class="d-none" name="action" id="action" value="crear" />
+                                <input type="text" class="d-none" id="id_ticket" value="0" />
+                                <!-- sep -->
+                                <div class="col-md-12">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">Identidad</span>
+                                        <input type="text" class="form-control" name="dni" id="dni" required
+                                            area-label="Numero de identidad" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">Nombre</span>
+                                        <input type="text" class="form-control" name="nombres" id="nombres" required
+                                            area-label="Nombres del empleado" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">Apellidos</span>
+                                        <input type="text" class="form-control" name="apellidos" id="apellidos" required
+                                            area-label="Apellidos del empleado" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">Email</span>
+                                        <input type="email" class="form-control" name="email" id="email" required
+                                            area-label="Correo del empleado" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-8">
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="departamento">Departamento:</label>
+                                        <select name="departamento" id="departamento"
+                                            class="form-control form-select form-select-sm">
+                                            <option selected value="0">--Seleccione--</option>
+                                            {% for prs in permisos %}
+                                            <option value="{{prs.id}}">
+                                                {{prs.name}}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleFormControlSelect1">Selección múltiple 1</label>
+                                        <select multiple class="form-control form-control-multiple" id="exampleFormControlSelect1">
+                                            <option>Opción 1</option>
+                                            <option>Opción 2</option>
+                                            <option>Opción 3</option>
+                                            <option>Opción 4</option>
+                                            <option>Opción 5</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <button id="button1" class="btn btn-primary">Mover a la derecha</button>
+                                        <button id="button2" class="btn btn-primary">Mover a la izquierda</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleFormControlSelect2">Selección múltiple 2</label>
+                                        <select multiple class="form-control form-control-multiple" id="exampleFormControlSelect2">
+                                            <option>Opción 6</option>
+                                            <option>Opción 7</option>
+                                            <option>Opción 8</option>
+                                            <option>Opción 9</option>
+                                            <option>Opción 10</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">Nombre de usuario</span>
+                                        <input type="text" class="form-control" name="username" id="username" required
+                                            area-label="Usuario del empleado" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="active" id="active">
+                                        <label class="form-check-label" for="active">Activo</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="staff" id="staff">
+                                        <label class="form-check-label" for="staff">Administrador</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">Contraseña</span>
+                                        <input type="password" class="form-control" name="contrasena" id="contrasena" required
+                                            area-label="************" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">Confirmar Contraseña</span>
+                                        <input type="password" class="form-control" name="contrasena2" id="contrasena2" required
+                                            area-label="************" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="form_empleado">Cancelar</button>
+                                <button type="submit" class="btn btn-primary" id="btn">Guardar</button>
+                            </div>
+                            <br>
+                        </form>
+            
+                        <div class="modal-footer">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Obtener los elementos <select> y los botones
+const select1 = document.getElementById('exampleFormControlSelect1');
+const select2 = document.getElementById('exampleFormControlSelect2');
+const button1 = document.getElementById('button1');
+const button2 = document.getElementById('button2');
+
+// Añadir eventos click a los botones
+button1.addEventListener('click', function () {
+  // Recorrer todas las opciones seleccionadas del primer select
+for (const option of select1.selectedOptions) {
+    // Clonar la opción seleccionada
+    const newOption = option.cloneNode(true);
+    // Añadir la opción clonada al segundo select
+    select2.appendChild(newOption);
+    // Eliminar la opción del primer select
+    option.remove();
+}
+});
+
+button2.addEventListener('click', function () {
+  // Recorrer todas las opciones seleccionadas del segundo select
+for (const option of select2.selectedOptions) {
+    // Clonar la opción seleccionada
+    const newOption = option.cloneNode(true);
+    // Añadir la opción clonada al primer select
+    select1.appendChild(newOption);
+    // Eliminar la opción del segundo select
+    option.remove();
+}
+});
+
+</script>
 
 {% endblock content %}

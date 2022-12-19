@@ -10,4 +10,5 @@ urlpatterns = [
     path('usuarios/lista-usuarios', empleados_views, name='empleados'),
     # path('usuarios/editar-usuario/<int:id>', views.Update_User, name='editar_usuarios'),
     path('usuarios/departamentos',departamentosViews, name='departamentos'),
+    path('permisos/', permisos_view, name='permisos'),
 ]

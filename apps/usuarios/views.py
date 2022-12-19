@@ -185,5 +185,40 @@ def departamentosViews(request):
         return render(request, 'usuarios/departamentos.html',{'titulo': 'Inicio', 'entidad':'Creacion de Departamentos'})
 
 @login_required
-def permisos_view():
-    return
+def permisos_view(request):
+    if request.method == 'POST' and request.is_ajax():
+        data = []
+        try:
+            # =====================  select ================
+            action = request.POST['action']
+            id_user = request.user.id
+            updated_time = datetime.now()
+            if action == 'buscardatos':
+                for i in User.objects.all():
+                    data. append(i.toJSON())
+
+            # ======================== crear =========================
+            elif action == 'crear':
+                # dep = Departamentos()
+                # dep.nombre_depto = request.POST['nombre_depto']
+                # dep.save()
+                # print('lol')
+                data = {'tipo_accion': 'crear', 'correcto': True}
+            elif action == 'editar':
+                # Departamentos.objects.filter(pk=request.POST['id']).update(
+                #     nombre_depto = request.POST['nombre_depto'],
+                #     updated_date = updated_time
+                # )
+
+                data = {'tipo_accion': 'editar', 'correcto': True}
+            else:
+                data['error'] = 'Ha ocurrido un error.'
+        except Exception as e:
+            print(str(e))
+            print(action)
+            data['error'] = str(e)
+            data = {'tipo_accion': 'error',  'correcto': True}
+        return JsonResponse(data, safe=False)
+    elif request.method == 'GET':
+        permisos = Permission.objects.all()
+        return render(request, 'usuarios/permisos.html',{'permisos': permisos})
