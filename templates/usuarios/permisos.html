@@ -20,42 +20,50 @@ Permisos
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
-                    <div class="container">
-            
+                    <div class="container text-center">
                         <form method="post" action="." id="form_empleado" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <div class="form-group row">
+                            <div class="row">
                                 <input type="text" class="d-none" name="action" id="action" value="crear" />
-                                <input type="text" class="d-none" id="id_ticket" value="0" />
+                                <input type="text" class="d-none" id="" value="0" />
                                 <!-- sep -->
-                                <div class="col-md-12">
+                                <div class="form-group col-3">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text">Identidad</span>
                                         <input type="text" class="form-control" name="dni" id="dni" required
                                             area-label="Numero de identidad" />
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-12">
+                                <div class="form-group col-3">
                                     <div class="input-group mb-3">
-                                        <span class="input-group-text">Nombre</span>
-                                        <input type="text" class="form-control" name="nombres" id="nombres" required
-                                            area-label="Nombres del empleado" />
+                                        <span class="input-group-text">Nombre de usuario</span>
+                                        <input type="text" class="form-control" name="username" id="username" required
+                                            area-label="Usuario del empleado" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-3 me-n3">
+                                    <div class="col-md-12">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Nombre</span>
+                                            <input type="text" class="form-control" name="nombres" id="nombres" required
+                                                area-label="Nombres del empleado" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-3 ms-n3">
+                                    <div class="col-md-12">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Apellidos</span>
+                                            <input type="text" class="form-control" name="apellidos" id="apellidos" required
+                                                area-label="Apellidos del empleado" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <div class="col-md-12">
-                                    <div class="input-group mb-3">
-                                        <span class="input-group-text">Apellidos</span>
-                                        <input type="text" class="form-control" name="apellidos" id="apellidos" required
-                                            area-label="Apellidos del empleado" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-12">
+                                <div class="col-5">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text">Email</span>
                                         <input type="email" class="form-control" name="email" id="email" required
@@ -103,59 +111,14 @@ Permisos
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-12">
-                                    <div class="input-group mb-3">
-                                        <span class="input-group-text">Nombre de usuario</span>
-                                        <input type="text" class="form-control" name="username" id="username" required
-                                            area-label="Usuario del empleado" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="active" id="active">
-                                        <label class="form-check-label" for="active">Activo</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="staff" id="staff">
-                                        <label class="form-check-label" for="staff">Administrador</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-12">
-                                    <div class="input-group mb-3">
-                                        <span class="input-group-text">Contraseña</span>
-                                        <input type="password" class="form-control" name="contrasena" id="contrasena" required
-                                            area-label="************" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-12">
-                                    <div class="input-group mb-3">
-                                        <span class="input-group-text">Confirmar Contraseña</span>
-                                        <input type="password" class="form-control" name="contrasena2" id="contrasena2" required
-                                            area-label="************" />
-                                    </div>
-                                </div>
-                            </div>
+                            
+                            
                             <div class="text-center">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="form_empleado">Cancelar</button>
                                 <button type="submit" class="btn btn-primary" id="btn">Guardar</button>
                             </div>
                             <br>
                         </form>
-            
-                        <div class="modal-footer">
-                            
-                        </div>
                     </div>
                 </div>
             </div>
