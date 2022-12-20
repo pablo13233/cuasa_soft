@@ -20,21 +20,21 @@ Permisos
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
-                    <div class="container text-center">
-                        <form method="post" action="." id="form_empleado" enctype="multipart/form-data">
+                    <div class="container col-12 text-center border border-primary" style="display: grid; place-items: center;">
+                        <form method="post" class="border border-danger" action="." id="form_empleado" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="row">
                                 <input type="text" class="d-none" name="action" id="action" value="crear" />
                                 <input type="text" class="d-none" id="" value="0" />
                                 <!-- sep -->
-                                <div class="form-group col-3">
+                                <div class="form-group col-6">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text">Identidad</span>
                                         <input type="text" class="form-control" name="dni" id="dni" required
                                             area-label="Numero de identidad" />
                                     </div>
                                 </div>
-                                <div class="form-group col-3">
+                                <div class="form-group col-6">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text">Nombre de usuario</span>
                                         <input type="text" class="form-control" name="username" id="username" required
@@ -43,7 +43,7 @@ Permisos
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-3 me-n3">
+                                <div class="form-group col-6">
                                     <div class="col-md-12">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Nombre</span>
@@ -52,7 +52,7 @@ Permisos
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-3 ms-n3">
+                                <div class="form-group col-6">
                                     <div class="col-md-12">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Apellidos</span>
@@ -63,7 +63,7 @@ Permisos
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <div class="col-5">
+                                <div class="col-6">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text">Email</span>
                                         <input type="email" class="form-control" name="email" id="email" required
@@ -71,13 +71,22 @@ Permisos
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-8">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="departamento">Departamento:</label>
-                                        <select name="departamento" id="departamento"
-                                            class="form-control form-select form-select-sm">
-                                            <option selected value="0">--Seleccione--</option>
+                            <div class="form-group row col-12">
+                                <!-- <div class="input-group mb-3">
+                                    <label class="input-group-text" for="departamento">Departamento:</label>
+                                    <select name="departamento" id="departamento" class="form-control form-select form-select-sm">
+                                        <option selected value="0">--Seleccione--</option>
+                                        {% for prs in permisos %}
+                                        <option value="{{prs.id}}">
+                                            {{prs.name}}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div> -->
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label for="exampleFormControlSelect1">Disponibles:</label>
+                                        <select name="perm_dis" id="perm_dis" multiple class="form-control form-control-multiple" style="height: 100px; max-height: 100px;">
                                             {% for prs in permisos %}
                                             <option value="{{prs.id}}">
                                                 {{prs.name}}
@@ -85,23 +94,9 @@ Permisos
                                             {% endfor %}
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="exampleFormControlSelect1">Selección múltiple 1</label>
-                                        <select multiple class="form-control form-control-multiple" id="exampleFormControlSelect1">
-                                            <option>Opción 1</option>
-                                            <option>Opción 2</option>
-                                            <option>Opción 3</option>
-                                            <option>Opción 4</option>
-                                            <option>Opción 5</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <button id="button1" class="btn btn-primary">Mover a la derecha</button>
-                                        <button id="button2" class="btn btn-primary">Mover a la izquierda</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleFormControlSelect2">Selección múltiple 2</label>
-                                        <select multiple class="form-control form-control-multiple" id="exampleFormControlSelect2">
+                                    <div class="form-group col-6">
+                                        <label for="exampleFormControlSelect2">Asignados:</label>
+                                        <select multiple class="form-control form-control-multiple" name="perm_asg" id="perm_asg" style="height: 100px; max-height: 100px;">
                                             <option>Opción 6</option>
                                             <option>Opción 7</option>
                                             <option>Opción 8</option>
@@ -110,12 +105,19 @@ Permisos
                                         </select>
                                     </div>
                                 </div>
+                                
+                                <div class="row">
+                                    <div class="form-group">
+                                        <a id="button1" class="btn btn-primary m-1">der</a>
+                                        <a id="button2" class="btn btn-primary m-1">izq</a>
+                                    </div>
+                                </div>
                             </div>
                             
                             
                             <div class="text-center">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="form_empleado">Cancelar</button>
-                                <button type="submit" class="btn btn-primary" id="btn">Guardar</button>
+                                <button type="button" class="btn btn-secondary m-3" data-bs-dismiss="form_empleado">Cancelar</button>
+                                <button type="submit" class="btn btn-primary m-3" id="btn">Guardar</button>
                             </div>
                             <br>
                         </form>
@@ -128,19 +130,19 @@ Permisos
 
 <script>
     // Obtener los elementos <select> y los botones
-const select1 = document.getElementById('exampleFormControlSelect1');
-const select2 = document.getElementById('exampleFormControlSelect2');
+const permisos_disp = document.getElementById('perm_dis');
+const permisos_asig = document.getElementById('perm_asg');
 const button1 = document.getElementById('button1');
 const button2 = document.getElementById('button2');
 
 // Añadir eventos click a los botones
 button1.addEventListener('click', function () {
   // Recorrer todas las opciones seleccionadas del primer select
-for (const option of select1.selectedOptions) {
+for (const option of permisos_disp.selectedOptions) {
     // Clonar la opción seleccionada
     const newOption = option.cloneNode(true);
     // Añadir la opción clonada al segundo select
-    select2.appendChild(newOption);
+    permisos_asig.appendChild(newOption);
     // Eliminar la opción del primer select
     option.remove();
 }
