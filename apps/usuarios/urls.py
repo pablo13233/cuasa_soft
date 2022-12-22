@@ -11,4 +11,5 @@ urlpatterns = [
     # path('usuarios/editar-usuario/<int:id>', views.Update_User, name='editar_usuarios'),
     path('usuarios/departamentos',departamentosViews, name='departamentos'),
     path('permisos/', permisos_view, name='permisos'),
+    path('grupos/', grupos_view, name='grupos'),
 ]

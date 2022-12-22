@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Permisos
+{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid py-4 col-12 ">
+    <div class="row mb-4">
+        <div class="col-12 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-7">
+                            <h3><i class="bi bi-tags opacity-10 fs-1"></i> Grupos</h3>
+                        </div>
+                        <div class="col-lg-6 col-5 my-auto text-end">
+                            <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
+                                <i class="fa-solid fa-plus  opacity-10 fs-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-items-center mb-0" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        # Grupo
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Nombre Grupo
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Accion
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agregar Grupo-->
+<div class="modal fade" id="modalGrupo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">
+                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Grupo</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="." id="formGrupo" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <input type="text" class="d-none" name="action" id="action" value="crear" />
+                        <input type="text" class="d-none" name="action" id="id_grupo" value="0" />
+
+                        <div class="col-md-12">
+                            <label for="">Nombre de grupo:</label>
+                            <input type="text" class="form-control" name="nombre" id="nombre" required />
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <span for="exampleFormControlSelect1">Disponibles:</span>
+                                <select name="perm_dis" id="perm_dis" multiple
+                                    class="form-control form-control-multiple"
+                                    style="height: 300px; max-height: 350px;">
+                                    {% for prs in permisos %}
+                                    <option value="{{prs.id}}">
+                                        {{prs.name}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <!-- <div class="form-group col-6">
+                                <span for="exampleFormControlSelect2">Seleccionados:</span>
+                                <select multiple class="form-control form-control-multiple" name="perm_asg"
+                                    id="perm_asg" style="height: 100px; max-height: 100px;">
+                                </select>
+                            </div> -->
+                        </div>
+
+                        <!-- <div class="row">
+                            <div class="form-group">
+                                <a id="btn_derecha" class="btn btn-primary m-1">der</a>
+                                <a id="btn_izquierda" class="btn btn-primary m-1">izq</a>
+                            </div>
+                        </div> -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btn">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- fin modal -->
+
+<script>
+    var tablaGrupo;
+    var modalTitulo = $('.modal-title');
+
+    window.onload = function () {
+        $("#btnAdd").on("click", function () {
+            modalTitulo.find('span').html('Crear Grupo');
+            modalTitulo.find('i').removeClass().addClass('fas fa-plus fs-3');
+            $('#action').val('crear');
+            $('#formGrupo')[0].reset();
+            $('#nombre').focus();
+
+            $('#modalGrupo').modal('show');
+        });
+        $('#datatable').DataTable();
+        obtenerDatos();
+    }
+
+    $("#btn").on("click", function () {
+        if ($("#nombre").val == "") {
+            alert("No puede dejar campos vacios");
+        } else {
+            submit_with_ajax("", "");
+        }
+        return false;
+    });
+
+    $('#datatable tbody').on('click', 'a[rel="editar"]', function () {
+        var tr = tablaGrupo.cell($(this).closest('td,li')).index();
+        var data = tablaGrupo.row(tr.row).data();
+
+        modalTitulo.find('span').html(' Editar Categoria');
+        modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
+
+        $('#action').val("editar");
+        $('#id_grupo').val(data.id);
+        $('#nombre').val(data.name);
+        $('#modalGrupo').modal('show');
+    });
+
+    function submit_with_ajax(url, parametros) {
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', $('#action').val());
+        parametros.append('nombre', $('#nombre').val());
+        parametros.append('id', parseInt($('#id_Grupo').val()));
+        parametros.append('permission_ids[]',$('#permission_ids').val());
+        parametros.append('csrfmiddlewaretoken', token);
+
+        $.ajax({
+            url: window.location.pathname,
+            type: 'POST',
+            data: parametros,
+
+            dataType: 'json',
+            contentType: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                if (result.correcto) {
+                    $('#formGrupo')[0].reset();
+                    $('#modalGrupo').modal('hide');
+
+                    tablaGrupo.ajax.reload(null, false);
+
+                    switch (result.tipo_accion) {
+                        case "crear":
+                            texto = "Datos guardados con exito";
+                            break;
+                        case "editar":
+                            texto = "Datos editados con exito";
+                            break;
+                        case "eliminar":
+                            texto = "Dato eliminado con exito";
+                            break;
+                        default:
+                            texto = "";
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Correcto',
+                        text: texto
+                    });
+
+                } else {
+                    tablaGrupo.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al realizar la acción'
+                    });
+                }
+            }
+        })
+
+    }
+
+    function obtenerDatos() {
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaCategoria = $('#datatable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            lenguage: {
+                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+            },
+            ajax: {
+                url: window.location.pathname,
+                type: 'POST',
+                data: {
+                    'action': 'buscardatos',
+                    'csrfmiddlewaretoken': token
+                },
+                dataSrc: ""
+            },
+            columns: [{
+                    "data": "id"
+                },
+                {
+                    "data": "nombre_Grupo"
+                },
+                {
+                    "data": "created_by.username"
+                },
+                {
+                    "data": "id"
+                }
+            ],
+            columnDefs: [{
+                targets: [3],
+                class: 'text-center',
+                ordenable: false,
+                render: function (data, type, row) {
+                    var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
+                                    <i class="fas fa-edit"></i></a> `;
+
+                    // buttons += `<a  rel="eliminar" class='btn btn-danger btn-sm btn-flat'>
+                    //             <i class="fa-solid fa-trash-can"></i></a>`;
+                    return buttons;
+                }
+            }, ],
+        });
+    }
+
+    // ===================================================================================================
+    // Obtener los elementos <select> y los botones
+    const permisos_disp = document.getElementById('perm_dis');
+    const permisos_asig = document.getElementById('perm_asg');
+    const btn_derecha = document.getElementById('btn_derecha');
+    const btn_izquierda = document.getElementById('btn_izquierda');
+
+    // Añadir eventos click a los botones
+    btn_derecha.addEventListener('click', function () {
+        // Recorrer todas las opciones seleccionadas del primer select
+        for (const option of permisos_disp.selectedOptions) {
+            // Clonar la opción seleccionada
+            const newOption = option.cloneNode(true);
+            // Añadir la opción clonada al segundo select
+            permisos_asig.appendChild(newOption);
+            // Eliminar la opción del primer select
+            option.remove();
+        }
+    });
+
+    btn_izquierda.addEventListener('click', function () {
+        // Recorrer todas las opciones seleccionadas del segundo select
+        for (const option of select2.selectedOptions) {
+            // Clonar la opción seleccionada
+            const newOption = option.cloneNode(true);
+            // Añadir la opción clonada al primer select
+            select1.appendChild(newOption);
+            // Eliminar la opción del segundo select
+            option.remove();
+        }
+    });
+</script>
+
+{% endblock content %}

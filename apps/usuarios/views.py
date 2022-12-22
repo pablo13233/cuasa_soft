@@ -6,7 +6,7 @@ from django.views.generic import (
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
@@ -222,3 +222,49 @@ def permisos_view(request):
     elif request.method == 'GET':
         permisos = Permission.objects.all()
         return render(request, 'usuarios/permisos.html',{'permisos': permisos})
+
+@login_required
+def grupos_view(request):
+    if request.method == 'POST' and request.is_ajax():
+        data = []
+        try:
+            # =====================  select ================
+            action = request.POST['action']
+            # id_user = request.user.id
+            if action == 'buscardatos':
+                for i in Group.objects.all():
+                    data. append(i.toJSON())
+
+            # ======================== crear =========================
+            elif action == 'crear':
+                #obtenemos datos de grupo y lista de permisos
+                nombre_grupo = request.POST['nombre']
+                permission_ids = request.POST['permission_ids[]']
+                #creamos el grupo
+                group = Group.objects.create(name=nombre_grupo)
+                #asignamos permisos al grupo
+                for permission_id in permission_ids:
+                    permission = Permission.objects.get(permission_id=permission_id)
+                    group.permissions.add(permission)
+                #guardamos cambios en la base de datos
+                group.save()
+
+                data = {'tipo_accion': 'crear', 'correcto': True}
+            elif action == 'editar':
+                # Departamentos.objects.filter(pk=request.POST['id']).update(
+                #     nombre_depto = request.POST['nombre_depto'],
+                #     updated_date = updated_time
+                # )
+
+                data = {'tipo_accion': 'editar', 'correcto': True}
+            else:
+                data['error'] = 'Ha ocurrido un error.'
+        except Exception as e:
+            print(str(e))
+            print(action)
+            data['error'] = str(e)
+            data = {'tipo_accion': 'error',  'correcto': True}
+        return JsonResponse(data, safe=False)
+    elif request.method == 'GET':
+        permisos = Permission.objects.all()
+        return render(request, 'usuarios/grupos.html',{'permisos': permisos})
