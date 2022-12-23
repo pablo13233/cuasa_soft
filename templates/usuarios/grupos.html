@@ -43,7 +43,19 @@ Permisos
                                 </tr>
                             </thead>
                             <tbody class="text-center">
-
+                                
+                                {% for grup in grupos %}
+                                    <tr>
+                                        <td>{{grup.id}}</td>
+                                        <td>{{grup.name}}</td>
+                                        <td>
+                                            <button href="ver" type="button" class="btn btn-secondary btn-sm btn-flat">
+                                                <i class="fa fa-eye fs-6"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                    
                             </tbody>
                         </table>
                     </div>
@@ -79,15 +91,11 @@ Permisos
                         <div class="row">
                             <div class="form-group col-12">
                                 <span for="exampleFormControlSelect1">Disponibles:</span>
-                                <select name="perm_dis" id="perm_dis" multiple
-                                    class="form-control form-control-multiple"
-                                    style="height: 300px; max-height: 350px;">
+                                <div class="container" style="height: 300px; max-height: 350px; overflow-y: scroll;">
                                     {% for prs in permisos %}
-                                    <option value="{{prs.id}}">
-                                        {{prs.name}}
-                                    </option>
+                                    <label for=""><input type="checkbox" name="permisos_lista" value="{{prs.id}}"> {{prs.name}}</label>
                                     {% endfor %}
-                                </select>
+                                </div>
                             </div>
                             <!-- <div class="form-group col-6">
                                 <span for="exampleFormControlSelect2">Seleccionados:</span>
@@ -130,7 +138,6 @@ Permisos
             $('#modalGrupo').modal('show');
         });
         $('#datatable').DataTable();
-        obtenerDatos();
     }
 
     $("#btn").on("click", function () {
@@ -157,11 +164,15 @@ Permisos
 
     function submit_with_ajax(url, parametros) {
         var parametros = new FormData();
+        var permisos_selec = [];
+        $('input[name=permisos_lista]:checked').each(function(){
+            permisos_selec.push($(this).val());
+        });
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
         parametros.append('nombre', $('#nombre').val());
         parametros.append('id', parseInt($('#id_Grupo').val()));
-        parametros.append('permission_ids[]',$('#permission_ids').val());
+        parametros.append('permission_list',permisos_selec);
         parametros.append('csrfmiddlewaretoken', token);
 
         $.ajax({
@@ -211,55 +222,6 @@ Permisos
             }
         })
 
-    }
-
-    function obtenerDatos() {
-        token = $('input[name="csrfmiddlewaretoken"]').val();
-        tablaCategoria = $('#datatable').DataTable({
-            responsive: true,
-            autoWidth: false,
-            destroy: true,
-            bSortable: true,
-            deferRender: true,
-            lenguage: {
-                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
-            },
-            ajax: {
-                url: window.location.pathname,
-                type: 'POST',
-                data: {
-                    'action': 'buscardatos',
-                    'csrfmiddlewaretoken': token
-                },
-                dataSrc: ""
-            },
-            columns: [{
-                    "data": "id"
-                },
-                {
-                    "data": "nombre_Grupo"
-                },
-                {
-                    "data": "created_by.username"
-                },
-                {
-                    "data": "id"
-                }
-            ],
-            columnDefs: [{
-                targets: [3],
-                class: 'text-center',
-                ordenable: false,
-                render: function (data, type, row) {
-                    var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
-                                    <i class="fas fa-edit"></i></a> `;
-
-                    // buttons += `<a  rel="eliminar" class='btn btn-danger btn-sm btn-flat'>
-                    //             <i class="fa-solid fa-trash-can"></i></a>`;
-                    return buttons;
-                }
-            }, ],
-        });
     }
 
     // ===================================================================================================

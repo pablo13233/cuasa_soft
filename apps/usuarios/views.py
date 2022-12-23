@@ -15,6 +15,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import JsonResponse
 from datetime import datetime
+from django.db import transaction
 
 
 @login_required
@@ -228,43 +229,47 @@ def grupos_view(request):
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
-            # =====================  select ================
-            action = request.POST['action']
-            # id_user = request.user.id
-            if action == 'buscardatos':
-                for i in Group.objects.all():
-                    data. append(i.toJSON())
+            with transaction.atomic():
+                # =====================  select ================
+                action = request.POST['action']
+                # id_user = request.user.id
+                #  if action == 'buscardatos':
+                #         for i in Group.objects.all():
+                #             data.append(i.toJSON())
 
-            # ======================== crear =========================
-            elif action == 'crear':
-                #obtenemos datos de grupo y lista de permisos
-                nombre_grupo = request.POST['nombre']
-                permission_ids = request.POST['permission_ids[]']
-                #creamos el grupo
-                group = Group.objects.create(name=nombre_grupo)
-                #asignamos permisos al grupo
-                for permission_id in permission_ids:
-                    permission = Permission.objects.get(permission_id=permission_id)
-                    group.permissions.add(permission)
-                #guardamos cambios en la base de datos
-                group.save()
+                # ======================== crear =========================
+                if action == 'crear':
+                    #obtenemos datos de grupo y lista de permisos
+                    nombre_grupo = request.POST['nombre']
+                    permission_ids = request.POST.getlist['permission_list']
+                    #creamos el grupo
+                    group = Group.objects.create(name=nombre_grupo)
+                    #asignamos permisos al grupo
+                    for permission_id in permission_ids:
+                        print('el id es: ',permission_id)
+                        permission = Permission.objects.get(id=permission_id)
+                        group.permissions.add(permission)
+                    #guardamos cambios en la base de datos
+                    group.save()
 
-                data = {'tipo_accion': 'crear', 'correcto': True}
-            elif action == 'editar':
-                # Departamentos.objects.filter(pk=request.POST['id']).update(
-                #     nombre_depto = request.POST['nombre_depto'],
-                #     updated_date = updated_time
-                # )
+                    data = {'tipo_accion': 'crear', 'correcto': True}
+                elif action == 'editar':
+                    # Departamentos.objects.filter(pk=request.POST['id']).update(
+                    #     nombre_depto = request.POST['nombre_depto'],
+                    #     updated_date = updated_time
+                    # )
 
-                data = {'tipo_accion': 'editar', 'correcto': True}
-            else:
-                data['error'] = 'Ha ocurrido un error.'
+                    data = {'tipo_accion': 'editar', 'correcto': True}
+                else:
+                    data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
             print(str(e))
             print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
+            transaction.rollback()
         return JsonResponse(data, safe=False)
     elif request.method == 'GET':
         permisos = Permission.objects.all()
-        return render(request, 'usuarios/grupos.html',{'permisos': permisos})
+        grupos = Group.objects.all()
+        return render(request, 'usuarios/grupos.html',{'permisos': permisos, 'grupos': grupos})
