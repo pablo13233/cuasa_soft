@@ -1,10 +1,7 @@
-from django.shortcuts import render
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse
-from django.urls import reverse_lazy
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from datetime import datetime
-from django.utils import formats
 from django.http import JsonResponse
 from xhtml2pdf import pisa
 from django.template.loader import get_template
@@ -36,6 +33,8 @@ class asignacion_pdf(View):
 
 @login_required
 def asignacionViews(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('asignaciones.view_historial_asignaciones')):
+        return redirect('usuarios_app:error_view')
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
@@ -90,8 +89,8 @@ def asignacionViews(request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print(str(e))
-            print(action)
+            # print(str(e))
+            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error', 'correcto': True}
         return JsonResponse(data, safe=False)

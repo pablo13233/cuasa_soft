@@ -96,8 +96,8 @@ def inventarioViews(request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print(str(e))
-            print(action)
+            # print(str(e))
+            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
@@ -124,7 +124,7 @@ def categoriaViews(request):
             if action == 'buscardatos':
                 for i in Categoria.objects.all():
                     data.append(i.toJSON())
-                print(data)
+                # print(data)
             # ======================== crear =========================
             elif action == 'crear':
                 ca = Categoria()
@@ -142,8 +142,8 @@ def categoriaViews(request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print(str(e))
-            print(action)
+            # print(str(e))
+            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
@@ -196,8 +196,8 @@ def marcasViews(request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print(str(e))
-            print(action)
+            # print(str(e))
+            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
@@ -240,8 +240,8 @@ def modeloViews(request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print(str(e))
-            print(action)
+            # print(str(e))
+            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
@@ -285,8 +285,8 @@ def proveedoresViews(request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print(str(e))
-            print(action)
+            # print(str(e))
+            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
@@ -324,8 +324,8 @@ def estadosViews(request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print(str(e))
-            print(action)
+            # print(str(e))
+            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)

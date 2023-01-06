@@ -192,7 +192,7 @@ def empleados_views(request):
                 else:
                     data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print("==================== ",str(e))
+            # print("==================== ",str(e))
             # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
@@ -223,7 +223,7 @@ def departamentosViews(request):
                 dep = Departamentos()
                 dep.nombre_depto = request.POST['nombre_depto']
                 dep.save()
-                print('lol')
+                # print('lol')
                 data = {'tipo_accion': 'crear', 'correcto': True}
             elif action == 'editar':
                 Departamentos.objects.filter(pk=request.POST['id']).update(
@@ -235,8 +235,8 @@ def departamentosViews(request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print(str(e))
-            print(action)
+            # print(str(e))
+            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
         return JsonResponse(data, safe=False)
@@ -314,7 +314,7 @@ def grupos_view(request):
                 else:
                     data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print('error---> ',str(e))
+            # print('error---> ',str(e))
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': False}
             transaction.rollback()

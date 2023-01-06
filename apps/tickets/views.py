@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.utils import formats
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from apps.tickets.models import *
 from django.db.models import Q
- 
+
 from django.http import JsonResponse
 # Create your views here.
 
@@ -60,6 +60,8 @@ def ticketViews (request):
 
 @login_required
 def AdminTicketViews (request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('tickets.delete_ticket')):
+        return redirect('usuarios_app:error_view')
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
@@ -114,6 +116,8 @@ def AdminTicketViews (request):
 
 @login_required
 def categoria_ticket_view(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('tickets.view_categoria_ticket')):
+        return redirect('usuarios_app:error_view')
     if request.method == 'POST' and request.is_ajax():
         data =[]
         try:
@@ -146,7 +150,7 @@ def categoria_ticket_view(request):
             else:
                 data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            print(str(e))
+            # print(str(e))
             data['error'] = str(e)
             data = {'tipo_accion':'error', 'correcto':True}
         return JsonResponse(data, safe=False)
