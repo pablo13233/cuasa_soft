@@ -24,7 +24,6 @@ Usuarios
                     <div class="container-fluid col-12 text-center">
                         <div class="d-grid gap-2 d-md-block">
                             <a class="btn btn-outline-info fs-4 m-1" href="{%url 'usuarios_app:departamentos'%}"><i class="fa-solid fa-sitemap fs-2"></i> Departamentos</a>
-                            <a class="btn btn-outline-info fs-4 m-1" href="{%url 'usuarios_app:permisos'%}"><i class="fa-solid fa-ballot-check fs-2"></i> Permisos</a>
                             <a class="btn btn-outline-info fs-4 m-1" href="{%url 'usuarios_app:grupos'%}"><i class="fa-solid fa-ballot-check fs-2"></i> Grupos de usuarios</a>
                         </div>
                     </div>
@@ -159,6 +158,22 @@ Usuarios
                                     {% for dep in departamentos %}
                                     <option value="{{dep.id}}">
                                         {{dep.nombre_depto}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-8">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="grupo">Grupo:</label>
+                                <select name="grupo" id="grupo"
+                                    class="form-control form-select form-select-sm">
+                                    <option selected value="0">--Seleccione--</option>
+                                    {% for gr in grupos %}
+                                    <option value="{{gr.id}}">
+                                        {{gr.name}}
                                     </option>
                                     {% endfor %}
                                 </select>
@@ -357,6 +372,7 @@ Usuarios
             $('#apellidos').val("");
             $('#dni').val("");
             $('#departamento').val("0");
+            $('#grupo').val("0");
             $('#email').val("");
             $('#username').val("");
             $('#active').attr("checked", true);
@@ -469,8 +485,12 @@ Usuarios
             alert("Falta el apellido");
             $('#apellidos').focus();
 
-        } else if ($("#departamento").val() == "") {
+        } else if ($("#departamento").val() == "0") {
             alert("Seleccione un departamento");
+            $('#departamento').focus();
+
+        } else if (($("#grupo").val() == "0") || ($("#grupo").val() == "") || ($("#grupo").val() == null)) {
+            alert("Seleccione un grupo");
             $('#departamento').focus();
 
         } else if ($("#email").val() == "") {
@@ -491,6 +511,32 @@ Usuarios
         return false;
     });
 
+    function cargaGrupo(username){
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', "grupo_usuario");
+        parametros.append('username', username);
+        parametros.append('csrfmiddlewaretoken', token);
+        $.ajax({
+            url: window.location.pathname,
+            type: 'POST',
+            data: parametros,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                // alert(data);
+                // Recorremos la lista de permisos
+                for (var i = 0; i < data.length; i++) {
+                    // recorremos los input:checkbox en el modal
+                    $('#nombres').val(data[0]);
+                    $('#apellidos').val(data[1]);
+                    $('#grupo').val(data[2]);
+                }
+            }
+        });
+    }
+
     //=========================================== Editar
     $('#datatable tbody').on('click', 'button[rel="editar"]', function () {
         var tr = tablaEmpleado.cell($(this).closest('td,li')).index();
@@ -500,9 +546,7 @@ Usuarios
         modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
 
         $('#action').val("editar");
-
-        $('#nombres').val(data.nombres);
-        $('#apellidos').val(data.apellidos);
+        username = data.usuario.usuario;
         $('#dni').val(data.dni);
         $('#departamento').val(data.depto.id);
         $('#email').val(data.email);
@@ -524,6 +568,8 @@ Usuarios
         $('#dni').focus();
 
         $('#modalEmpleado').modal('show');
+        
+        cargaGrupo(username);
     });
 
     //================================================ desactivar / activar usuarios
@@ -623,6 +669,7 @@ Usuarios
         parametros.append('dni', $("#dni").val());
         parametros.append('correo', $('#email').val());
         parametros.append('depto', $("#departamento").val());
+        parametros.append('id_grupo', $("#grupo").val());
         parametros.append('nombre_usuario', $('#username').val());
         parametros.append('contrasena', $('#contrasena').val());
         parametros.append('contrasena2', $('#contrasena').val());
@@ -660,9 +707,6 @@ Usuarios
                             break;
                         case "editar":
                             texto = "Datos editados con éxito";
-                            break;
-                        case "eliminar":
-                            texto = "Registro eliminado con éxito";
                             break;
                         default:
                             texto = "";
@@ -782,5 +826,4 @@ Usuarios
     
 
 </script>
-
 {% endblock content %}

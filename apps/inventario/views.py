@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
@@ -10,10 +10,15 @@ from apps.inventario.models import *
 
 from django.http import JsonResponse
 # Create your views here.
+# from apps.usuarios.urls import error_view
 
+# def error_view(request):
+#     return render(request, 'partials/error_permisos.html')
 
 @login_required
 def inventarioViews(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('inventario.view_inventario_item')):
+        return redirect('usuarios_app:error_view')
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
@@ -108,6 +113,8 @@ def inventarioViews(request):
 # =============================================================== Parametros ===========================================================================
 @login_required
 def categoriaViews(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('inventario.view_categoria')):
+        return redirect('usuarios_app:error_view')
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
@@ -117,7 +124,7 @@ def categoriaViews(request):
             if action == 'buscardatos':
                 for i in Categoria.objects.all():
                     data.append(i.toJSON())
-
+                print(data)
             # ======================== crear =========================
             elif action == 'crear':
                 ca = Categoria()
@@ -146,6 +153,8 @@ def categoriaViews(request):
 
 @login_required
 def marcasViews(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('inventario.view_marca')):
+        return redirect('usuarios_app:error_view')
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
@@ -198,6 +207,8 @@ def marcasViews(request):
 
 @login_required
 def modeloViews(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('inventario.view_modeloitem')):
+        return redirect('usuarios_app:error_view')
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
@@ -240,6 +251,8 @@ def modeloViews(request):
 
 @login_required
 def proveedoresViews(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('inventario.view_proveedor')):
+        return redirect('usuarios_app:error_view')
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
@@ -282,6 +295,8 @@ def proveedoresViews(request):
 
 @login_required
 def estadosViews(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('inventario.view_estado')):
+        return redirect('usuarios_app:error_view')
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:

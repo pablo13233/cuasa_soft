@@ -44,7 +44,7 @@ Permisos
                             </thead>
                             <tbody class="text-center">
                                 
-                                {% for grup in grupos %}
+                                <!-- {% for grup in grupos %}
                                     <tr>
                                         <td>{{grup.id}}</td>
                                         <td>{{grup.name}}</td>
@@ -55,7 +55,7 @@ Permisos
                                         </td>
                                     </tr>
                                 {% endfor %}
-                                    
+                                    -->
                             </tbody>
                         </table>
                     </div>
@@ -89,28 +89,15 @@ Permisos
                             <input type="text" class="form-control" name="nombre" id="nombre" required />
                         </div>
                         <div class="row">
-                            <div class="form-group col-12">
+                            <div class="form-group col-12 mt-4 border">
                                 <span for="exampleFormControlSelect1">Disponibles:</span>
-                                <div class="container" style="height: 300px; max-height: 350px; overflow-y: scroll;">
+                                <div class="container border-top" style="height: 300px; max-height: 350px; overflow-y: scroll;" name="contenedor_permisos" id="contenedor_permisos">
                                     {% for prs in permisos %}
-                                    <label for=""><input type="checkbox" name="permisos_lista" value="{{prs.id}}"> {{prs.name}}</label>
+                                    <label for=""><input type="checkbox" name="permisos_lista" value="{{prs.id}}"> {{prs.name}}</label><br>
                                     {% endfor %}
                                 </div>
                             </div>
-                            <!-- <div class="form-group col-6">
-                                <span for="exampleFormControlSelect2">Seleccionados:</span>
-                                <select multiple class="form-control form-control-multiple" name="perm_asg"
-                                    id="perm_asg" style="height: 100px; max-height: 100px;">
-                                </select>
-                            </div> -->
                         </div>
-
-                        <!-- <div class="row">
-                            <div class="form-group">
-                                <a id="btn_derecha" class="btn btn-primary m-1">der</a>
-                                <a id="btn_izquierda" class="btn btn-primary m-1">izq</a>
-                            </div>
-                        </div> -->
                     </div>
                 </form>
             </div>
@@ -121,7 +108,7 @@ Permisos
         </div>
     </div>
 </div>
-<!-- fin modal -->
+<!-- fin modal add grupo -->
 
 <script>
     var tablaGrupo;
@@ -138,6 +125,7 @@ Permisos
             $('#modalGrupo').modal('show');
         });
         $('#datatable').DataTable();
+        obtenerDatos();
     }
 
     $("#btn").on("click", function () {
@@ -148,18 +136,51 @@ Permisos
         }
         return false;
     });
+    function cargaPermisosGrupo(id_grupo){
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', "permisos_grupo");
+        parametros.append('id', parseInt(id_grupo));
+        parametros.append('csrfmiddlewaretoken', token);
+        $.ajax({
+            url: window.location.pathname,
+            type: 'POST',
+            data: parametros,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                // alert(data);
+                // Recorremos la lista de permisos
+                for (var i = 0; i < data.length; i++) {
+                    // recorremos los input:checkbox en el modal
+                    $('input[name=permisos_lista]').each(function(){
+                        // por cada permiso en el modal busca segun el id devuelto en la lista
+                        if($(this).val() == data[i]['id']){
+                            // cambia el estado de la checbox para los permisos que ya tiene el grupo
+                            $(this).prop('checked', true);
+                        }
+                    });
+                }
+            }
+        });
+    }
 
     $('#datatable tbody').on('click', 'a[rel="editar"]', function () {
+        $('#formGrupo')[0].reset();
         var tr = tablaGrupo.cell($(this).closest('td,li')).index();
-        var data = tablaGrupo.row(tr.row).data();
+        var dato = tablaGrupo.row(tr.row).data();
 
-        modalTitulo.find('span').html(' Editar Categoria');
+        modalTitulo.find('span').html('Editar Grupo');
         modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
 
+        id_grupo = dato.id;
         $('#action').val("editar");
-        $('#id_grupo').val(data.id);
-        $('#nombre').val(data.name);
+        $('#id_grupo').val(dato.id);
+        $('#nombre').val(dato.name);
+
         $('#modalGrupo').modal('show');
+        cargaPermisosGrupo(id_grupo);
     });
 
     function submit_with_ajax(url, parametros) {
@@ -171,7 +192,7 @@ Permisos
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
         parametros.append('nombre', $('#nombre').val());
-        parametros.append('id', parseInt($('#id_Grupo').val()));
+        parametros.append('id_grupo', parseInt($('#id_grupo').val()));
         parametros.append('permission_list',permisos_selec);
         parametros.append('csrfmiddlewaretoken', token);
 
@@ -179,7 +200,6 @@ Permisos
             url: window.location.pathname,
             type: 'POST',
             data: parametros,
-
             dataType: 'json',
             contentType: 'multipart/form-data',
             processData: false,
@@ -221,40 +241,45 @@ Permisos
                 }
             }
         })
-
     }
 
-    // ===================================================================================================
-    // Obtener los elementos <select> y los botones
-    const permisos_disp = document.getElementById('perm_dis');
-    const permisos_asig = document.getElementById('perm_asg');
-    const btn_derecha = document.getElementById('btn_derecha');
-    const btn_izquierda = document.getElementById('btn_izquierda');
-
-    // Añadir eventos click a los botones
-    btn_derecha.addEventListener('click', function () {
-        // Recorrer todas las opciones seleccionadas del primer select
-        for (const option of permisos_disp.selectedOptions) {
-            // Clonar la opción seleccionada
-            const newOption = option.cloneNode(true);
-            // Añadir la opción clonada al segundo select
-            permisos_asig.appendChild(newOption);
-            // Eliminar la opción del primer select
-            option.remove();
-        }
-    });
-
-    btn_izquierda.addEventListener('click', function () {
-        // Recorrer todas las opciones seleccionadas del segundo select
-        for (const option of select2.selectedOptions) {
-            // Clonar la opción seleccionada
-            const newOption = option.cloneNode(true);
-            // Añadir la opción clonada al primer select
-            select1.appendChild(newOption);
-            // Eliminar la opción del segundo select
-            option.remove();
-        }
-    });
+    function obtenerDatos(){
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaGrupo = $('#datatable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            lenguage: {"url":"//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"},
+            ajax: {
+                url:window.location.pathname, 
+                type: 'POST',
+                data: {
+                    'action': 'buscardatos',
+                    'csrfmiddlewaretoken': token
+                },
+                dataSrc: ""
+            },
+            columns: [
+                {"data":"id"},
+                {"data":"name"},
+                {"data":"id"}
+            ],
+            columnDefs: [
+                {
+                    targets: [2],
+                    class: 'text-center',
+                    ordenable: false,
+                    render: function(data, type, row){
+                        var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
+                                    <i class="fas fa-edit"></i></a> `;
+                        return buttons;
+                    }
+                },
+            ],
+        });
+    }
 </script>
 
 {% endblock content %}

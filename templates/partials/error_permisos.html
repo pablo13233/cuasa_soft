@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Permisos
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid py-4 col-12">
+    <div class="row mb-4">
+        <div class="col-12 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-12 col-12 text-center">
+                            <p class="fs-2 text-uppercase"><i class="fa-solid fa-hexagon-exclamation fs-1"></i> Usted no tiene permisos para acceder a esta ventana.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container col-12 text-center" style="display: grid; place-items: center;">
+                        <p class="fs-3"> Lo siento, no tienes permiso para acceder a esta página. Si necesitas acceder a ella por algún motivo, por favor comunícate con el departamento de TI para solicitar los permisos necesarios. Gracias por tu comprensión.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
