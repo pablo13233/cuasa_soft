@@ -197,6 +197,8 @@ def empleados_views(request):
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
             transaction.rollback()
+        else:
+            transaction.commit()
         return JsonResponse(data, safe=False)
     elif request.method == 'GET':
         deptos = Departamentos.objects.all()
@@ -210,35 +212,39 @@ def departamentosViews(request):
     if request.method == 'POST' and request.is_ajax():
         data = []
         try:
-            # =====================  select ================
-            action = request.POST['action']
-            id_user = request.user.id
-            updated_time = timezone.now()
-            if action == 'buscardatos':
-                for i in Departamentos.objects.all():
-                    data.append(i.toJSON())
+            with transaction.atomic():
+                # =====================  select ================
+                action = request.POST['action']
+                id_user = request.user.id
+                updated_time = timezone.now()
+                if action == 'buscardatos':
+                    for i in Departamentos.objects.all():
+                        data.append(i.toJSON())
 
-            # ======================== crear =========================
-            elif action == 'crear':
-                dep = Departamentos()
-                dep.nombre_depto = request.POST['nombre_depto']
-                dep.save()
-                # print('lol')
-                data = {'tipo_accion': 'crear', 'correcto': True}
-            elif action == 'editar':
-                Departamentos.objects.filter(pk=request.POST['id']).update(
-                    nombre_depto = request.POST['nombre_depto'],
-                    updated_date = updated_time
-                )
+                # ======================== crear =========================
+                elif action == 'crear':
+                    dep = Departamentos()
+                    dep.nombre_depto = request.POST['nombre_depto']
+                    dep.save()
+                    # print('lol')
+                    data = {'tipo_accion': 'crear', 'correcto': True}
+                elif action == 'editar':
+                    Departamentos.objects.filter(pk=request.POST['id']).update(
+                        nombre_depto = request.POST['nombre_depto'],
+                        updated_date = updated_time
+                    )
 
-                data = {'tipo_accion': 'editar', 'correcto': True}
-            else:
-                data['error'] = 'Ha ocurrido un error.'
+                    data = {'tipo_accion': 'editar', 'correcto': True}
+                else:
+                    data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
             # print(str(e))
             # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
+            transaction.rollback()
+        else:
+            transaction.commit()
         return JsonResponse(data, safe=False)
     elif request.method == 'GET':
         return render(request, 'usuarios/departamentos.html',{'titulo': 'Inicio', 'entidad':'Creacion de Departamentos'})
@@ -318,6 +324,8 @@ def grupos_view(request):
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': False}
             transaction.rollback()
+        else:
+            transaction.commit()
         return JsonResponse(data, safe=False)
     elif request.method == 'GET':
         permisos = Permission.objects.all()

@@ -10,7 +10,29 @@ Administracion Tickets
 
 <div class="container-fluid py-4 col-12 ">
     <div class="row mb-4">
-        <div class="col-12 mb-md-0 mb-4">
+        <div class="col-12 md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-7">
+                            <h3><i class="fa-solid fa-sliders fs-1"></i> Estados</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container-fluid col-12 text-center">
+                        <div class="d-grid gap-2 d-md-block">
+                            <a class="btn btn-outline-primary fs-4 m-1" href="{% url 'tickets_app:admin_ticket' 1 %}"><i class="fa-solid fa-layer-group fs-2"></i> Abierto</a>
+                            <a class="btn btn-outline-warning fs-4 m-1" href="{% url 'tickets_app:admin_ticket' 2 %}"><i class="fa-solid fa-tags"></i> En progreso</a>
+                            <a class="btn btn-outline-success fs-4 m-1" href="{% url 'tickets_app:admin_ticket' 3 %}"><i class="fa-solid fa-shapes"></i> Cerrado</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-12 md-0 mb-4">
             <div class="card">
                 <div class="card-header pb-0">
                     <div class="row">
@@ -26,7 +48,7 @@ Administracion Tickets
                 </div>
                 <div class="card-body px-0 pb-2">
                     <div class="table-responsive">
-                        <table class="table align-items-center mb-0" id="tableOpen">
+                        <table class="table align-items-center mb-0" id="datatable">
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -62,7 +84,7 @@ Administracion Tickets
         </div>
     </div>
 
-    <div class="row mb-4">
+    <!-- <div class="row mb-4">
         <div class="col-12 mb-md-0 mb-4">
             <div class="card">
                 <div class="card-header pb-0">
@@ -168,7 +190,7 @@ Administracion Tickets
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 </div>
 
@@ -177,7 +199,7 @@ Administracion Tickets
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Asignar Ticket</h5>
+                <h5 class="modal-title" id="modalTitulo"><i class="fa-solid fa-user-check"></i><span> Asignar Ticket</span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
@@ -200,20 +222,20 @@ Administracion Tickets
                         <label for="exampleFormControlTextarea1">Descripcion</label>
                         <textarea class="form-control" id="description_ticket" name="description_ticket" rows="3" name="descripcion" disabled></textarea>
                     </div>
-                    <div class="from-group">
-                        <button type="button" class="btn" id="verImagen"><i class="bi bi-image fs-1"></i></button>
-                        <!-- Modal ver Imagen     -->
-                            <div class="modal fade" id="modalImagen">
-                                <div class="modal-dialog modal-dialog-centered modal-lg">
-                                    <div class="modal-content">
-                                        <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="id_imagen">
-                                    </div>
-                                </div>
-                            </div>
-                        <!-- Fin Modal ver Imagen -->
+                    <div class="btn-group mt-2 mb-2" role="group">
+                        <button type="button" class="btn form-control p-0" id="verImagen" title="Ver Imagen"><i class="fa-solid fa-image fs-1"></i></button>
                     </div>
-                    <div class="form-group">
-                        <label for="">Asignar a</label>
+                    <!-- Modal ver Imagen     -->
+                    <div class="modal fade" id="modalImagen">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <img src="" class="img-responsive" style="max-width:1366px;max-height:768px;" id="id_imagen">
+                            </div>
+                        </div>
+                    </div>
+                <!-- Fin Modal ver Imagen -->
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="asignar_usuario">Asignar a</label>
                         <select class="form-select" id="asignar_usuario" aria-label="Default select example">
                             <option value="0" selected> -- Seleccione -- </option>
                             {% for us in users %}
@@ -232,69 +254,17 @@ Administracion Tickets
 </div>
 <!-- Fin Editar -->
 
-<!-- Inicio Terminar -->
-<div class="modal fade" id="modalTerminarTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Terminar Ticket</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="post" action="." id="formTerminarTicket" enctype="multipart/form-data"> {% csrf_token %}
-                    <div class="form-group">
-                        <div class="row">
-                            <input type="text" class="d-none" name="action" id="action" value="actualizarProgress"/>
-                            <div class="col-9 col-sm-8">
-                                <label for="">Titulo</label>
-                                <input type="text" class="form-control" id="titulo_ticketDone" name="titulo_ticket" disabled>
-                            </div>
-                            <div class="col-3 col-sm-4">
-                                <label for="">Num. Ticket</label>
-                                <input type="text" class="form-control" id="id_ticketDone" name="id_ticket" readonly>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleFormControlTextarea1">Descripcion</label>
-                        <textarea class="form-control" id="description_ticketDone" name="description_ticket" rows="3" name="descripcion" disabled></textarea>
-                    </div>
-                    <div class="from-group">
-                        <button type="button" class="btn" id="verImagenD"><i class="bi bi-image fs-1"></i></button>
-                        <!-- Modal ver Imagen     -->
-                            <div class="modal fade" id="modalImagenD">
-                                <div class="modal-dialog modal-dialog-centered modal-lg">
-                                    <div class="modal-content">
-                                        <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="id_imagenDone">
-                                    </div>
-                                </div>
-                            </div>
-                        <!-- Fin Modal ver Imagen -->
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnTerminarTicket">Terminar</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Fin Terminar -->
-
 <script>
     //==================================================Carga del Modal=================================================
 
-    var tablaTicketOpen;
-    var tablaTicketInProgress;
-    var tablaTicketDone;
+    var tablaTicket;
+    var modalTitulo = $('#modalTitulo');
 
     window.onload = function () {
-        //alert("Pagina cargada");
-        $('#tableOpen').DataTable();
-        $('tableProgress').DataTable();
-        $('tableClose').DataTable();
+        modalTitulo.find('span').html(' Asignar Ticket');
+        modalTitulo.find('i').removeClass().addClass('fa-solid fa-user-check');
+        $('#datatable').DataTable();
+        
         ObtenerDatos();
     }
 
@@ -303,7 +273,7 @@ Administracion Tickets
     function ObtenerDatos() {
         token = $('input[name="csrfmiddlewaretoken"]').val();
         //============================== TIckets en Abiertos ===========================================================
-        tablaTicketOpen = $('#tableOpen').DataTable({
+        tablaTicket = $('#datatable').DataTable({
             responsive: true,
             autoWidth: false,
             destroy: true,
@@ -316,7 +286,7 @@ Administracion Tickets
                 url: window.location.pathname, //Obtenemos la url obsoluta
                 type: 'POST',
                 data: {
-                    'action': 'ticketsopen', //Mandamos la accion para que django sepa que tiene que buscar
+                    'action': 'buscardatos', //Mandamos la accion para que django sepa que tiene que buscar
                     'csrfmiddlewaretoken': token
                 }, // parametros
                 dataSrc: ""
@@ -356,7 +326,12 @@ Administracion Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                            return '<span class="badge rounded-pill bg-primary fs-6">Abierto</span>';;
+                            if (data == 'OPEN')
+                                return '<span class="badge rounded-pill bg-primary fs-6 btn-sm btn-flat">Abierto</span>';
+                            else if (data == 'IN_PROGRESS')
+                                return '<span class="badge rounded-pill bg-warning fs-6 btn-sm btn-flat">En Progreso</span>';
+                            else if (data == 'DONE')
+                                return '<span class="badge rounded-pill bg-success fs-6 btn-sm btn-flat">Terminado</span>';
                     }
                 },
                 {
@@ -364,146 +339,8 @@ Administracion Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var buttons = `<a rel="actualizarOpen" class='btn btn-secondary btn-sm btn-flat test-popup-link'>
+                        var buttons = `<a rel="EditarTicket" class='btn btn-secondary btn-sm btn-flat test-popup-link' title="Ver / Asignar">
                                         <i class="fa-solid fa-eye fs-6"></i></a>`;
-                            return buttons;
-                    }
-                },
-            ],
-        });
-        //============================== TIckets en Progreso ===========================================================
-        tablaTicketInProgress = $('#tableProgress').DataTable({
-            responsive: true,
-            autoWidth: false,
-            destroy: true,
-            bSortable: true,
-            deferRender: true,
-            language: {
-                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
-            },
-            ajax: {
-                url: window.location.pathname, //Obtenemos la url obsoluta
-                type: 'POST',
-                data: {
-                    'action': 'ticketsprogress', //Mandamos la accion para que django sepa que tiene que buscar
-                    'csrfmiddlewaretoken': token
-                }, // parametros
-                dataSrc: ""
-            },
-            columns: [ //Columnas de nuestro modelo/Tabla aqui retorna o pinta los valores en la datables
-                {
-                    "data": "id"
-                },
-                {
-                    "data": "user_id.usuario"
-                },
-                {
-                    "data": "assignee_id.usuario"
-                },
-                {
-                    "data": "description"
-                },
-                {
-                    "data": "created_at"
-                },
-                {
-                    "data": "status"
-                },
-                {
-                    "data": "action"
-                }
-            ], 
-            columnDefs: [ //Personalizar una columna
-                {
-                    targets: [3],
-                    render: function (data, type, row) {
-                        return data.substr(0, 25) + "...";
-                    }
-                },
-                {
-                    targets: [5], //Personalizar la colummna numero 5
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        return '<span class="badge rounded-pill bg-warning text-dark fs-6">En Progreso</span>';
-                    }
-                },
-                {
-                    targets: [6], //Personalizar la colummna numero 6
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        var buttons = `<a rel="actualizarProgress" class='btn btn-secondary btn-sm btn-flat test-popup-link'>
-                                        <i class="fa-solid fa-eye fs-6"></i></a>`;
-                            return buttons;
-                    }
-                },
-            ],
-        });
-        //=================================  Tickets Cerrados ============================================================
-        tablaTicketDone = $('#tableClose').DataTable({
-            responsive: true,
-            autoWidth: false,
-            destroy: true,
-            bSortable: true,
-            deferRender: true,
-            language: {
-                "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
-            },
-            ajax: {
-                url: window.location.pathname, //Obtenemos la url obsoluta
-                type: 'POST',
-                data: {
-                    'action': 'ticketdone', //Mandamos la accion para que django sepa que tiene que buscar
-                    'csrfmiddlewaretoken': token
-                }, // parametros
-                dataSrc: ""
-            },
-            columns: [ //Columnas de nuestro modelo/Tabla aqui retorna o pinta los valores en la datables
-            {
-                    "data": "id"
-                },
-                {
-                    "data": "user_id.usuario"
-                },
-                {
-                    "data": "assignee_id.usuario"
-                },
-                {
-                    "data": "description"
-                },
-                {
-                    "data": "created_at"
-                },
-                {
-                    "data": "status"
-                },
-                {
-                    "data": "action"
-                }
-            ], 
-            columnDefs: [ //Personalizar una columna
-                {
-                    targets: [3],
-                    render: function (data, type, row) {
-                        return data.substr(0, 25) + "...";
-                    }
-                },
-                {
-                    targets: [5], //Personalizar la colummna numero 5
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        return '<span class="badge rounded-pill bg-success fs-6">Terminado</span>';
-                    }
-                },
-                {
-                    targets: [6], //Personalizar la colummna numero 6
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        var buttons = `<button rel="verTicket" type="button" class='btn btn-secondary btn-sm btn-flat'>
-                                        <i class="fa-solid fa-eye fs-6"></i></button>`;
                             return buttons;
                     }
                 },
@@ -523,13 +360,6 @@ Administracion Tickets
         return false;
     });
 
-    $("#btnTerminarTicket").on("click", function () {
-
-        if (confirm("¿Esta seguro de terminar el ticket?")) {
-            submit_with_ajax("", "");
-        }
-        return false;
-    });
 
     //================================================Función AJAX======================================================
 
@@ -545,7 +375,7 @@ Administracion Tickets
             parametros.append('assignee_id', $("#asignar_usuario").val());
         }else if(tipoaction == "actualizarProgress")
         {
-            parametros.append('id', parseInt($("#id_ticketDone").val()));
+            parametros.append('id', parseInt($("#id_ticket").val()));
         }
         
         
@@ -563,13 +393,9 @@ Administracion Tickets
                 //alert("Correcto");
                 if (result.correcto) {
                     $('#formEditarTicket')[0].reset();
-                    $("#modalEditarTicket").modal("hide");
-                    $('#formTerminarTicket')[0].reset();
-                    $('#modalTerminarTicket').modal("hide");
-                    tablaTicketOpen.ajax.reload(null, false); //Recargamos las tablas
-                    tablaTicketInProgress.ajax.reload(null, false);
-                    tablaTicketDone.ajax.reload(null, false); 
-
+                    $("#modalEditarTicket").modal("hide");;
+                    // alert("lol");
+                    tablaTicket.ajax.reload(null, false); //Recargamo tabla
                     switch (result.tipo_accion) {
                         case "actualizarOpen":
                             texto = "Ticket asignado con éxito";
@@ -588,9 +414,7 @@ Administracion Tickets
                     });
 
                 } else {
-                    tablaTicketOpen.ajax.reload(null, false); //Recargamos las tablas
-                    tablaTicketInProgress.ajax.reload(null, false);
-                    tablaTicketDone.ajax.reload(null, false); 
+                    tablaTicket.ajax.reload(null, false); //Recargamo tabla 
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -611,58 +435,39 @@ Administracion Tickets
 
     //================================================= Editar Ticket =============================================================
 
-    $('#tableOpen tbody').on('click', 'a[rel="actualizarOpen"]', function(){
+    $('#datatable tbody').on('click', 'a[rel="EditarTicket"]', function(){
         
-        var tr = tablaTicketOpen.cell($(this).closest('td, li')).index();
-        var data = tablaTicketOpen.row(tr.row).data();
+        var tr = tablaTicket.cell($(this).closest('td, li')).index();
+        var data = tablaTicket.row(tr.row).data();
+        estado = data.status;
 
-        $('#action').val('actualizarOpen');
-        
-        $('#titulo_ticket').val(data.title);
-        $('#id_ticket').val(data.id);
-        $('#description_ticket').val(data.description);
-        $('#id_imagen').attr("src",data.img_ticket);
-
-        $('#modalEditarTicket').modal('show');
-    });
-
-    $('#tableProgress tbody').on('click', 'a[rel="actualizarProgress"]', function(){
-        
-        var tr = tablaTicketInProgress.cell($(this).closest('td, li')).index();
-        var data = tablaTicketInProgress.row(tr.row).data();
-
-        $('#action').val('actualizarProgress');
-        
-        $('#titulo_ticketDone').val(data.title);
-        $('#id_ticketDone').val(data.id);
-        $('#description_ticketDone').val(data.description);
-        $('#id_imagenDone').attr("src",data.img_ticket);
-
-        $('#modalTerminarTicket').modal('show');
-    });
-
-    $('#tableClose tbody').on('click', 'button[rel="verTicket"]', function(){
-        
-        var tr = tablaTicketDone.cell($(this).closest('td, li')).index();
-        var data = tablaTicketDone.row(tr.row).data();
-        
         $('#titulo_ticket').val(data.title);
         $('#id_ticket').val(data.id);
         $('#description_ticket').val(data.description);
         $('#id_imagen').attr("src",data.img_ticket);
         $('#asignar_usuario').val(data.assignee_id.id);
-        $('#asignar_usuario').prop('disabled',true)
-        $('#btnEditarTicket').attr("hidden",true)
+        if (estado == 'OPEN'){//si el estado es OPEN cambia el texto del boton y asigna la accion para actualizarlo a IN_PROGRESS
+            modalTitulo.find('span').html(' Asignar Ticket');
+            modalTitulo.find('i').removeClass().addClass('fa-solid fa-user-check fs-3'); 
+            $('#btnEditarTicket').text('Asignar'); 
+            $('#action').val('actualizarOpen');
+        }else if (estado == 'IN_PROGRESS'){//si el estado es IN_PROGRESS cambia el texto del boton y asigna la accion apra actualizarlo DONE
+            modalTitulo.find('span').html(' Terminar Ticket');
+            modalTitulo.find('i').removeClass().addClass('fa-solid fa-ballot-check fs-3');
+            $('#btnEditarTicket').text('Terminar');
+            $('#asignar_usuario').attr("disabled",true);
+            $('#action').val('actualizarProgress');
+        }else if (estado == 'DONE'){
+            modalTitulo.find('span').html(' Ver Ticket');
+            modalTitulo.find('i').removeClass().addClass('fa-solid fa-eye fs-3');
+            $('#btnEditarTicket').hide();
+            $('#asignar_usuario').attr("disabled",true);
+        }
 
         $('#modalEditarTicket').modal('show');
     });
 
     //========================================= ver imagen ===============================
-    $("#verImagenD").on("click", function () {
-        
-        $("#modalImagenD").modal("show");
-        
-    });
     $("#verImagen").on("click", function () {
         
         $("#modalImagen").modal("show");

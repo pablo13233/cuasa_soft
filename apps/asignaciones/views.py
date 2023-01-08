@@ -8,7 +8,7 @@ from django.template.loader import get_template
 from io import BytesIO
 
 from django.views.generic import View
-
+from django.db import transaction
 from apps.asignaciones.models import *
 from apps.inventario.models import *
 from django.contrib.auth.models import User
@@ -39,60 +39,62 @@ def asignacionViews(request):
         data = []
         try:
             #select
-            action = request.POST['action']
-            id_user = request.user.id
-            updated_time = datetime.now()
-            if action == 'buscardatos': 
-                for i in historial_asignaciones.objects.all().order_by('-id'):
-                    data.append(i.toJSON())
-            #created
-            elif action == 'crear':
-                equipo = request.POST['item_id']
-                inv = Inventario_Item.objects.get(pk=equipo)
-                #-------------------------------------
-                if inv.estado.id == 2:
+            with transaction.atomic():
+                action = request.POST['action']
+                id_user = request.user.id
+                updated_time = datetime.now()
+                if action == 'buscardatos': 
+                    for i in historial_asignaciones.objects.all().order_by('-id'):
+                        data.append(i.toJSON())
+                #created
+                elif action == 'crear':
+                    equipo = request.POST['item_id']
+                    inv = Inventario_Item.objects.get(pk=equipo)
+                    #-------------------------------------
+                    if inv.estado.id == 2:
+                        asg = historial_asignaciones()
+                        if int(request.POST['usuario_asignar'])>0:
+                            asg.usuario = User.objects.get(pk=request.POST['usuario_asignar'])
+                        if int(equipo)>0:
+                            asg.inventario_item = Inventario_Item.objects.get(pk=equipo)
+                        asg.status = 'ASIGNADO'
+                        asg.assigned_by = User.objects.get(pk=id_user)
+                        asg.update_by = User.objects.get(pk=id_user)
+                        asg.observaciones = request.POST.get('observaciones')
+                        asg.save()
+                        #-------------------------------------
+                        inv.estado = Estado.objects.get(pk=1)
+                        inv.updated_at = updated_time
+                        inv.save()
+                        data = {'tipo_accion': 'crear', 'correcto': True}
+                #editar
+                elif action == 'editar':
+                    equipoe = request.POST['equipo_ver']
+                    inve = Inventario_Item.objects.get(correlativo=equipoe)
+                    #-------------------------------------
                     asg = historial_asignaciones()
-                    if int(request.POST['usuario_asignar'])>0:
-                        asg.usuario = User.objects.get(pk=request.POST['usuario_asignar'])
-                    if int(equipo)>0:
-                        asg.inventario_item = Inventario_Item.objects.get(pk=equipo)
-                    asg.status = 'ASIGNADO'
-                    asg.assigned_by = User.objects.get(pk=id_user)
+                    if int(request.POST['usuario_asignar']>0):
+                        asg.usuario = User.objects.get(username=request.POST['usuario_ver'])
+                    if int(request.POST['equipo_ver']>0):
+                        asg.inventario_item = Inventario_Item.objects.get(correlativo=equipo)
+                    asg.status = 'DESCARGO'
                     asg.update_by = User.objects.get(pk=id_user)
                     asg.observaciones = request.POST.get('observaciones')
                     asg.save()
                     #-------------------------------------
-                    inv.estado = Estado.objects.get(pk=1)
-                    inv.updated_at = updated_time
-                    inv.save()
-                    data = {'tipo_accion': 'crear', 'correcto': True}
-            #editar
-            elif action == 'editar':
-                equipoe = request.POST['equipo_ver']
-                inve = Inventario_Item.objects.get(correlativo=equipoe)
-                #-------------------------------------
-                asg = historial_asignaciones()
-                if int(request.POST['usuario_asignar']>0):
-                    asg.usuario = User.objects.get(username=request.POST['usuario_ver'])
-                if int(request.POST['equipo_ver']>0):
-                    asg.inventario_item = Inventario_Item.objects.get(correlativo=equipo)
-                asg.status = 'DESCARGO'
-                asg.update_by = User.objects.get(pk=id_user)
-                asg.observaciones = request.POST.get('observaciones')
-                asg.save()
-                #-------------------------------------
-                inve.estado = 2
-                inve.updated_at = updated_time
-                inve.save()
+                    inve.estado = 2
+                    inve.updated_at = updated_time
+                    inve.save()
 
-                data = {'tipo_accion': 'editar', 'correcto': True}
-            else:
-                data['error'] = 'Ha ocurrido un error.'
+                    data = {'tipo_accion': 'editar', 'correcto': True}
+                else:
+                    data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            # print(str(e))
-            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error', 'correcto': True}
+            transaction.rollback()
+        else:
+            transaction.commit()
         return JsonResponse(data, safe=False)
     elif request.method == 'GET': 
         invent = Inventario_Item.objects.all()

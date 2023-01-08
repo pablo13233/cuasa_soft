@@ -3,6 +3,7 @@
 *.png
 *.webp
 *.svg
+*.mp4
 
 .DS_Store
 

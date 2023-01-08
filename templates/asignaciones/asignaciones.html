@@ -12,10 +12,10 @@ Asignaciones
     <div class="row mb-4">
         <div class="col-lg-12 col-md-8 mb-md-0 mb-4">
             <div class="card">
-                <div class="card-header pb-0">
+                <div class="card-header pt-2">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h4>Asignaciones</h4>
+                            <h4><i class="fa-solid fa-arrow-right-from-arc fs-3"></i> Asignaciones</h4>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
                             <button type="button" class="btn btn-success btn-sm mb-2 me-2" id="btnAdd">
@@ -25,7 +25,7 @@ Asignaciones
 
                     </div>
                 </div>
-                <div class="card-body px-0 pb-2">
+                <div class="card-body pt-2">
                     <table class="table align-items-center mb-0" id="datatable">
                         <thead>
                             <tr>
@@ -76,8 +76,8 @@ Asignaciones
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title" id="">
-                    <i class="fa-solid fa-plus"></i> <span>Asignar Equipo</span></h5>
+                <h5 class="modal-title" id="modal-title">
+                    <i class="fa-solid fa-plus"></i><span> Asignar Equipo</span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
@@ -90,7 +90,7 @@ Asignaciones
                         <div class="col-md-12">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="equipo">Equipo:</label>
-                                <select name="equipo" id="equipo" class="form-control form-select form-select-sm">
+                                <select name="equipo" id="equipo" class="form-control form-select form-select-sm"  data-show-subtext="false" data-live-search="true">
                                     <option selected value="0">--Seleccione--</option>
                                     {% for itm in invent %}
                                         <option value="{{itm.pk}}"> 
@@ -145,70 +145,22 @@ Asignaciones
 </div>
 <!-- Fin Agregar -->
 
-
-<!-- Inicio ver asignacion-->
-
-<div class="modal fade" id="modalVerAsignacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="">
-                    <i class="bi bi-eye"></i> <span>Asignacion</span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group row">
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">Equipo:</span>
-                            <input type="text" class="form-control" id="equipo_ver" readonly />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group row">
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">Asignado a:</span>
-                            <input type="text" class="form-control" id="usuario_ver" readonly />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group row">
-                            <div class="input-group mb-3">  
-                                <span class="input-group-text">Nota:</span>
-                                <textarea id="nota_ver" name="nota_ver" maxlength="500" type="text" class="form-control" style="resize: none" readonly>
-                                </textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnDescargo">Descargo</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Fin ver asignaacion-->
-
 <script>
-    var modalTitulo = $('.modal-title');
+    var modalTitulo = $('#modal-title');
     var tablaAsignacion;
 
     window.onload = function () {
-
+        modalTitulo.find('span').html(' Asignar Equipo');
+        modalTitulo.find('i').removeClass().addClass('fa-solid fa-plus');
         //alert("Pagina cargada");
-        $("#btnAdd").on("click", function () {
-            modalTitulo.find('span').html('Asignar Equipo');
-            modalTitulo.find('i').removeClass().addClass('fa fa-plus');
+        $('#datatable').DataTable();
+        obtenerDatos();
+    }
+
+    //=================================================Ver y descargar=============================================================
+    $("#btnAdd").on("click", function () {
+            modalTitulo.find('span').html(' Asignar Equipo');
+            modalTitulo.find('i').removeClass().addClass('fa-solid fa-plus');
             $('#action').val("crear");
             $('#form_asignar')[0].reset();
             $('#nota').val("");
@@ -218,31 +170,55 @@ Asignaciones
             $('#Equipo').focus();
 
             $('#modalAsignacion').modal('show');
-        });
-        $('#datatable').DataTable();
-        obtenerDatos();
-
-    }
-
-    //=================================================Ver y descargar=============================================================
-
-    $('#datatable tbody').on('click', 'button[rel="verAsignacion"]', function () {
+        }
+    );
+    $('#datatable tbody').on('click', 'a[rel="verAsignacion"]', function () {
             var tr = tablaAsignacion.cell($(this).closest('td, li')).index();
             var data = tablaAsignacion.row(tr.row).data();
-            
-            $("#equipo_ver").attr("src", data.inventario_item_id);
-            $("#usuario_ver").val(data.usuario.username);
-            $("#nota_ver").val(data.observaciones);
-            $("#assigned_ver").val(data.assignee_id.usuario);
 
-            $("#modalVerAsignacion").modal("show");
+            modalTitulo.find('span').html(' Asignar Equipo');
+            modalTitulo.find('i').removeClass().addClass('fa-solid fa-plus');
+            
+            $("#equipo").val(data.inventario_item.id);
+            $("#usuario").val(data.usuario.id);
+            $("#nota").val(data.observaciones);
+
+            $("#modalAsignacion").modal("show");
+        }
+    );
+    $('#datatable tbody').on('click', 'a[rel="editar"]', function () {
+            var tr = tablaAsignacion.cell($(this).closest('td, li')).index();
+            var data = tablaAsignacion.row(tr.row).data();
+
+            modalTitulo.find('span').html(' Editar Asignacion');
+            modalTitulo.find('i').removeClass().addClass('fa-solid fa-edit');
+            
+            $("#equipo").val(data.inventario_item.id);
+            $("#usuario").val(data.usuario.id);
+            $("#nota").val(data.observaciones);
+
+            $("#modalAsignacion").modal("show");
+        }
+    );
+    $('#datatable tbody').on('click', 'a[rel="descarte"]', function () {
+            var tr = tablaAsignacion.cell($(this).closest('td, li')).index();
+            var data = tablaAsignacion.row(tr.row).data();
+
+            modalTitulo.find('span').html(' Descartar Equipo Asignado');
+            modalTitulo.find('i').removeClass().addClass('fa-solid fa-user-minus');
+            
+            $("#equipo").val(data.inventario_item.id);
+            $("#usuario").val(data.usuario.id);
+            $("#nota").val(data.observaciones);
+
+            $("#modalAsignacion").modal("show");
         }
     );
 
     //================================================== Obtener Datos===========================================================
     function obtenerDatos() {
         token = $('input[name="csrfmiddlewaretoken"]').val();
-        tablaTicket = $('#datatable').DataTable({
+        tablaAsignacion = $('#datatable').DataTable({
             responsive: true,
             autoWidth: false,
             destroy: true,
@@ -304,8 +280,12 @@ Asignaciones
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var buttons = `<button rel="verAsignacion" type="button" class='btn btn-secondary btn-sm btn-flat'>
-                                        <i class="fa fa-eye fs-6" aria-hidden="true"></i></button>`;
+                        var buttons = `<a rel="verAsignacion" title="Ver" class='btn btn-secondary btn-sm btn-flat mx-1 test-popup-link'>
+                                        <i class="fa-solid fa-eye fs-6" aria-hidden="true"></i></a>`;
+                            buttons += `<a rel="editar" title="Editar" class='btn btn-warning btn-sm btn-flat mx-1 test-popup-link'>
+                                        <i class="fa-solid fa-edit fs-6" aria-hidden="true"></i></a>`;
+                            buttons += `<a rel="descarte" title="Descargo" class='btn btn-danger btn-sm btn-flat mx-1 test-popup-link'>
+                                        <i class="fa-solid fa-user-minus fs-6" aria-hidden="true"></i></a>`;
                             return buttons;
                     }
                 },
@@ -399,6 +379,7 @@ Asignaciones
             }
         });
     }
+
 
 </script>
 {% endblock content %}
