@@ -1,34 +1,70 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.http import JsonResponse
-from xhtml2pdf import pisa
-from django.template.loader import get_template
-from io import BytesIO
-
-from django.views.generic import View
+from django.http import HttpResponse
 from django.db import transaction
 from apps.asignaciones.models import *
 from apps.inventario.models import *
+from apps.usuarios.models import *
 from django.contrib.auth.models import User
+from .utils import generar_pdf
+from django.template.loader import render_to_string
+from weasyprint import HTML,CSS
+
 # Create your views here.
 
-# html a pdf
-def html_to_pdf(template_src, context_dict={}):
-    template = get_template(template_src)
-    html = template.render(context_dict)
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
-    if not pdf.err:
-        return HttpResponse(result.getvalue(),content_type="application/pdf")
-    return None
-#
+from django.views.generic import TemplateView
 
-class asignacion_pdf(View):
-    def get(self, request, *args, **kwargs):
-        pdf= html_to_pdf('asignaciones/asignacion_pdf.html')
-        return HttpResponse(pdf, content_type="application/pdf")
+
+@login_required
+def PdfView(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('asignaciones.view_historial_asignaciones')):
+        return redirect('usuarios_app:error_view')
+    if request.method == 'GET':
+        try:
+            id_asg = request.GET['asignacion_id']
+            data_asignacion =  historial_asignaciones.objects.filter(id=id_asg)
+            for asg in data_asignacion:
+                data_asg = {}
+                id = asg.pk
+                status = asg.status
+                fecha = asg.assigned_date.strftime('%Y-%m-%d')
+                nombres = asg.usuario.first_name + ' ' + asg.usuario.last_name
+                ident = Empleado.objects.get(usuario = asg.usuario)
+                dni = ident.dni
+                observaciones = asg.observaciones
+                item = Inventario_Item.objects.get(id=asg.inventario_item.id)
+                item_nombre = item.nombre_item
+                item_caracteristica = item.caracteristica
+                serie = item.serial_number
+                modelo = item.ModeloItem.nombre_modelo
+                marca = item.ModeloItem.marca.nombre_marca
+            html_string = render_to_string('asignaciones/asignacion_pdf.html',{
+                            'id':id,
+                            'status':status,
+                            'fecha':fecha,
+                            'nombres':nombres,
+                            'dni':dni,
+                            'observaciones':observaciones,
+                            'equipo':item_nombre,
+                            'caracteristicas':item_caracteristica,
+                            'serie':serie,
+                            'modelo':modelo,
+                            'marca':marca,
+                            })
+            html = HTML(string=html_string,base_url=request.build_absolute_uri()) #base url es lo que hace funcionar los archivos estaticos en el pdf
+            response = HttpResponse(html.write_pdf(), content_type='application/pdf')
+        except Exception as e: 
+            print("Error: " + str(e))
+        return response
+    elif request.method =="POST":
+        return None
+    
+class asignacion_pdf(TemplateView):
+    template_name = 'asignaciones/asignacion_pdf.html'
+
+
 
 
 @login_required
@@ -42,6 +78,7 @@ def asignacionViews(request):
             with transaction.atomic():
                 action = request.POST['action']
                 id_user = request.user.id
+                usuario_asg = User.objects.get(pk=id_user)
                 updated_time = datetime.now()
                 if action == 'buscardatos': 
                     for i in historial_asignaciones.objects.all().order_by('-id'):
@@ -58,8 +95,8 @@ def asignacionViews(request):
                         if int(equipo)>0:
                             asg.inventario_item = Inventario_Item.objects.get(pk=equipo)
                         asg.status = 'ASIGNADO'
-                        asg.assigned_by = User.objects.get(pk=id_user)
-                        asg.update_by = User.objects.get(pk=id_user)
+                        asg.assigned_by = usuario_asg
+                        asg.update_by = usuario_asg
                         asg.observaciones = request.POST.get('observaciones')
                         asg.save()
                         #-------------------------------------
@@ -68,25 +105,31 @@ def asignacionViews(request):
                         inv.save()
                         data = {'tipo_accion': 'crear', 'correcto': True}
                 #editar
-                elif action == 'editar':
-                    equipoe = request.POST['equipo_ver']
-                    inve = Inventario_Item.objects.get(correlativo=equipoe)
-                    #-------------------------------------
-                    asg = historial_asignaciones()
-                    if int(request.POST['usuario_asignar']>0):
-                        asg.usuario = User.objects.get(username=request.POST['usuario_ver'])
-                    if int(request.POST['equipo_ver']>0):
-                        asg.inventario_item = Inventario_Item.objects.get(correlativo=equipo)
-                    asg.status = 'DESCARGO'
-                    asg.update_by = User.objects.get(pk=id_user)
-                    asg.observaciones = request.POST.get('observaciones')
-                    asg.save()
-                    #-------------------------------------
-                    inve.estado = 2
-                    inve.updated_at = updated_time
-                    inve.save()
+                elif action == 'descargo':
+                    usuario_equipo = request.POST['usuario_asignar']
+                    equipo = request.POST['item_id']
+                    id_asignacion = request.POST['id_asignacion']
+                    #-----------------Se crea el nuevo registro en el historial (No se actualiza ya que este necesita un historico)
+                    historial_asignaciones.objects.filter(id=id_asignacion).create(
+                        usuario = User.objects.get(pk=usuario_equipo),
+                        inventario_item = Inventario_Item.objects.get(pk=equipo),
+                        status = 'DESCARGO',
+                        assigned_by = usuario_asg,
+                        update_by = usuario_asg,
+                        observaciones = request.POST.get('observaciones'),
+                    )
+                    #-----------Actualzia el equipo/item para que este disponible para proxima asignacion
+                    Inventario_Item.objects.filter(id=equipo).update(
+                        estado = 2,
+                        updated_at = updated_time,
+                    )
 
-                    data = {'tipo_accion': 'editar', 'correcto': True}
+                    data = {'tipo_accion': 'descargo', 'correcto': True}
+                # elif action == 'pdf':
+                #     id_asg = request.POST['id_asignacion']
+                    
+                #     return redirect("asignaciones_app:nota", id_asg)
+                    
                 else:
                     data['error'] = 'Ha ocurrido un error.'
         except Exception as e:

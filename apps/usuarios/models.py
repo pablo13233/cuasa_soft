@@ -21,7 +21,7 @@ class Departamentos(models.Model):
 class Empleado(models.Model):
     dni = models.CharField(primary_key=True, max_length=13, blank=False, null=False)
     depto = models.ForeignKey(Departamentos, on_delete=models.PROTECT, null=True, blank=True, related_name="departamentos_usuarios")
-    usuario = models.ForeignKey(User, on_delete=models.PROTECT, null=False, blank=False, related_name="empleado_usuario")
+    usuario = models.OneToOneField(User, on_delete=models.PROTECT, null=False, blank=False, related_name="empleado_usuario")
     created_by = models.ForeignKey(User, on_delete=models.PROTECT, null=False, blank=False, related_name="empleado_creado_por")
     created_date = models.DateTimeField(auto_now_add=True)
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='empleado_editado_por')

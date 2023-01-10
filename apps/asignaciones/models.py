@@ -20,7 +20,7 @@ class estado_asignacion(models.TextChoices):
 
 class historial_asignaciones(models.Model):
     id = models.AutoField(primary_key=True)
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='asignado_a', null=False, blank=False)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='asignado_a', null=False, blank=False)
     inventario_item = models.ForeignKey(Inventario_Item, on_delete=models.CASCADE, null=False, blank=False )
     status = models.CharField(max_length=25, choices=estado_asignacion.choices, default=estado_asignacion.ASIGNADO)
     assigned_date = models.DateTimeField(auto_now_add=True, null=False, blank=False)

@@ -93,9 +93,12 @@ Asignaciones
                                 <select name="equipo" id="equipo" class="form-control form-select form-select-sm"  data-show-subtext="false" data-live-search="true">
                                     <option selected value="0">--Seleccione--</option>
                                     {% for itm in invent %}
-                                        <option value="{{itm.pk}}"> 
-                                            {{itm.correlativo}} | {{itm.nombre_item}}
-                                        </option>
+                                    
+                                        {% if itm.estado.id == 2 %}
+                                            <option value="{{itm.pk}}"> 
+                                                {{itm.correlativo}} | {{itm.nombre_item}}
+                                            </option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select>
                             </div>
@@ -155,7 +158,9 @@ Asignaciones
         //alert("Pagina cargada");
         $('#datatable').DataTable();
         obtenerDatos();
+        
     }
+    
 
     //=================================================Ver y descargar=============================================================
     $("#btnAdd").on("click", function () {
@@ -182,22 +187,33 @@ Asignaciones
             $("#equipo").val(data.inventario_item.id);
             $("#usuario").val(data.usuario.id);
             $("#nota").val(data.observaciones);
+            $("#usuario").attr("disabled",true);
+            $("#equipo").attr("disabled",true);
+            $("#nota").attr("disabled",true);
+            $("#btn").hide();
 
             $("#modalAsignacion").modal("show");
         }
     );
-    $('#datatable tbody').on('click', 'a[rel="editar"]', function () {
+
+    $('#datatable tbody').on('click', 'a[rel="pdf"]', function () {
             var tr = tablaAsignacion.cell($(this).closest('td, li')).index();
             var data = tablaAsignacion.row(tr.row).data();
-
-            modalTitulo.find('span').html(' Editar Asignacion');
-            modalTitulo.find('i').removeClass().addClass('fa-solid fa-edit');
             
-            $("#equipo").val(data.inventario_item.id);
-            $("#usuario").val(data.usuario.id);
-            $("#nota").val(data.observaciones);
-
-            $("#modalAsignacion").modal("show");
+            asignacion_id  = data.id;
+            Swal.fire({
+                title: '¿Imprimir el archivo?',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                window.open("{% url 'asignaciones_app:nota_asg' %}?asignacion_id=" +asignacion_id);
+                }
+            })
         }
     );
     $('#datatable tbody').on('click', 'a[rel="descarte"]', function () {
@@ -206,10 +222,16 @@ Asignaciones
 
             modalTitulo.find('span').html(' Descartar Equipo Asignado');
             modalTitulo.find('i').removeClass().addClass('fa-solid fa-user-minus');
-            
+            $('#action').val("descargo");
             $("#equipo").val(data.inventario_item.id);
             $("#usuario").val(data.usuario.id);
             $("#nota").val(data.observaciones);
+            $('#id_asignacion').val(data.id);
+            $("#usuario").attr("disabled",true);
+            $("#equipo").attr("disabled",true);
+            $("#nota").attr("disabled",false);
+            $("#btn").show();
+            $("#btn").text('Descargo');
 
             $("#modalAsignacion").modal("show");
         }
@@ -254,10 +276,15 @@ Asignaciones
                     "data": "observaciones"
                 },
                 {
-                    "data": "action"
-                }
+                    "data": "status"
+                },
             ], 
             columnDefs: [ //Personalizar una columna
+                {
+                    targets: [0], //Personalizar la colummna numero 6
+                    class: 'text-center',
+                    orderable: false, //
+                },
                 {
                     targets: [5],
                     render: function (data, type, row) {
@@ -282,14 +309,18 @@ Asignaciones
                     render: function (data, type, row) {
                         var buttons = `<a rel="verAsignacion" title="Ver" class='btn btn-secondary btn-sm btn-flat mx-1 test-popup-link'>
                                         <i class="fa-solid fa-eye fs-6" aria-hidden="true"></i></a>`;
-                            buttons += `<a rel="editar" title="Editar" class='btn btn-warning btn-sm btn-flat mx-1 test-popup-link'>
-                                        <i class="fa-solid fa-edit fs-6" aria-hidden="true"></i></a>`;
-                            buttons += `<a rel="descarte" title="Descargo" class='btn btn-danger btn-sm btn-flat mx-1 test-popup-link'>
-                                        <i class="fa-solid fa-user-minus fs-6" aria-hidden="true"></i></a>`;
+                            buttons += `<a rel="pdf" title="Imprimir PDF" class='btn btn-info btn-sm btn-flat mx-1' target="blank">
+                                        <i class="fa-solid fa-file-pdf fs-6 p-0" aria-hidden="true"></i></a>`;
+                            if (data == 'ASIGNADO')
+                                buttons += `<a rel="descarte" title="Descargo" class='btn btn-danger btn-sm btn-flat mx-1 test-popup-link'>
+                                            <i class="fa-solid fa-user-minus fs-6" aria-hidden="true"></i></a>`;
+                            
                             return buttons;
                     }
                 },
+                
             ],
+            order: [[0,'desc']],
         });
     }
 
@@ -316,8 +347,12 @@ Asignaciones
     function submit_with_ajax(url, parametros) {
         var parametros = new FormData();
         token = $('input[name="csrfmiddlewaretoken"]').val();
-        parametros.append('action', $('#action').val());
-
+        action = $('#action').val();
+        item = $("#equipo").val();
+        parametros.append('action', action);
+        if (action == 'descargo' || action == 'pdf') {
+            parametros.append('id_asignacion', $('#id_asignacion').val());
+        }
         parametros.append('usuario_asignar', $("#usuario").val());
         parametros.append('observaciones', $("#nota").val());
         parametros.append('item_id', $("#equipo").val());
@@ -338,17 +373,17 @@ Asignaciones
                 if (result.correcto) {
                     $('#form_asignar')[0].reset();
                     $("#modalAsignacion").modal("hide");
-                    tablaTicket.ajax.reload(null, false);
+                    tablaAsignacion.ajax.reload(null, false);
 
                     switch (result.tipo_accion) {
                         case "crear":
-                            texto = "Datos guardado con éxito";
+                            texto = "Asignacion creada con exito";
                             break;
-                        case "editar":
-                            texto = "Datos editados con éxito";
+                        case "descargo":
+                            texto = "Descargo creado con exito";
                             break;
-                        case "eliminar":
-                            texto = "Registro eliminado con éxito";
+                        case "pdf":
+                            texto = "Pdf creado con exito";
                             break;
                         default:
                             texto = "";
@@ -361,7 +396,7 @@ Asignaciones
                     });
 
                 } else {
-                    tablaTicket.ajax.reload(null, false);
+                    tablaAsignacion.ajax.reload(null, false);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
