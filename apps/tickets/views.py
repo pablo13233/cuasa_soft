@@ -1,7 +1,5 @@
-from datetime import datetime
 from django.utils import formats
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import User
@@ -9,6 +7,8 @@ from apps.tickets.models import *
 from django.db.models import Q
 from django.db import transaction
 from django.http import JsonResponse
+from django.utils import timezone
+from datetime import datetime
 # Create your views here.
 
 @login_required
@@ -79,12 +79,16 @@ def AdminTicketViews (request,id):
                 #========================   select Tickets Abiertos  =========================
                 action = request.POST['action']
                 id_user = request.user.id
-                date_up = datetime.now()
-
+                date_up = timezone.now()
                 if action =='buscardatos':
-                    for i in Ticket.objects.filter(status=estado):
-                        data.append(i.toJSON())
-
+                    if estado == 'OPEN' or estado == 'IN_PROGRESS':
+                        for i in Ticket.objects.filter(status=estado):
+                            data.append(i.toJSON())
+                    elif estado == 'DONE':
+                        fecha_ini = request.POST['fecha_ini']
+                        fecha_final = request.POST['fecha_final']
+                        for i in Ticket.objects.filter(status=estado, created_at__range=[fecha_ini, fecha_final]):
+                            data.append(i.toJSON())
                         #========================   Crear   =========================
                 elif action =='actualizarOpen':
                     dato_Ticket = Ticket.objects.get(pk=request.POST['id'])
@@ -127,7 +131,7 @@ def categoria_ticket_view(request):
             with transaction.atomic():
                 action = request.POST['action']
                 id_user = request.user.id
-                date_up = datetime.now()
+                date_up = timezone.now()
 
                 if action == 'buscardatos':
                     for i in categoria_ticket.objects.all():

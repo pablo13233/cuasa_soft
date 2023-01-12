@@ -8,7 +8,6 @@ from django.contrib.auth.hashers import make_password
 from apps.usuarios.models import Departamentos, Empleado
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from datetime import datetime
 from django.db import transaction
 from django.utils import timezone
 

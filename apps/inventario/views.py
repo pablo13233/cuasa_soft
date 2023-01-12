@@ -26,9 +26,14 @@ def inventarioViews(request):
             # =====================  select ================
                 action = request.POST['action']
                 id_user = request.user.id
+                categoria_select = int(request.POST['categoria_select'])
                 if action == 'buscardatos':
-                    for i in Inventario_Item.objects.all():
-                        data.append(i.toJSON())
+                    if categoria_select == 0:
+                        for i in Inventario_Item.objects.all():
+                            data.append(i.toJSON())
+                    elif categoria_select > 0:
+                        for i in Inventario_Item.objects.filter(categoria=categoria_select):
+                            data.append(i.toJSON())
                 # =====================  crear ================
                 elif action == 'crear':
 

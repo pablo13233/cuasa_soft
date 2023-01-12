@@ -12,10 +12,51 @@ Asignaciones
     <div class="row mb-4">
         <div class="col-lg-12 col-md-8 mb-md-0 mb-4">
             <div class="card">
+                <div class="card-body px-0 pb-2 ms-2 me-2">
+                    <div class="wrapper bg-white rounded shadow">
+                        <div class="accordion accordion-flush border-top border-start border-end" id="myAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingOne"> <button
+                                        class="accordion-button collapsed border-0" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#flush-collapseOne"
+                                        aria-expanded="false" aria-controls="flush-collapseOne"> Busqueda avanzada
+                                    </button> </h2>
+                                <div id="flush-collapseOne" class="accordion-collapse collapse border-0"
+                                    aria-labelledby="flush-headingOne" data-bs-parent="#myAccordion">
+                                    <div class="accordion-body">
+                                        <div class="container">
+                                            <div class="row col-12 p-0">
+                                                <div class="form-check form-switch ms-5">
+                                                    <input class="form-check-input fs-4" type="checkbox" role="switch" id="busquedaSW">
+                                                    <label class="form-check-label fs-5" for="busquedaSW">Habilitar Busqueda Avanzada</label>
+                                                </div>
+                                            </div>
+                                            <div class="row col-12 p-0 mt-3">
+                                                <div class="input-group mb-3 mt-1">
+                                                    <span class="input-group-text" id="basic-addon1">Termino de busqueda</span>
+                                                    <input type="text" id="busqueda" name="busqueda" class="form-control" placeholder="Usuario, DNI o Nombre del Item" aria-label="Nombre, DNI o Nombre del Item" aria-describedby="basic-addon1" disabled>
+                                                </div>
+                                            </div>
+                                            <div class="row col-2">
+                                                <button type="button" class="btn btn-primary ms-3" id="btnBuscar" disabled>Buscar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-12 col-md-8 mb-md-0 mb-4">
+            <div class="card">
                 <div class="card-header pt-2">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h4><i class="fa-solid fa-arrow-right-from-arc fs-3"></i> Asignaciones</h4>
+                            <h4><i class="fa-solid fa-arrow-right-from-arc fs-3"></i> Historial de Asignaciones</h4>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
                             <button type="button" class="btn btn-success btn-sm mb-2 me-2" id="btnAdd">
@@ -151,6 +192,8 @@ Asignaciones
 <script>
     var modalTitulo = $('#modal-title');
     var tablaAsignacion;
+    var habBusqueda = false;
+    var busqueda = "";
 
     window.onload = function () {
         modalTitulo.find('span').html(' Asignar Equipo');
@@ -158,9 +201,44 @@ Asignaciones
         //alert("Pagina cargada");
         $('#datatable').DataTable();
         obtenerDatos();
-        
     }
     
+    $(document).ready(function () {
+        $('#busquedaSW').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('#busqueda').removeAttr("disabled");
+                habBusqueda = true;
+            }else{
+                $('#busqueda').val("");
+                $('#busqueda').attr('disabled','disabled');
+                $("#btnBuscar").attr('disabled','disabled');
+                habBusqueda = false;
+                busqueda ="";
+            }
+        });
+        $('#busqueda').on("keypress", function (e) {
+            var keyCode = e.keyCode || e.which;
+            var key = e.key;
+            var regex = /^[A-Za-z0-9]+$/;
+            if (!regex.test(key) && keyCode != 8 && keyCode != 9 && keyCode != 37 && keyCode != 39) {
+                e.preventDefault();
+            }
+        });
+        $('#busqueda').on("keyup", function(){
+            if($(this).val() !== ""){
+                $("#btnBuscar").removeAttr("disabled");
+            }else{
+                $("#btnBuscar").attr('disabled','disabled');
+            }
+        });
+        
+    });
+
+    $("#btnBuscar").on("click", function () {
+            busqueda = $('#busqueda').val();
+            obtenerDatos(); 
+        }
+    );
 
     //=================================================Ver y descargar=============================================================
     $("#btnAdd").on("click", function () {
@@ -225,7 +303,7 @@ Asignaciones
             $('#action').val("descargo");
             $("#equipo").val(data.inventario_item.id);
             $("#usuario").val(data.usuario.id);
-            $("#nota").val(data.observaciones);
+            $("#nota").val("");
             $('#id_asignacion').val(data.id);
             $("#usuario").attr("disabled",true);
             $("#equipo").attr("disabled",true);
@@ -252,6 +330,8 @@ Asignaciones
                 type: 'POST',
                 data: {
                     'action': 'buscardatos', //Mandamos la accion para que django sepa que tiene que buscar
+                    'habBusqueda': habBusqueda,
+                    'busqueda': busqueda,
                     'csrfmiddlewaretoken': token
                 }, // parametros
                 dataSrc: ""
@@ -356,7 +436,7 @@ Asignaciones
         parametros.append('usuario_asignar', $("#usuario").val());
         parametros.append('observaciones', $("#nota").val());
         parametros.append('item_id', $("#equipo").val());
-
+        parametros.append('habBusqueda', habBusqueda);
         parametros.append('csrfmiddlewaretoken', token);
 
         $.ajax({

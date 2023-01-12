@@ -36,10 +36,25 @@ Administracion Tickets
             <div class="card">
                 <div class="card-header pb-0">
                     <div class="row">
-                        <div class="col-lg-6 col-7">
-                            <h3><i class="fa-solid fa-file-lines fs-1"></i></i> Tickets Abiertos</h3>
+                        <div class="col-4">
+                            <h3 id="tituloCard"><i class="fa-solid fa-file-lines fs-1"></i></i> <span>Tickets</span></h3>
                         </div>
-                        <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="col-6 p-0 text-center">
+                            <div class="col-12 p-0" id="div_fechas">
+                                <div class="row p-0 m-0">
+                                    <div class="form-group col-5 pb-2">
+                                        <label for="fechaInicial">Fecha Inicial:</label>
+                                        <input type="text" class="form-control datepicker p-0" id="fechaInicial" readonly>
+                                    </div>
+                                    <div class="col-1 p-0 m-0"></div>
+                                    <div class="form-group col-5 pb-2">
+                                        <label for="fechaFinal">Fecha Final:</label>
+                                        <input type="text" class="form-control datepicker p-0" id="fechaFinal" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2 my-auto text-end p-0">
                             <a type="button" href="{% url 'tickets_app:categorias_ticket'%}" class="btn btn-success btn-sm mb-2 me-2">
                                 <i class="fa fa-bookmark opacity-10 fs-4" aria-hidden="true"></i><span class="fs-5"> Categorias</span>
                             </a>
@@ -259,15 +274,58 @@ Administracion Tickets
 
     var tablaTicket;
     var modalTitulo = $('#modalTitulo');
+    var titulo_card = $('#tituloCard');
+    var fechaFinal;
+    var fechaInicial;
 
     window.onload = function () {
         modalTitulo.find('span').html(' Asignar Ticket');
         modalTitulo.find('i').removeClass().addClass('fa-solid fa-user-check');
         $('#datatable').DataTable();
         
-        ObtenerDatos();
     }
 
+    $(document).ready(function () {
+       // Obtener la URL completa
+        var url = window.location.href;
+        // Expresión regular para buscar el valor después de "admin-ticket/"
+        var value = url.match(/admin-ticket\/(\d+)\//)[1];
+        if (value == 1){//si el estado es OPEN cambia el texto del boton y asigna la accion para actualizarlo a IN_PROGRESS
+            titulo_card.find('span').html(' Abiertos');
+            $('#div_fechas').hide();
+            ObtenerDatos();
+        }else if (value == 2){//si el estado es IN_PROGRESS cambia el texto del boton y asigna la accion apra actualizarlo DONE
+            titulo_card.find('span').html(' En Progreso');
+            $('#div_fechas').hide();
+            ObtenerDatos();
+        }else if (value == 3){
+            titulo_card.find('span').html(' Cerrados');
+            $('#div_fechas').show();
+        }
+        $("#fechaFinal").attr("disabled", true);
+        $("#fechaInicial").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayBtn: true
+        }).on("changeDate", function (e) {
+            fechaInicial = $("#fechaInicial").val();
+            $("#fechaFinal").datepicker("setStartDate", fechaInicial);
+            $("#fechaFinal").attr("disabled", false);
+        });
+        $("#fechaFinal").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayBtn: true
+        }).on("changeDate", function (e) {
+            fechaFinal = $("#fechaFinal").val();
+            if (fechaFinal < fechaInicial) {
+                alert("La fecha final debe ser igual o mayor a la fecha inicial!");
+                $("#fechaFinal").val("");
+            }else{
+                ObtenerDatos();
+            }
+        });
+    });
 
     //================================================== Obtener Ticket ================================================
     function ObtenerDatos() {
@@ -286,7 +344,9 @@ Administracion Tickets
                 url: window.location.pathname, //Obtenemos la url obsoluta
                 type: 'POST',
                 data: {
-                    'action': 'buscardatos', //Mandamos la accion para que django sepa que tiene que buscar
+                    'action': 'buscardatos',
+                    'fecha_ini':fechaInicial,
+                    'fecha_final':fechaFinal, //Mandamos la accion para que django sepa que tiene que buscar
                     'csrfmiddlewaretoken': token
                 }, // parametros
                 dataSrc: ""

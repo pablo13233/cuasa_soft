@@ -1,6 +1,5 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.db import transaction
@@ -8,13 +7,10 @@ from apps.asignaciones.models import *
 from apps.inventario.models import *
 from apps.usuarios.models import *
 from django.contrib.auth.models import User
-from .utils import generar_pdf
 from django.template.loader import render_to_string
 from weasyprint import HTML,CSS
-
+from django.utils import timezone
 # Create your views here.
-
-from django.views.generic import TemplateView
 
 
 @login_required
@@ -60,11 +56,6 @@ def PdfView(request):
         return response
     elif request.method =="POST":
         return None
-    
-class asignacion_pdf(TemplateView):
-    template_name = 'asignaciones/asignacion_pdf.html'
-
-
 
 
 @login_required
@@ -79,10 +70,33 @@ def asignacionViews(request):
                 action = request.POST['action']
                 id_user = request.user.id
                 usuario_asg = User.objects.get(pk=id_user)
-                updated_time = datetime.now()
-                if action == 'buscardatos': 
-                    for i in historial_asignaciones.objects.all().order_by('-id'):
-                        data.append(i.toJSON())
+                updated_time = timezone.now()
+                habBusqueda = request.POST['habBusqueda']
+                if action == 'buscardatos':
+                    if habBusqueda == 'false': 
+                        for i in historial_asignaciones.objects.all().order_by('-id'):
+                            data.append(i.toJSON())
+                    elif habBusqueda == 'true':
+                        busqueda = request.POST['busqueda']
+                        busqueda_upper = busqueda.upper() 
+                        try:
+                            if (historial_asignaciones.objects.filter(usuario=User.objects.get(username=busqueda)).exists()):
+                                for i in historial_asignaciones.objects.filter(usuario=User.objects.get(username=busqueda)).order_by('-id'):
+                                    data.append(i.toJSON())
+                        except User.DoesNotExist:
+                            try:
+                                if (historial_asignaciones.objects.filter(inventario_item=Inventario_Item.objects.get(correlativo=busqueda_upper)).exists()):
+                                    for i in historial_asignaciones.objects.filter(inventario_item=Inventario_Item.objects.get(correlativo=busqueda_upper)).order_by('-id'):
+                                        data.append(i.toJSON())
+                            except Inventario_Item.DoesNotExist:
+                                try:
+                                    empleado = Empleado.objects.get(dni=busqueda)
+                                    if (historial_asignaciones.objects.filter(usuario=User.objects.get(username=empleado.usuario)).exists()):
+                                        for i in historial_asignaciones.objects.filter(usuario=User.objects.get(username=empleado.usuario)).order_by('-id'):
+                                            data.append(i.toJSON())
+                                except Empleado.DoesNotExist:
+                                    for i in historial_asignaciones.objects.all().order_by('-id'):
+                                        data.append(i.toJSON())
                 #created
                 elif action == 'crear':
                     equipo = request.POST['item_id']

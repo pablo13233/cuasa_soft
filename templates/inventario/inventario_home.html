@@ -36,10 +36,24 @@ Inventario
                 <div class="card-header pt-2">
                     <div class="row">
                         <div class="row">
-                            <div class="col-lg-6 col-7">
+                            <div class="col-lg-6 col-6">
                                 <h3><i class="fa-solid fa-users fs-1"></i> Inventario</h3>
                             </div>
-                            <div class="col-lg-6 col-5 my-auto text-end">
+                            <div class="col-4 p-0 text-center border">
+                                <div class="col-12 form-group ps-1 pe-1">
+                                    <label for="categoria_select">Seleccione una categoria </label>
+                                    <select name="categoria" id="categoria_select" class="form-control form-select form-select-sm">
+                                        <option selected value="">--Seleccione--</option>
+                                        <option value="0">Todo</option>
+                                        {% for cat in categorias %}
+                                            <option value="{{cat.pk}}"> 
+                                                {{cat.nombre_categoria}}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-5 my-auto text-end">
                                 <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
                                     <i class="fa-solid fa-plus opacity-10 fs-5"></i>
                                 </button>
@@ -299,6 +313,7 @@ Inventario
     var tablaInventario;
     var modalTitulo = $('.modal-title');
     var imgTitulo = $('.modal-img-title');
+    var categoria;
 
     window.onload = function() {
         $("#btnAdd").on("click", function(){
@@ -321,8 +336,14 @@ Inventario
         autoclose: true,
         todayBtn: true
         });
-        obtenerDatos();
     };
+
+$(document).ready(function(){
+    $('#categoria_select').change(function(){
+        categoria = $(this).val();
+        obtenerDatos();
+    })
+});
 
 //------------------------- boton en modal para agregar -----------------------
 $("#btn").on('click', function(){
@@ -451,6 +472,7 @@ function obtenerDatos(){
             type: 'POST',
             data:{
                 'action': 'buscardatos',
+                'categoria_select':categoria,
                 'csrfmiddlewaretoken': token
             },
             dataSrc: ""
