@@ -244,13 +244,24 @@ Asignaciones
     $("#btnAdd").on("click", function () {
             modalTitulo.find('span').html(' Asignar Equipo');
             modalTitulo.find('i').removeClass().addClass('fa-solid fa-plus');
+            $('#equipo').html(
+                `<option selected value="0">--Seleccione--</option>
+                {% for itm in invent %}
+                    {% if itm.estado.id == 2 %}
+                        <option value="{{itm.pk}}"> 
+                            {{itm.correlativo}} | {{itm.nombre_item}}
+                        </option>
+                    {% endif %}
+                {% endfor %}`
+            );
             $('#action').val("crear");
             $('#form_asignar')[0].reset();
             $('#nota').val("");
-            $('#usuario').val("")
-            $('#equipo').val("");
-
+            $("#equipo").attr("disabled",false);
+            $("#usuario").attr("disabled",false);
+            $("#nota").attr("disabled",false);
             $('#Equipo').focus();
+            $("#btn").text('Asignar');
 
             $('#modalAsignacion').modal('show');
         }
@@ -258,7 +269,14 @@ Asignaciones
     $('#datatable tbody').on('click', 'a[rel="verAsignacion"]', function () {
             var tr = tablaAsignacion.cell($(this).closest('td, li')).index();
             var data = tablaAsignacion.row(tr.row).data();
-
+            $('#form_asignar')[0].reset();
+            $('#equipo').html(
+                `{% for itm in invent %}
+                    <option value="{{itm.pk}}"> 
+                        {{itm.correlativo}} | {{itm.nombre_item}}
+                    </option>
+                {% endfor %}`
+            );
             modalTitulo.find('span').html(' Asignar Equipo');
             modalTitulo.find('i').removeClass().addClass('fa-solid fa-plus');
             
@@ -297,7 +315,14 @@ Asignaciones
     $('#datatable tbody').on('click', 'a[rel="descarte"]', function () {
             var tr = tablaAsignacion.cell($(this).closest('td, li')).index();
             var data = tablaAsignacion.row(tr.row).data();
-
+            $('#form_asignar')[0].reset();
+            $('#equipo').html(
+                `{% for itm in invent %}
+                    <option value="{{itm.pk}}"> 
+                        {{itm.correlativo}} | {{itm.nombre_item}}
+                    </option>
+                {% endfor %}`
+            );
             modalTitulo.find('span').html(' Descartar Equipo Asignado');
             modalTitulo.find('i').removeClass().addClass('fa-solid fa-user-minus');
             $('#action').val("descargo");

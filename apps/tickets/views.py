@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.db import transaction
 from django.http import JsonResponse
 from django.utils import timezone
-from datetime import datetime
+import datetime
 # Create your views here.
 
 @login_required
@@ -85,8 +85,8 @@ def AdminTicketViews (request,id):
                         for i in Ticket.objects.filter(status=estado):
                             data.append(i.toJSON())
                     elif estado == 'DONE':
-                        fecha_ini = request.POST['fecha_ini']
-                        fecha_final = request.POST['fecha_final']
+                        fecha_ini = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_ini'],'%Y-%m-%d')) 
+                        fecha_final = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_final'], '%Y-%m-%d'))
                         for i in Ticket.objects.filter(status=estado, created_at__range=[fecha_ini, fecha_final]):
                             data.append(i.toJSON())
                         #========================   Crear   =========================

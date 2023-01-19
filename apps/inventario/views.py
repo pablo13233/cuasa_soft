@@ -2,13 +2,14 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
-from datetime import datetime
-from django.utils import formats
-
+from django.utils import formats, timezone
+import datetime
 from django.contrib.auth.models import User
 from apps.inventario.models import *
 from django.db import transaction
 from django.http import JsonResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
 # Create your views here.
 # from apps.usuarios.urls import error_view
 
@@ -26,13 +27,13 @@ def inventarioViews(request):
             # =====================  select ================
                 action = request.POST['action']
                 id_user = request.user.id
-                categoria_select = int(request.POST['categoria_select'])
                 if action == 'buscardatos':
+                    categoria_select = int(request.POST['categoria_select'])
                     if categoria_select == 0:
-                        for i in Inventario_Item.objects.all():
+                        for i in Inventario_Item.objects.filter(estado_id__in=[1,2]):
                             data.append(i.toJSON())
                     elif categoria_select > 0:
-                        for i in Inventario_Item.objects.filter(categoria=categoria_select):
+                        for i in Inventario_Item.objects.filter(categoria=categoria_select,estado_id__in=[1,2]):
                             data.append(i.toJSON())
                 # =====================  crear ================
                 elif action == 'crear':
@@ -68,7 +69,7 @@ def inventarioViews(request):
 
                 # =====================  editar  ================
                 elif action == 'editar':
-                    updated_time = datetime.now()
+                    updated_time = timezone.now()
                     inv = Inventario_Item.objects.get(pk=request.POST['id'])
                     inv.correlativo = request.POST['correlativo']
                     inv.nombre_item = request.POST['nombre_item']
@@ -361,3 +362,98 @@ def estadosViews(request):
     elif request.method == 'GET':
         return render(request, 'inventario/estados.html',{'titulo': 'Inicio', 'entidad':'Creacion de Estados'})
 # Parametros
+
+@login_required
+def descarteViews(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('inventario.delete_inventario_item')):
+        return redirect('usuarios_app:error_view')
+    if request.method == 'POST' and request.is_ajax():
+        data = []
+        try:
+            with transaction.atomic():
+                # =====================  select ================
+                action = request.POST['action']
+                id_user = request.user.id
+                if action == 'buscardatos':
+                    if request.POST['fecha_ini'] == None or request.POST['fecha_final'] == None:
+                        for i in Inventario_Item.objects.filter(estado_id=3):
+                            data.append(i.toJSON())
+                    else:
+                        fecha_ini = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_ini'],'%Y-%m-%d')) 
+                        fecha_final = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_final'], '%Y-%m-%d'))
+                        for i in Inventario_Item.objects.filter(estado_id=3, updated_at__range=[fecha_ini, fecha_final]):
+                            data.append(i.toJSON())
+                
+                # ======================== crear =========================
+                elif action == 'crear':
+                    Inventario_Item.objects.filter(pk=request.POST['item_id']).update(
+                        comentarios=request.POST['comentario'],
+                        estado_id=3,
+                        updated_at = timezone.now(),
+                        updated_by = User.objects.get(pk=id_user),
+                    )
+
+                    data = {'tipo_accion': 'crear', 'correcto': True}
+                elif action == 'editar':
+                    prov = Estado.objects.get(pk=request.POST['id'])
+                    prov.nombre_estado = request.POST['nombre_estado']
+                    prov.save()
+
+                    data = {'tipo_accion': 'editar', 'correcto': True}
+                else:
+                    data['error'] = 'Ha ocurrido un error.'
+        except Exception as e:
+            # print(str(e))
+            # print(action)
+            data['error'] = str(e)
+            data = {'tipo_accion': 'error',  'correcto': True}
+            transaction.rollback()
+        else:
+            transaction.commit()
+        return JsonResponse(data, safe=False)
+    elif request.method == 'GET':
+        invent = Inventario_Item.objects.filter(estado_id=2)
+        return render(request, 'inventario/descarte.html',{'invent':invent})
+
+#--------------- PDF
+
+@login_required
+def pdfInventarioView(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('inventario.delete_inventario_item')):
+        return redirect('usuarios_app:error_view')
+    if request.method == 'GET':
+        try:
+            id_item = request.GET['item']
+            data_item =  Inventario_Item.objects.filter(id=id_item)
+            for itm in data_item:
+                id = itm.id
+                nombre = itm.nombre_item
+                correlativo = itm.correlativo
+                caracteristica = itm.caracteristica
+                comentarios = itm.comentarios
+                fecha_descarte = itm.updated_at
+                usuario_desscarta = itm.updated_by.username
+                serie = itm.serial_number
+                modelo = itm.ModeloItem.nombre_modelo
+                marca = itm.ModeloItem.marca.nombre_marca
+                categoria = itm.categoria.nombre_categoria
+            html_string = render_to_string('inventario/descarte_pdf.html',{
+                            'id':id,
+                            'nombre':nombre,
+                            'correlativo':correlativo,
+                            'caracteristica':caracteristica,
+                            'comentarios':comentarios,
+                            'fecha_descarte':fecha_descarte,
+                            'serie':serie,
+                            'modelo':modelo,
+                            'marca':marca,
+                            'usuario_desscarta':usuario_desscarta,
+                            'categoria':categoria,
+                            })
+            html = HTML(string=html_string,base_url=request.build_absolute_uri()) #base url es lo que hace funcionar los archivos estaticos en el pdf
+            response = HttpResponse(html.write_pdf(), content_type='application/pdf')
+        except Exception as e: 
+            print("Error: " + str(e))
+        return response
+    elif request.method =="POST":
+        return None

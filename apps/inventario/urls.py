@@ -11,4 +11,6 @@ urlpatterns = [
     path('modelo/', modeloViews, name='modelo'),
     path('proveedores/', proveedoresViews, name='proveedores'),
     path('estados/', estadosViews, name='estados'),
+    path('descarte/', descarteViews, name='descarte'),
+    path('descarte-pdf/', pdfInventarioView, name='nota_descarte'),
 ]

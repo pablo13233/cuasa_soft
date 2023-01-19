@@ -8,7 +8,7 @@ from apps.inventario.models import *
 from apps.usuarios.models import *
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
-from weasyprint import HTML,CSS
+from weasyprint import HTML
 from django.utils import timezone
 # Create your views here.
 

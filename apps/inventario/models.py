@@ -123,5 +123,8 @@ class Inventario_Item(models.Model):
             item['fecha_garantia'] = ''
         else:
             item['fecha_garantia'] = self.updated_at.strftime("%Y-%m-%d")
-        item['updated_by'] = {'id': self.estado.id, 'nombre_estado': self.estado.nombre_estado}
+        if self.updated_by == None:
+            item['updated_by'] = {'id': 'no actualizado', 'username': 'no actualizado'}
+        else:
+            item['updated_by'] = {'id': self.updated_by.id, 'username': self.updated_by.username}
         return item

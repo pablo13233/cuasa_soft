@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Inventario
+{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid py-4 col-12 ">
+    <div class="row mb-4">
+        <div class="col-12 mb-md-0 mb-4">
+            <div class="card col-12">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-7">
+                            <h3><i class="fa-solid fa-sliders fs-1"></i> Parametros</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container-fluid col-12 text-center">
+                        <div class="d-grid gap-2 d-md-block">
+                            <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:categorias' %}"><i class="fa-solid fa-layer-group fs-2"></i> Categorias</a>
+                            <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:marcas' %}"><i class="fa-solid fa-tags fs-2"></i> Marcas</a>
+                            <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:modelo' %}"><i class="fa-solid fa-shapes fs-2"></i> Modelo</a>
+                            <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:proveedores' %}"><i class="fa-solid fa-handshake fs-2"></i> Proveedor</a>
+                            <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:estados' %}"><i class="fa-solid fa-rectangle-history fs-2"></i> Estado</a>
+                            <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:descarte' %}"><i class="fa-solid fa-dumpster fs-2"></i> Descartes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card col-12">
+                <div class="card-header pt-2">
+                    <div class="row">
+                        <div class="row">
+                            <div class="col-5">
+                                <h3><i class="fa-solid fa-dumpster-fire fs-1"></i> Descartes</h3>
+                            </div>
+                            <div class="col-6 p-0 text-center">
+                                <div class="col-12 p-0" id="div_fechas">
+                                    <div class="row p-0 m-0">
+                                        <div class="form-group col-5 pb-2">
+                                            <label for="fechaInicial">Fecha Inicial:</label>
+                                            <input type="text" class="form-control datepicker p-0" id="fechaInicial" readonly>
+                                        </div>
+                                        <div class="col-1 p-0 m-0"></div>
+                                        <div class="form-group col-5 pb-2">
+                                            <label for="fechaFinal">Fecha Final:</label>
+                                            <input type="text" class="form-control datepicker p-0" id="fechaFinal" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-1 my-auto text-end">
+                                <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
+                                    <i class="fa-solid fa-plus opacity-10 fs-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pt-2">
+                    <div class="table-responsive col-12 col-md-12 col-sm-12">
+                        <table class="table table-hover align-items-center mb-0" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        # Item
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Correlativo
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Nombre
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Fecha
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Estado
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Usuario
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Accion
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+    
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Agregar Inventarios-->
+<div class="modal fade" id="modalInventario" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">
+                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Item</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="." id="formInventario" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <input type="text" class="d-none" name="action" id="action" value="crear" />
+                                <label class="input-group-text" for="equipo">Equipo:</label>
+                                <select name="equipo" id="equipo" class="form-control form-select form-select-sm"  data-show-subtext="false" data-live-search="true">
+                                    <option selected value="0">--Seleccione--</option>
+                                    {% for itm in invent %}
+                                            <option value="{{itm.pk}}"> 
+                                                {{itm.correlativo}} | {{itm.nombre_item}}
+                                            </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" >Comentarios:</span>
+                                <textarea maxlength="500" type="text" class="form-control" name="comentarios" id="comentarios" required aria-label="Comentarios del artculo"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btn">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Agregar -->
+<script>
+    var tablaInventario;
+    var modalTitulo = $('.modal-title');
+    var imgTitulo = $('.modal-img-title');
+    var fechaFinal;
+    var fechaInicial;
+
+    window.onload = function() {
+        $("#btnAdd").on("click", function(){
+            modalTitulo.find('span').html('Crear Descarte');
+            modalTitulo.find('i').removeClass().addClass('fas fa-plus fs-3');
+            $('#equipo').html(
+                `<option selected value="0">--Seleccione--</option>
+                {% for itm in invent %}
+                        <option value="{{itm.pk}}"> 
+                            {{itm.correlativo}} | {{itm.nombre_item}}
+                        </option>
+                {% endfor %}`
+            );
+            $('#action').val('crear');
+            $('#formInventario')[0].reset();
+            $('#nombre').focus();
+            
+            $('#equipo').attr("disabled",false);
+            $('#modalInventario').modal('show');
+        });
+        $('#datatable').DataTable();
+    };
+
+    $(document).ready(function () {
+        $("#fechaFinal").attr("disabled", true);
+        $("#fechaInicial").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayBtn: true
+        }).on("changeDate", function (e) {
+            fechaInicial = $("#fechaInicial").val();
+            $("#fechaFinal").datepicker("setStartDate", fechaInicial);
+            $("#fechaFinal").attr("disabled", false);
+        });
+        $("#fechaFinal").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayBtn: true
+        }).on("changeDate", function (e) {
+            fechaFinal = $("#fechaFinal").val();
+            if (fechaFinal < fechaInicial) {
+                alert("La fecha final debe ser igual o mayor a la fecha inicial!");
+                $("#fechaFinal").val("");
+            }else{
+                obtenerDatos();
+            }
+        });
+    });
+
+    function obtenerDatos(){
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaInventario = $('#datatable').DataTable({
+            responsive: true,
+            autoWidth: true,
+            destroy: true,
+            bSortable: true,
+            defenRender: true,
+            language: {"url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"},
+            ajax:{
+                url:window.location.pathname,
+                type: 'POST',
+                data:{
+                    'action': 'buscardatos',
+                    'fecha_ini':fechaInicial,
+                    'fecha_final':fechaFinal,
+                    'csrfmiddlewaretoken': token
+                },
+                dataSrc: ""
+            },
+            columns: [
+                {"data": "id"},
+                {"data": "correlativo"},
+                {"data": "nombre_item"},
+                {"data": "updated_at"},
+                {"data": "estado.nombre_estado"},
+                {"data": "updated_by.username"},
+                {"data": "id"}
+            ],
+            columnDefs: [
+                {
+                    targets: [6],
+                    class: 'text-center',
+                    ordenable: false,
+                    render: function (data, type, row) {
+                        var buttons = `<a rel="pdf" title="Imprimir PDF" class='btn btn-info btn-sm btn-flat mx-1' target="blank">
+                                        <i class="fa-solid fa-file-pdf fs-6 p-0" aria-hidden="true"></i></a>`;
+                        buttons += `<a rel="ver" class='btn btn-primary btn-sm btn-flat'>
+                                        <i class="fa-solid fa-eye"></i></a>`;
+                        return buttons;
+                    }
+                },
+            ],
+        });
+    }
+
+    //==================================================validar formularios=======================================================
+    $("#btn").on("click", function () {
+
+
+        if ($("#equipo").val() == "") {
+            alert("Falta el equipo a descartar");
+
+        } else if ($("#nota").val() == "") {
+            alert("Faltan las observaciones del equipo a Descartar");
+
+        } else {
+            submit_with_ajax("", "");
+        }
+        return false;
+    });
+
+//================================================Función AJAX======================================================
+
+    function submit_with_ajax(url, parametros) {
+        var parametros = new FormData();
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        parametros.append('action', $('#action').val());
+        parametros.append('comentario', $("#nota").val());
+        parametros.append('item_id', $("#equipo").val());
+        parametros.append('csrfmiddlewaretoken', token);
+
+        $.ajax({
+            url: window.location.pathname, //window.location.pathname
+            type: 'POST',
+            data: parametros, // parametros,
+
+            dataType: 'json',
+            contentType: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                //alert("Correcto");
+                if (result.correcto) {
+                    $('#form_asignar')[0].reset();
+                    $("#modalAsignacion").modal("hide");
+                    tablaAsignacion.ajax.reload(null, false);
+
+                    switch (result.tipo_accion) {
+                        case "crear":
+                            texto = "Descarte creado con exito";
+                            break;
+                        default:
+                            texto = "";
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Correcto',
+                        text: texto
+                    });
+
+                } else {
+                    tablaAsignacion.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al realizar la acción'
+                    });
+                }
+
+            },
+            error: function (error) {
+                alert(error.responseJSON.Message);
+
+            },
+            failure: function () {
+                alert('Failure');
+            }
+        });
+    }
+
+    $('#datatable tbody').on('click', 'a[rel="ver"]', function(){
+        var tr = tablaInventario.cell($(this).closest('td,li')).index();
+        var data = tablaInventario.row(tr.row).data();
+
+        modalTitulo.find('span').html(' Ver Descarte');
+        modalTitulo.find('i').removeClass().addClass('fas fa-eye fs-3');
+        $('#equipo').append(
+            '<option selected value="'+ data.id +'">'+data.correlativo+'</option>'
+            );
+        $('#equipo').attr("disabled",true);
+        $('#equipo').val(data.id);
+        $('#comentarios').val(data.comentarios);
+        
+        $('#modalInventario').modal('show');
+
+    }).on('click', 'a[rel="pdf"]', function(){
+        var tr = tablaInventario.cell($(this).closest('td, li')).index();
+        var data = tablaInventario.row(tr.row).data();
+            const item_id  = data.id;
+            Swal.fire({
+                title: '¿Imprimir el archivo?',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                window.open("{% url 'inventario_app:nota_descarte' %}?item=" +item_id);
+                }
+            })
+    });
+
+</script>
+{% endblock content %}
