@@ -161,6 +161,7 @@ Administracion Tickets
 </div>
 <!-- Fin Editar -->
 
+
 <script>
     //==================================================Carga del Modal=================================================
 
@@ -263,7 +264,7 @@ Administracion Tickets
                     "data": "status"
                 },
                 {
-                    "data": "action"
+                    "data": "status"
                 }
             ], 
             columnDefs: [ //Personalizar una columna
@@ -291,9 +292,23 @@ Administracion Tickets
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        var buttons = `<a rel="EditarTicket" class='btn btn-secondary btn-sm btn-flat test-popup-link' title="Ver / Asignar">
-                                        <i class="fa-solid fa-eye fs-6"></i></a>`;
+                        if (data == 'OPEN'){
+                            var buttons = `<a rel="EditarTicket" class='btn btn-secondary btn-sm btn-flat test-popup-link ms-1 me-1' title="Ver / Asignar">
+                                            <i class="fa-solid fa-eye fs-6"></i></a>`;           
                             return buttons;
+                        }else if (data == 'IN_PROGRESS'){
+                            var buttons = `<a rel="EditarTicket" class='btn btn-secondary btn-sm btn-flat test-popup-link ms-1 me-1' title="Ver / Terminar">
+                                <i class="fa-solid fa-eye fs-6"></i></a>`;
+                                buttons += `<a rel="comentarios" class='btn btn-secondary btn-sm btn-flat test-popup-link ms-1 me-1' title="Comentarios">
+                                <i class="fa-solid fa-comment-lines fs-6"></i></a>`;            
+                            return buttons;
+                        }else if (data == 'DONE'){
+                            var buttons = `<a rel="EditarTicket" class='btn btn-secondary btn-sm btn-flat test-popup-link ms-1 me-1' title="Ver">
+                                <i class="fa-solid fa-eye fs-6"></i></a>`;
+                                buttons += `<a rel="comentarios" class='btn btn-secondary btn-sm btn-flat test-popup-link ms-1 me-1' title="Comentarios">
+                                <i class="fa-solid fa-comment-lines fs-6"></i></a>`;            
+                            return buttons;
+                        }
                     }
                 },
             ],
@@ -417,6 +432,24 @@ Administracion Tickets
         }
 
         $('#modalEditarTicket').modal('show');
+    }).on('click', 'a[rel="comentarios"]', function(){
+            var tr = tablaTicket.cell($(this).closest('td, li')).index();
+            var data = tablaTicket.row(tr.row).data();
+            
+            id_ticket  = data.id;
+            Swal.fire({
+                title: '¿Añadir comentarios al ticket?',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                window.open("{% url 'tickets_app:comentarios' %}?id_ticket=" +id_ticket);
+                }
+            })
     });
 
     //========================================= ver imagen ===============================

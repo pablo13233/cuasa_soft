@@ -167,3 +167,53 @@ def categoria_ticket_view(request):
         return JsonResponse(data, safe=False)
     elif request.method =="GET":
         return render(request, 'tickets/categorias.html')
+
+
+@login_required
+def commentTicket_view(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('commentTicket.view_comentticket')):
+        return redirect('usuarios_app:error_view')
+    if request.method =="GET":
+        id_t = request.GET['id_ticket']
+        return render(request, 'tickets/comentarios.html',{'ticket':id_t})
+    elif request.method == 'POST' and request.is_ajax():
+        data =[]
+        try:
+            with transaction.atomic():
+                action = request.POST['action']
+                id_user = request.user.id
+                date_up = timezone.now()
+                id_t = int(request.POST['ticket'])
+                if action == 'buscardatos':
+                    for i in commentTicket.objects.filter(id_ticket = id_t):
+                        data.append(i.toJSON())
+                elif action == 'crear':
+                    print('lol ',id_t)
+                    commentTicket.objects.create(
+                        id_ticket=Ticket.objects.get(pk=id_t),
+                        title = request.POST['title'],
+                        comment = request.POST['comments'],
+                        created_by = User.objects.get(pk=id_user),
+                        updated_by = User.objects.get(pk=id_user),
+                    )
+
+                    data = {'tipo_accion':'crear', 'correcto':True}
+                elif action == 'editar':
+                    commentTicket.objects.filter(pk=request.POST['id_comment']).update(
+                        title = request.POST['title'],
+                        comment = request.POST['comments'],
+                        updated_by = User.objects.get(user=id_user),
+                        updated_at = date_up
+                    )
+
+                    data = {'tipo_accion':'editar', 'correcto':True}
+                else:
+                    data['error'] = 'Ha ocurrido un error.'
+        except Exception as e:
+            # print(str(e))
+            data['error'] = str(e)
+            data = {'tipo_accion':'error', 'correcto':True}
+            transaction.rollback()
+        else:
+            transaction.commit()
+        return JsonResponse(data, safe=False)

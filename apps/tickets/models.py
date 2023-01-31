@@ -47,7 +47,7 @@ class Ticket(models.Model):
 
     def __str__(self):
         return "{}-{}".format(self.pk, self.title)
- 
+
     def toJSON(self):
         item = model_to_dict(self) #convertir el objeto a un diccionario
         item['img_ticket'] = self.img_ticket.url #agregar la url de la imagen
@@ -60,4 +60,26 @@ class Ticket(models.Model):
             item['assignee_id'] = {'id': self.assignee_id.id, 'usuario': self.assignee_id.username}        
         item['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S") #agregar la fecha de creacion
         item['updated_at'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S") #agregar la fecha de actualizacion
+        return item
+
+class commentTicket(models.Model):
+    title = models.CharField(max_length=100, blank=False, null= False)
+    comment = models.TextField(max_length=500, blank=False, null= False)
+    id_ticket = models.ForeignKey(Ticket, on_delete=models.PROTECT, related_name='ticket_comment')
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, related_name='comment_creator', on_delete=models.PROTECT)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_by = models.ForeignKey(User, related_name='comment_updater', on_delete=models.PROTECT)
+
+    def __str__(self):
+        return "{}-{}".format(self.pk, self.title)
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['title'] = self.title
+        item['comment']= self.comment
+        item['id_ticket'] = {'id': self.id_ticket.pk, 'title': self.id_ticket.title}
+        item['created_by'] = {'id': self.created_by.pk, 'usuario': self.created_by.username}
+        item['updated_by'] = {'id': self.updated_by.pk, 'usuario': self.updated_by.username}
+        item['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S") 
+        item['updated_at'] = self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
         return item

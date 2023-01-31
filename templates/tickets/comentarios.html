@@ -14,7 +14,7 @@ Categorias
                 <div class="card-header pb-0">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h3><i class="fa-solid fa-tags opacity-10 fs-1"></i> Categorias</h3>
+                            <h3><i class="fa-solid fa-comment-lines opacity-10 fs-1"></i> Comentarios del ticket <span id='id_ticket'>{{ticket}}</span></h3>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
                             <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
@@ -29,15 +29,19 @@ Categorias
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        # Categoria
+                                        #
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Nombre
+                                        Titulo
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Descripcion
+                                        Comentario
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Ticket
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -61,28 +65,27 @@ Categorias
 </div>
 
 <!-- Modal Agregar Categorias-->
-<div class="modal fade" id="modalCategoria" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+<div class="modal fade" id="modalComentario" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="">
-                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Categoria</span>
+                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Comentario</span>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="." id="formCategoria" enctype="multipart/form-data">
+                <form method="post" action="." id="formComentario" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group row">
                         <input type="text" class="d-none" name="action" id="action" value="crear" />
-                        <input type="text" class="d-none" name="action" id="id_categoria" value="0" />
-                        
+                        <input type="text" class="d-none" name="id_comentario" id="id_comentario" value="0" />
                         <div class="col-md-12">
                             <div class="input-group mb-3">
-                                <span class="input-group-text" >Nombre:</span>
-                                <input type="text" class="form-control" name="nombre" id="nombre" required aria-label="Nombre del la categoria"/>
+                                <span class="input-group-text" >Titulo:</span>
+                                <input type="text" class="form-control" name="titulo" id="titulo" required aria-label="Nombre del la categoria"/>
                             </div>
                         </div>
                     </div>
@@ -90,7 +93,7 @@ Categorias
                         <div class="col-md-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" >Descripcion:</span>
-                                <textarea maxlength="500" type="text" class="form-control" name="description" id="description" required aria-label="Descripcion de la categoria"></textarea>
+                                <textarea maxlength="500" type="text" class="form-control" name="comment" id="description" required aria-label="Descripcion de la categoria"></textarea>
                             </div>
                         </div>
                     </div>
@@ -107,26 +110,26 @@ Categorias
 <!-- fin modal -->
 
 <script>
-    var tablaCategoria;
-    var modalTitulo = $('.modal-title');
+    let tablaComentario;
+    const modalTitulo = $('.modal-title');
 
     window.onload = function() {
         $("#btnAdd").on("click", function(){
             modalTitulo.find('span').html('Crear Categoria');
             modalTitulo.find('i').removeClass().addClass('fa fa-plus fs-3');
             $('#action').val('crear');
-            $('#formCategoria')[0].reset();
-            $('#nombre').focus();
-            $('#description').val("");
+            $('#formComentario')[0].reset();
+            $('#titulo').focus();
+            $('#comment').val("");
 
-            $('#modalCategoria').modal('show');
+            $('#modalComentario').modal('show');
         });
         $('#datatable').DataTable();
         obtenerDatos();
     }
 
     $("#btn").on("click", function(){
-        if(($("#nombre").val == "") || ($("#description").val == "")){
+        if(($("#titulo").val == "") || ($("#comment").val == "")){
             alert("No puede dejar campos vacios");
         }else{
             submit_with_ajax("", "");
@@ -135,26 +138,27 @@ Categorias
     });
 
     $('#datatable tbody').on('click', 'a[rel="editar"]', function(){
-        var tr = tablaCategoria.cell($(this).closest('td,li')).index();
-        var data = tablaCategoria.row(tr.row).data();
+        var tr = tablaComentario.cell($(this).closest('td,li')).index();
+        var data = tablaComentario.row(tr.row).data();
 
         modalTitulo.find('span').html(' Editar Categoria');
         modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
 
         $('#action').val("editar");
-        $('#id_categoria').val(data.id);
-        $('#nombre').val(data.nombre_categoria);
-        $('#description').val(data.description);
-        $('#modalCategoria').modal('show');
+        $('#id_comentario').val(data.id);
+        $('#titulo').val(data.nombre_categoria);
+        $('#comment').val(data.description);
+        $('#modalComentario').modal('show');
     });
 
     function submit_with_ajax(url, parametros){
         var parametros = new FormData();
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
-        parametros.append('tittle', $('#nombre').val());
-        parametros.append('description', $('#description').val());
-        parametros.append('id', parseInt($('#id_categoria').val()));
+        parametros.append('title', $('#titulo').val());
+        parametros.append('comments', $('#comment').val());
+        parametros.append('id', parseInt($('#id_comentario').val()));
+        parametros.append('ticket', $('#id_ticket').text());
         parametros.append('csrfmiddlewaretoken', token);
 
         $.ajax({
@@ -168,10 +172,10 @@ Categorias
             contentType: false, 
             success:function(result){
                 if(result.correcto){
-                    $('#formCategoria')[0].reset();
-                    $('#modalCategoria').modal('hide');
+                    $('#formComentario')[0].reset();
+                    $('#modalComentario').modal('hide');
 
-                    tablaCategoria.ajax.reload(null, false);
+                    tablaComentario.ajax.reload(null, false);
 
                     switch(result.tipo_accion){
                         case "crear":
@@ -179,9 +183,6 @@ Categorias
                             break;
                         case "editar":
                             texto = "Datos editados con exito";
-                            break;
-                        case "eliminar":
-                            texto = "Dato eliminado con exito";
                             break;
                         default:
                             texto = "";
@@ -194,7 +195,7 @@ Categorias
                     });
 
                 }else{
-                    tablaCategoria.ajax.reload(null, false);
+                    tablaComentario.ajax.reload(null, false);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -208,7 +209,8 @@ Categorias
 
     function obtenerDatos(){
         token = $('input[name="csrfmiddlewaretoken"]').val();
-        tablaCategoria = $('#datatable').DataTable({
+        const ticket = $('#id_ticket').text();
+        tablaComentario = $('#datatable').DataTable({
             responsive: true,
             autoWidth: false,
             destroy: true,
@@ -220,14 +222,16 @@ Categorias
                 type: 'POST',
                 data: {
                     'action': 'buscardatos',
+                    'ticket': ticket,
                     'csrfmiddlewaretoken': token
                 },
                 dataSrc: ""
             },
             columns: [
                 {"data":"id"},
-                {"data":"tittle"},
-                {"data":"description"},
+                {"data":"title"},
+                {"data":"comment"},
+                {"data":"id_ticket.id"},
                 {"data":"created_by.usuario"},
                 {"data":"id"}
             ],
@@ -239,12 +243,14 @@ Categorias
                     }
                 },
                 {
-                    targets: [4],
+                    targets: [5],
                     class: 'text-center',
                     ordenable: false,
                     render: function(data, type, row){
-                        var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat">
+                        var buttons = `<a rel="editar" class="btn btn-warning btn-sm btn-flat ms-1 me-1" title="Editar">
                                     <i class="fa fa-edit"></i></a> `;
+                            buttons += `<a rel="ver" class='btn btn-secondary btn-sm btn-flat test-popup-link ms-1 me-1' title="Ver">
+                                <i class="fa-solid fa-eye fs-6"></i></a>`;
                         return buttons;
                     }
                 },
