@@ -1,0 +1,86 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %} 
+Perfil 
+{% endblock title %} 
+{% block content %}
+
+<section>
+    <div class="container py-5">
+        <div class="row col-12">
+            <div class="col-12 mb-4">
+                <div class="card col-8 mx-auto">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <p class="mb-0">Nombre Completo</p>
+                            </div>
+                            <div class="col-sm-7">
+                                <p class="text-muted mb-0">{{nombre.upper}} {{apellido.upper}}</p>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <p class="mb-0">Identidad</p>
+                            </div>
+                            <div class="col-sm-7">
+                                <p class="text-muted mb-0">{{dni}}</p>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <p class="mb-0">Email</p>
+                            </div>
+                            <div class="col-sm-7">
+                                <p class="text-muted mb-0">{{email}}</p>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <p class="mb-0">Departamento</p>
+                            </div>
+                            <div class="col-sm-7">
+                                <p class="text-muted mb-0">{{depto.upper}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex align-items-center col-12">
+            {% for asg in asignaciones %}
+            <div class="card mx-auto" style="width: 18rem;">
+                <div class="mx-auto mt-2" style="min-width:200px;min-height:200px;">
+                    <img src="{{asg.imagen.url}}" class="card-img-top rounded" style="max-width:200px;max-height:200px;">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{asg.nombre_item.upper}}</h5>
+                    <table >
+                        <tr>
+                            <td class="fw-bold ms-2">Correlativo</td>
+                            <td style="padding-left: 5px;">{{asg.correlativo.upper}}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold ms-2">Serial</td>
+                            <td style="padding-left: 5px;">{{asg.serial}}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold ms-2">Modelo</td>
+                            <td style="padding-left: 5px;">{{asg.modelo}}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold ms-2">Categoria</td>
+                            <td style="padding-left: 5px;">{{asg.categoria}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

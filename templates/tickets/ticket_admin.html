@@ -179,6 +179,10 @@ Administracion Tickets
     }
 
     $(document).ready(function () {
+        $('#asignar_usuario').select2({
+            dropdownParent:  $('#modalEditarTicket'),
+            theme: 'bootstrap-5'
+        });
        // Obtener la URL completa
         var url = window.location.href;
         // Expresión regular para buscar el valor después de "admin-ticket/"
@@ -187,10 +191,12 @@ Administracion Tickets
             titulo_card.find('span').html(' Abiertos');
             $('#div_fechas').hide();
             ObtenerDatos();
+            notificar();
         }else if (value == 2){//si el estado es IN_PROGRESS cambia el texto del boton y asigna la accion apra actualizarlo DONE
             titulo_card.find('span').html(' En Progreso');
             $('#div_fechas').hide();
             ObtenerDatos();
+            notificar();
         }else if (value == 3){
             titulo_card.find('span').html(' Cerrados');
             $('#div_fechas').show();
@@ -218,8 +224,34 @@ Administracion Tickets
                 ObtenerDatos();
             }
         });
+        
     });
 
+    function notificar(){
+        $("#datatable").on('draw.dt', function(){
+            const tr = $(this).DataTable();
+            tr.rows().every(function(){
+                const rowData = this.data();
+                const date = new Date(rowData.created_at);
+                // Verificar si la fecha es menor a la fecha de hoy
+                const hour24 = new Date().getTime() - (24*60*60*1000);
+                if (date.getTime() < hour24) {
+                // Mostrar fila resaltada
+                    $(this.node()).addClass('table-danger');
+                }
+                const numFilaRetraso = $('.table-danger').length;
+                if(numFilaRetraso > 0) {
+                    Swal.fire({
+                        title: 'Hay tickets pendientes',
+                        text: 'Revisa la tabla para verificar',
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                    });
+                }
+                
+            });
+        });
+    }
     //================================================== Obtener Ticket ================================================
     function ObtenerDatos() {
         token = $('input[name="csrfmiddlewaretoken"]').val();
@@ -400,6 +432,7 @@ Administracion Tickets
         });
     }
 
+    
     //================================================= Editar Ticket =============================================================
 
     $('#datatable tbody').on('click', 'a[rel="EditarTicket"]', function(){
@@ -407,12 +440,11 @@ Administracion Tickets
         var tr = tablaTicket.cell($(this).closest('td, li')).index();
         var data = tablaTicket.row(tr.row).data();
         estado = data.status;
-
+        $('#asignar_usuario').val(data.assignee_id.id);
         $('#titulo_ticket').val(data.title);
         $('#id_ticket').val(data.id);
         $('#description_ticket').val(data.description);
         $('#id_imagen').attr("src",data.img_ticket);
-        $('#asignar_usuario').val(data.assignee_id.id);
         if (estado == 'OPEN'){//si el estado es OPEN cambia el texto del boton y asigna la accion para actualizarlo a IN_PROGRESS
             modalTitulo.find('span').html(' Asignar Ticket');
             modalTitulo.find('i').removeClass().addClass('fa-solid fa-user-check fs-3'); 
@@ -430,7 +462,7 @@ Administracion Tickets
             $('#btnEditarTicket').hide();
             $('#asignar_usuario').attr("disabled",true);
         }
-
+        
         $('#modalEditarTicket').modal('show');
     }).on('click', 'a[rel="comentarios"]', function(){
             var tr = tablaTicket.cell($(this).closest('td, li')).index();
@@ -451,6 +483,7 @@ Administracion Tickets
                 }
             })
     });
+    
 
     //========================================= ver imagen ===============================
     $("#verImagen").on("click", function () {

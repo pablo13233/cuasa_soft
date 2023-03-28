@@ -28,6 +28,7 @@ Inventario
                             <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:proveedores' %}"><i class="fa-solid fa-handshake fs-2"></i> Proveedor</a>
                             <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:estados' %}"><i class="fa-solid fa-rectangle-history fs-2"></i> Estado</a>
                             <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:descarte' %}"><i class="fa-solid fa-dumpster fs-2"></i> Descartes</a>
+                            <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:mantenimiento' %}"><i class="fa-solid fa-screwdriver-wrench fs-2"></i> Mantenimientos</a>
                         </div>
                     </div>
                 </div>
@@ -126,7 +127,7 @@ Inventario
                         <input type="text" class="d-none" name="action" id="action" value="crear" />
                         <input type="text" class="d-none" name="action" id="id_inventario" value="0" />
 
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Correlativo:</span>
                                 <input type="text" class="form-control" name="correlativo" id="correlativo" required aria-label="Numero de correlativo" />
@@ -135,7 +136,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" >Nombre:</span>
                                 <input type="text" class="form-control" name="nombre" id="nombre" required aria-label="Nombre del articulo"/>
@@ -144,7 +145,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-6">
+                        <div class="col-9">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="categoria">Categoria:</label>
                                 <select name="categoria" id="categoria" class="form-control form-select form-select-sm">
@@ -160,7 +161,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-6">
+                        <div class="col-9">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="modelo">Modelo:</label>
                                 <select name="modelo" id="modelo" class="form-control form-select form-select-sm">
@@ -176,7 +177,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-6">
+                        <div class="col-9">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="proveedor">Proveedor:</label>
                                 <select name="proveedor" id="proveedor" class="form-control form-select form-select-sm">
@@ -192,7 +193,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Lps.</span>
                                 <input type="text" class="form-control" value="0.00" name="precio" id="precio" aria-label="Precio"/>
@@ -202,7 +203,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Fecha de Compra</span>
                                 <input size="16" type="text" name="fecha_compra" class="form-control" id="fecha_compra" readonly>
@@ -211,7 +212,7 @@ Inventario
                     </div>
                     
                     <div class="form-group row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Fecha de Garantia</span>
                                 <input size="16" type="text" name="fecha_garantia" class="form-control" id="fecha_garantia" readonly>
@@ -220,7 +221,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-6">
+                        <div class="col-9">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="estado">Estado:</label>
                                 <select name="estado" id="estado" class="form-control form-select form-select-sm">
@@ -236,7 +237,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" >Caracteristicas:</span>
                                 <textarea maxlength="500" type="text" class="form-control" name="caracteristica" id="caracteristica" required aria-label="Caracteristicas del artculo"></textarea>
@@ -245,7 +246,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" >Comentarios:</span>
                                 <textarea maxlength="500" type="text" class="form-control" name="comentarios" id="comentarios" required aria-label="Comentarios del artculo"></textarea>
@@ -254,7 +255,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" ># Serie:</span>
                                 <input type="text" class="form-control" name="serial_number" id="serial_number" required aria-label="Numero de serie del articulo"/>
@@ -263,7 +264,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" >Ubicacion:</span>
                                 <textarea maxlength="500" type="text" class="form-control" name="ubicacion" id="ubicacion" required aria-label="Ubicacion del artculo"></textarea>
@@ -272,7 +273,7 @@ Inventario
                     </div>
 
                     <div class="form-group row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="imagen">Imagen:</label>
                                 <input type="file" class="form-control" name="imagen" id="imagen">
@@ -344,6 +345,22 @@ $(document).ready(function(){
         categoria = $(this).val();
         obtenerDatos();
     })
+    $('#categoria_select').select2({
+            theme: 'bootstrap-5'
+    });
+    $('#categoria').select2({
+        dropdownParent:  $('#modalInventario'),
+        theme: 'bootstrap-5'
+    });
+    $('#modelo').select2({
+        dropdownParent:  $('#modalInventario'),
+        theme: 'bootstrap-5'
+    });
+    $('#proveedor').select2({
+        dropdownParent:  $('#modalInventario'),
+        theme: 'bootstrap-5'
+    });
+    
 });
 
 //------------------------- boton en modal para agregar -----------------------

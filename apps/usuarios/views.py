@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission, Group
 from django.contrib.auth.hashers import make_password
 from apps.usuarios.models import Departamentos, Empleado
+from apps.asignaciones.models import historial_asignaciones
+from apps.tickets.models import Ticket
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.db import transaction
@@ -330,3 +332,38 @@ def grupos_view(request):
         permisos = Permission.objects.all()
         grupos = Group.objects.all()
         return render(request, 'usuarios/grupos.html',{'permisos': permisos, 'grupos': grupos})
+
+@login_required
+def perfil_Usuarios(request):
+    user = request.user.id
+    usr = User.objects.get(pk=user)
+    data_asignacion=[]
+    data_tickets=[]
+    empleado = Empleado.objects.get(usuario = usr)
+    asignacion = historial_asignaciones.objects.filter(usuario = usr)
+    
+    nombre = empleado.usuario.first_name
+    apellido = empleado.usuario.last_name
+    email = empleado.usuario.email
+    dni = empleado.dni
+    depto = empleado.depto.nombre_depto
+
+    for asg in asignacion:
+        data_asg={}
+        if asg.status == 'ASIGNADO':
+            data_asg['correlativo'] = asg.inventario_item.correlativo
+            data_asg['nombre_item'] = asg.inventario_item.nombre_item
+            data_asg['serial'] = asg.inventario_item.serial_number
+            data_asg['modelo'] = asg.inventario_item.ModeloItem.nombre_modelo
+            data_asg['categoria'] = asg.inventario_item.categoria.nombre_categoria
+            data_asg['imagen'] = asg.inventario_item.imagen_item
+        data_asignacion.append(data_asg)
+
+    return render(request, 'usuarios/profile.html',{
+                    'asignaciones':data_asignacion,
+                    'nombre':nombre,
+                    'apellido':apellido,
+                    'email':email,
+                    'dni':dni,
+                    'depto':depto,
+                    })

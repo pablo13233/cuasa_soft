@@ -28,7 +28,7 @@ def ticketViews (request):
                 if action =='buscardatos':
                     for i in Ticket.objects.filter(query):
                         data.append(i.toJSON())
-    
+                        print(i.created_at)
                         #========================   Crear   =========================
                 elif action =='crear':
 
@@ -188,7 +188,7 @@ def commentTicket_view(request):
                     for i in commentTicket.objects.filter(id_ticket = id_t):
                         data.append(i.toJSON())
                 elif action == 'crear':
-                    print('lol ',id_t)
+                    # print('lol ',id_t)
                     commentTicket.objects.create(
                         id_ticket=Ticket.objects.get(pk=id_t),
                         title = request.POST['title'],
@@ -202,7 +202,7 @@ def commentTicket_view(request):
                     commentTicket.objects.filter(pk=request.POST['id_comment']).update(
                         title = request.POST['title'],
                         comment = request.POST['comments'],
-                        updated_by = User.objects.get(user=id_user),
+                        updated_by = User.objects.get(pk=id_user),
                         updated_at = date_up
                     )
 

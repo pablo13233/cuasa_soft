@@ -27,8 +27,8 @@ Inventario
                             <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:modelo' %}"><i class="fa-solid fa-shapes fs-2"></i> Modelo</a>
                             <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:proveedores' %}"><i class="fa-solid fa-handshake fs-2"></i> Proveedor</a>
                             <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:estados' %}"><i class="fa-solid fa-rectangle-history fs-2"></i> Estado</a>
-                            <a class="btn btn-outline-info fs-4 m-1 disabled" href="{% url 'inventario_app:descarte' %}"><i class="fa-solid fa-dumpster fs-2"></i> Descartes</a>
-                            <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:mantenimiento' %}"><i class="fa-solid fa-screwdriver-wrench fs-2"></i> Mantenimientos</a>
+                            <a class="btn btn-outline-info fs-4 m-1" href="{% url 'inventario_app:descarte' %}"><i class="fa-solid fa-dumpster fs-2"></i> Descartes</a>
+                            <a class="btn btn-outline-info fs-4 m-1 disabled" href="{% url 'inventario_app:mantenimiento' %}"><i class="fa-solid fa-screwdriver-wrench fs-2"></i> Mantenimientos</a>
                         </div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@ Inventario
                     <div class="row">
                         <div class="row">
                             <div class="col-5">
-                                <h3><i class="fa-solid fa-dumpster-fire fs-1"></i> Descartes</h3>
+                                <h3><i class="fa-solid fa-screwdriver-wrench fs-1"></i> Mantenimientos</h3>
                             </div>
                             <div class="col-6 p-0 text-center">
                                 <div class="col-12 p-0" id="div_fechas">
@@ -70,27 +70,27 @@ Inventario
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        # Item
+                                        #
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Correlativo
+                                        Titulo
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Nombre
+                                        Inventario
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Fecha
+                                        Fecha Crea
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Estado
+                                        Cambio Parte
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Usuario
+                                        Usuario Creo
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -108,27 +108,37 @@ Inventario
         </div>
     </div>
 </div>
-<!-- Modal Agregar Inventarios-->
-<div class="modal fade" id="modalInventario" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+<!-- Modal Agregar Mantenimiento-->
+<div class="modal fade" id="modalMantenimiento" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="">
-                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Item</span>
+                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Mantenimiento</span>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="." id="formInventario" enctype="multipart/form-data">
+                <form method="post" action="." id="formMantenimiento" enctype="multipart/form-data">
                     {% csrf_token %}
+                    <div class="form-group row">
+                        <input type="text" class="d-none" name="action" id="action" value="crear" />
+                        <input type="text" class="d-none" name="action" id="id_inventario" value="0" />
+
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Titulo:</span>
+                                <input type="text" class="form-control" name="title" id="title" required aria-label="Titulo para el mantenimiento" />
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group row">
                         <div class="col-md-12">
                             <div class="input-group mb-3">
-                                <input type="text" class="d-none" name="action" id="action" value="crear" />
                                 <label class="input-group-text" for="equipo">Equipo:</label>
-                                <select name="equipo" id="equipo" class="form-control form-select form-select-sm"  data-show-subtext="false" data-live-search="true">
+                                <select name="equipo" id="equipo" class="form-control">
                                     <option selected value="0">--Seleccione--</option>
                                     {% for itm in invent %}
                                             <option value="{{itm.pk}}"> 
@@ -139,7 +149,12 @@ Inventario
                             </div>
                         </div>
                     </div>
-
+                    <div class="input-group mb-3">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="checkbox" value="cambio_partes" id="cambio_partes">
+                        </div>
+                        <label class="form-control" >Cambio de partes</label>
+                    </div>
                     <div class="form-group row">
                         <div class="col-md-12">
                             <div class="input-group mb-3">
@@ -148,7 +163,14 @@ Inventario
                             </div>
                         </div>
                     </div>
-
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="imagen">Imagen:</label>
+                                <input type="file" class="form-control" name="imagen" id="imagen">
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -159,8 +181,26 @@ Inventario
     </div>
 </div>
 <!-- Modal Agregar -->
+<!-- Modal ver imagen -->
+<div class="modal fade" id="modalImagen">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-img-title" id="">
+                    <span> Mantenimiento</span>
+                </h5>
+                <button type="button" class="btn btn-light btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" class="img-responsive" style="max-width:100%;max-height:100%;" id="verImagen">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Ver Imagen -->
 <script>
-    var tablaInventario;
+    var tablaMantenimiento;
     var modalTitulo = $('.modal-title');
     var imgTitulo = $('.modal-img-title');
     var fechaFinal;
@@ -168,7 +208,7 @@ Inventario
 
     window.onload = function() {
         $("#btnAdd").on("click", function(){
-            modalTitulo.find('span').html('Crear Descarte');
+            modalTitulo.find('span').html('Crear Mantenimiento');
             modalTitulo.find('i').removeClass().addClass('fas fa-plus fs-3');
             $('#equipo').html(
                 `<option selected value="0">--Seleccione--</option>
@@ -179,18 +219,19 @@ Inventario
                 {% endfor %}`
             );
             $('#action').val('crear');
-            $('#formInventario')[0].reset();
+            $('#formMantenimiento')[0].reset();
             $('#nombre').focus();
             
             $('#equipo').attr("disabled",false);
-            $('#modalInventario').modal('show');
+            $('#modalMantenimiento').modal('show');
         });
         $('#datatable').DataTable();
     };
 
+
     $(document).ready(function () {
         $('#equipo').select2({
-            dropdownParent:  $('#modalInventario'),
+            dropdownParent:  $('#modalMantenimiento'),
             theme: 'bootstrap-5'
         });
         $("#fechaFinal").attr("disabled", true);
@@ -220,7 +261,7 @@ Inventario
 
     function obtenerDatos(){
         token = $('input[name="csrfmiddlewaretoken"]').val();
-        tablaInventario = $('#datatable').DataTable({
+        tablaMantenimiento = $('#datatable').DataTable({
             responsive: true,
             autoWidth: true,
             destroy: true,
@@ -240,14 +281,25 @@ Inventario
             },
             columns: [
                 {"data": "id"},
-                {"data": "correlativo"},
-                {"data": "nombre_item"},
-                {"data": "updated_at"},
-                {"data": "estado.nombre_estado"},
-                {"data": "updated_by.username"},
+                {"data": "titulo"},
+                {"data": "inventario.correlativo"},
+                {"data": "creado_fecha"},
+                {"data": "cambio_partes.estado"},
+                {"data": "creado_por.usuario_creo"},
                 {"data": "id"}
             ],
             columnDefs: [
+                {
+                    targets: [4],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        if (data == 'si')
+                            return '<span class="badge rounded-pill bg-success fs-6">Si</span>';
+                        else if (data == 'no')
+                            return '<span class="badge rounded-pill bg-primary fs-6">No</span>';
+                    }
+                },
                 {
                     targets: [6],
                     class: 'text-center',
@@ -255,7 +307,7 @@ Inventario
                     render: function (data, type, row) {
                         var buttons = `<a rel="pdf" title="Imprimir PDF" class='btn btn-info btn-sm btn-flat mx-1' target="blank">
                                         <i class="fa-solid fa-file-pdf fs-6 p-0" aria-hidden="true"></i></a>`;
-                        buttons += `<a rel="ver" class='btn btn-primary btn-sm btn-flat'>
+                        buttons += `<a rel="ver" title:"Ver Imagen" class='btn btn-primary btn-sm btn-flat'>
                                         <i class="fa-solid fa-eye"></i></a>`;
                         return buttons;
                     }
@@ -268,28 +320,37 @@ Inventario
     $("#btn").on("click", function () {
 
 
-        if ($("#equipo").val() == "") {
-            alert("Falta el equipo a descartar");
+        if ($("#equipo").val() == "" || $("#equipo").val() == "0" ) {
+            alert("Falta el equipo para mantenimiento");
 
-        } else if ($("#nota").val() == "") {
-            alert("Faltan las observaciones del equipo a Descartar");
+        } else if ($("#comentarios").val() == "") {
+            alert("Faltan las observaciones del equipo a dar mantenimiento");
 
-        } else {
+        } else if ($("#item_id").val() == "" || $("#equipo").val() == "0") {
+            alert("Faltan las observaciones del equipo a dar mantenimiento");
+
+        }else {
             submit_with_ajax("", "");
         }
         return false;
     });
 
-//================================================Función AJAX======================================================
+    //================================================Función AJAX======================================================
 
     function submit_with_ajax(url, parametros) {
         var parametros = new FormData();
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
+        parametros.append('title', $('#title').val());
         parametros.append('comentario', $("#comentarios").val());
-        parametros.append('item_id', $("#equipo").val());
+        parametros.append('item_id',parseInt($('#equipo').val()));
+        if (document.getElementById('cambio_partes').checked == true) {
+            parametros.append('cambio_partes', true)
+        } else if (document.getElementById('cambio_partes').checked == false) {
+            parametros.append('cambio_partes', false)
+        }
+        parametros.append('imagen', $('#imagen')[0].files[0]);
         parametros.append('csrfmiddlewaretoken', token);
-
         $.ajax({
             url: window.location.pathname, //window.location.pathname
             type: 'POST',
@@ -302,13 +363,13 @@ Inventario
             success: function (result) {
                 //alert("Correcto");
                 if (result.correcto) {
-                    $('#formInventario')[0].reset();
-                    $("#modalInventario").modal("hide");
-                    tablaInventario.ajax.reload(null, false);
+                    $('#formMantenimiento')[0].reset();
+                    $("#modalMantenimiento").modal("hide");
+                    tablaMantenimiento.ajax.reload(null, false);
 
                     switch (result.tipo_accion) {
                         case "crear":
-                            texto = "Descarte creado con exito";
+                            texto = "Mantenimiento creado con exito";
                             break;
                         default:
                             texto = "";
@@ -321,7 +382,7 @@ Inventario
                     });
 
                 } else {
-                    tablaInventario.ajax.reload(null, false);
+                    tablaMantenimiento.ajax.reload(null, false);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -340,25 +401,19 @@ Inventario
         });
     }
 
+    // ================================== botones de accion
     $('#datatable tbody').on('click', 'a[rel="ver"]', function(){
-        var tr = tablaInventario.cell($(this).closest('td,li')).index();
-        var data = tablaInventario.row(tr.row).data();
-
-        modalTitulo.find('span').html(' Ver Descarte');
-        modalTitulo.find('i').removeClass().addClass('fas fa-eye fs-3');
-        $('#equipo').append(
-            '<option selected value="'+ data.id +'">'+data.correlativo+'</option>'
-            );
-        $('#equipo').attr("disabled",true);
-        $('#equipo').val(data.id);
-        $('#comentarios').val(data.comentarios);
+        var tr = tablaMantenimiento.cell($(this).closest('td, li')).index();
+        var data = tablaMantenimiento.row(tr.row).data();
         
-        $('#modalInventario').modal('show');
-
+        imgTitulo.find('span').html('Imagen del mantenimiento equipo: '+ data.inventario.correlativo)
+        console.log(data.imagen_item);
+        $("#verImagen").attr("src", data.imagen_mantenimiento);
+        $("#modalImagen").modal("show");
     }).on('click', 'a[rel="pdf"]', function(){
-        var tr = tablaInventario.cell($(this).closest('td, li')).index();
-        var data = tablaInventario.row(tr.row).data();
-            const item_id  = data.id;
+        var tr = tablaMantenimiento.cell($(this).closest('td, li')).index();
+        var data = tablaMantenimiento.row(tr.row).data();
+            const id  = data.id;
             Swal.fire({
                 title: '¿Imprimir el archivo?',
                 icon: 'info',
@@ -369,7 +424,7 @@ Inventario
                 cancelButtonText: 'No'
             }).then((result) => {
                 if (result.isConfirmed) {
-                window.open("{% url 'inventario_app:nota_descarte' %}?item=" +item_id);
+                window.open("{% url 'inventario_app:nota_mantenimiento' %}?id=" +id);
                 }
             })
     });

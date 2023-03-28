@@ -46,6 +46,13 @@
         border-top: 1px solid #000;
         width: 200px;
         }
+        .ng{
+            font-weight: 900;
+        }
+        td {
+            border: 1px solid black;
+            padding-left: 3px;
+        }
     </style>
 </head>
 <body>
@@ -53,45 +60,67 @@
     <div class="m-0 p-0">
         <div class="title m-0 p-0">
             <img src="{% static 'img/logo-2.png' %}" alt="Imagen del título">
-            <h2 class="text-center text-uppercase pt-4">Nota de Descarte de equipo</h2>
+            <h2 class="text-center text-uppercase pt-4">Nota de Mantenimiento de equipo</h2>
         </div>
         <hr style="border-bottom: 1px solid #000;">
     </div>
 
     <!-- Contenido del reporte -->
     <div class="container pt-3">
-        <p class="text-left">En esta fecha se informa que se realizo la revision al equipo que se mencionara acontinuacion el cual ha culminado
-            con su vida util y no tiene reparacion por lo que se determino que el equipo esta obsoleto y por ende se tiene que descartar. 
+        <p class="text-left">En esta fecha se informa que se realizo la revision al equipo que se mencionara acontinuacion. 
         </p>
         <p><span class="fs-3">Detalles del equipo:</span>
         <br>
-            <ul>
-                <li>Correlativo: <span class="text-uppercase fw-bold">{{correlativo}}</span></li>
-                <li>Categoria: <span class="text-uppercase fw-bold">{{categoria}}</span></li>
-                <li>Nombre: <span class="text-uppercase fw-bold">{{nombre}}</span></li>
-                <li>Marca: <span class="text-uppercase fw-bold">{{marca}}</span></li>
-                <li>Modelo: <span class="text-uppercase fw-bold">{{modelo}}</span></li>
-                <li>S/N o Service Tag: <span class="text-uppercase fw-bold">{{serie}}</span></li>
-            </ul>
+        <table>
+            <tr>
+                <td class="ng">Motivo:</td>
+                <td>{{title}}</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">Correlativo en inventario:</td>
+                <td>{{correlativo}}</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">S/N o Service Tag:</td>
+                <td>{{serie}}</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">Caracteristicas del equipo:</td>
+                <td>{{caracteristicas}}</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">Asignado a:</td>
+                <td>{{asignado}}</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">Se cambiaron partes:</td>
+                <td>{% if cambio_partes %} Si {% else %} No {% endif %}</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">Tecnico asignado:</td>
+                <td>{{usuario_creo}}</td>
+            </tr>
+        </table>
         </p>
-        <span>Diagnostico:</span>
+        <span class="fw-bold">Diagnostico:</span>
         <p class="text-left">{{comentarios}}</p>
         
         <br>
-        <p>A partir de la fecha: {{fecha_descarte}}</p>
+        <p>En la fecha: {{fecha_crea}}</p>
         <br>
     </div>
 
     <!-- Firmas -->
     <div class="firmas">
         <div class="row mt-4">
-            <div class="col-1">
+            
+            <div class="col-4">
+                <hr class="mx-3">
+                <p>Usuario</p>
             </div>
             <div class="col-4">
                 <hr class="mx-3">
                 <p>Técnico</p>
-            </div>
-            <div class="col-2">
             </div>
             <div class="col-4">
                 <hr class="mx-3">

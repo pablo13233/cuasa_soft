@@ -5,5 +5,5 @@ app_name = 'asignaciones_app'
 
 urlpatterns =[
     path('asignaciones/', asignacionViews, name='asignaciones'),
-    path('nota_asg/', PdfView, name='nota_asg'),
+    path('asignaciones/nota_asg/', PdfView, name='nota_asg'),
 ]

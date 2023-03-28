@@ -204,6 +204,14 @@ Asignaciones
     }
     
     $(document).ready(function () {
+        $('#equipo').select2({
+            dropdownParent:  $('#modalAsignacion'),
+            theme: 'bootstrap-5'
+        });
+        $('#usuario').select2({
+            dropdownParent:  $('#modalAsignacion'),
+            theme: 'bootstrap-5'
+        });
         $('#busquedaSW').on('change', function () {
             if ($(this).is(':checked')) {
                 $('#busqueda').removeAttr("disabled");

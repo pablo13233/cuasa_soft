@@ -248,6 +248,12 @@ Tickets
         obtenerDatos();
 
     }
+    $(document).ready(function(){
+        $('#categoria').select2({
+            dropdownParent:  $('#modalTicket'),
+            theme: 'bootstrap-5'
+        });
+    });
 
     //=================================================Data table=============================================================
 

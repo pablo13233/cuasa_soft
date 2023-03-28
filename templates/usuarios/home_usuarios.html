@@ -387,6 +387,16 @@ Usuarios
         $('#datatable').DataTable();
         obtenerDatos();
     }
+    $(document).ready(function(){
+        $('#departamento').select2({
+            dropdownParent:  $('#modalEmpleado'),
+            theme: 'bootstrap-5'
+        });
+        $('#grupo').select2({
+            dropdownParent:  $('#modalEmpleado'),
+            theme: 'bootstrap-5'
+        });
+    });
 
     // ==================================== Obtener 
     function obtenerDatos() {

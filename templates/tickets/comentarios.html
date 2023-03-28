@@ -93,7 +93,7 @@ Categorias
                         <div class="col-md-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" >Descripcion:</span>
-                                <textarea maxlength="500" type="text" class="form-control" name="comment" id="description" required aria-label="Descripcion de la categoria"></textarea>
+                                <textarea maxlength="500" type="text" class="form-control" name="comment" id="comment" required aria-label="Descripcion de la categoria"></textarea>
                             </div>
                         </div>
                     </div>
@@ -115,13 +115,15 @@ Categorias
 
     window.onload = function() {
         $("#btnAdd").on("click", function(){
-            modalTitulo.find('span').html('Crear Categoria');
+            modalTitulo.find('span').html('Crear Comentario');
             modalTitulo.find('i').removeClass().addClass('fa fa-plus fs-3');
             $('#action').val('crear');
             $('#formComentario')[0].reset();
             $('#titulo').focus();
             $('#comment').val("");
-
+            $('#titulo').attr("disabled",false);
+            $('#comment').attr("disabled",false);
+            $('#btn').show();
             $('#modalComentario').modal('show');
         });
         $('#datatable').DataTable();
@@ -141,13 +143,28 @@ Categorias
         var tr = tablaComentario.cell($(this).closest('td,li')).index();
         var data = tablaComentario.row(tr.row).data();
 
-        modalTitulo.find('span').html(' Editar Categoria');
+        modalTitulo.find('span').html(' Editar Comentario');
         modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
 
         $('#action').val("editar");
         $('#id_comentario').val(data.id);
-        $('#titulo').val(data.nombre_categoria);
-        $('#comment').val(data.description);
+        $('#titulo').val(data.title);
+        $('#comment').val(data.comment);
+        $('#titulo').attr("disabled",false);
+        $('#comment').attr("disabled",false);
+        $('#btn').show();
+        $('#modalComentario').modal('show');
+    }).on('click', 'a[rel="ver"]', function(){
+        var tr = tablaComentario.cell($(this).closest('td,li')).index();
+        var data = tablaComentario.row(tr.row).data();
+
+        modalTitulo.find('span').html(' Editar Categoria');
+        modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
+        $('#titulo').val(data.title);
+        $('#comment').val(data.comment);
+        $('#titulo').attr("disabled",true);
+        $('#comment').attr("disabled",true);
+        $('#btn').hide();
         $('#modalComentario').modal('show');
     });
 
@@ -157,7 +174,7 @@ Categorias
         parametros.append('action', $('#action').val());
         parametros.append('title', $('#titulo').val());
         parametros.append('comments', $('#comment').val());
-        parametros.append('id', parseInt($('#id_comentario').val()));
+        parametros.append('id_comment', parseInt($('#id_comentario').val()));
         parametros.append('ticket', $('#id_ticket').text());
         parametros.append('csrfmiddlewaretoken', token);
 

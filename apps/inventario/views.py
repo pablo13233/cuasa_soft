@@ -6,15 +6,12 @@ from django.utils import formats, timezone
 import datetime
 from django.contrib.auth.models import User
 from apps.inventario.models import *
+from apps.asignaciones.models import historial_asignaciones
 from django.db import transaction
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML
-# Create your views here.
-# from apps.usuarios.urls import error_view
 
-# def error_view(request):
-#     return render(request, 'partials/error_permisos.html')
 
 @login_required
 def inventarioViews(request):
@@ -426,7 +423,6 @@ def pdfInventarioView(request):
             id_item = request.GET['item']
             data_item =  Inventario_Item.objects.filter(id=id_item)
             for itm in data_item:
-                id = itm.id
                 nombre = itm.nombre_item
                 correlativo = itm.correlativo
                 caracteristica = itm.caracteristica
@@ -438,7 +434,7 @@ def pdfInventarioView(request):
                 marca = itm.ModeloItem.marca.nombre_marca
                 categoria = itm.categoria.nombre_categoria
             html_string = render_to_string('inventario/descarte_pdf.html',{
-                            'id':id,
+                            'id_item':id_item,
                             'nombre':nombre,
                             'correlativo':correlativo,
                             'caracteristica':caracteristica,
@@ -449,6 +445,113 @@ def pdfInventarioView(request):
                             'marca':marca,
                             'usuario_desscarta':usuario_desscarta,
                             'categoria':categoria,
+                            })
+            html = HTML(string=html_string,base_url=request.build_absolute_uri()) #base url es lo que hace funcionar los archivos estaticos en el pdf
+            response = HttpResponse(html.write_pdf(), content_type='application/pdf')
+        except Exception as e: 
+            print("Error: " + str(e))
+        return response
+    elif request.method =="POST":
+        return None
+    
+@login_required
+def mantenimientosViews(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('inventario.add_historico_mantenimientos')):
+        return redirect('usuarios_app:error_view')
+    if request.method == 'POST' and request.is_ajax():
+        data = []
+        try:
+            with transaction.atomic():
+                # =====================  select ================
+                action = request.POST['action']
+                id_user = request.user.id
+                if action == 'buscardatos':
+                    if request.POST['fecha_ini'] == None or request.POST['fecha_final'] == None:
+                        print('Error en fechas')
+                    else:
+                        fecha_ini = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_ini'],'%Y-%m-%d')) 
+                        fecha_final = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_final'], '%Y-%m-%d'))
+                        for i in historico_mantenimientos.objects.filter(updated_at__range=[fecha_ini, fecha_final]):
+                            data.append(i.toJSON())
+                
+                # ======================== crear =========================
+                elif action == 'crear':
+                    if (request.POST['cambio_partes'] == 'false'):
+                            n_cambio_parte = False
+                    elif (request.POST['cambio_partes'] == 'true'):
+                        n_cambio_parte = True
+                    
+                    hm = historico_mantenimientos()
+                    hm.inventario_item = Inventario_Item.objects.get(id=request.POST['item_id'])
+                    hm.title = request.POST['title']
+                    hm.cambio_partes = n_cambio_parte
+                    hm.comentario = request.POST['comentario']
+                    hm.updated_at = timezone.now()
+                    hm.created_by = User.objects.get(pk=id_user)
+                    hm.updated_by = User.objects.get(pk=id_user)
+                    hm.save()
+                    if request.FILES:
+                        imagen = request.FILES.get("imagen")
+                        imagen.name = str(hm.pk)+" "+imagen.name
+                        hm.imagen_mantenimiento = imagen
+                        hm.save()
+
+                    data = {'tipo_accion': 'crear', 'correcto': True}
+                elif action == 'editar':
+                    prov = Estado.objects.get(pk=request.POST['id'])
+                    prov.nombre_estado = request.POST['nombre_estado']
+                    prov.save()
+
+                    data = {'tipo_accion': 'editar', 'correcto': True}
+                else:
+                    data['error'] = 'Ha ocurrido un error.'
+        except Exception as e:
+            # print(str(e))
+            # print(action)
+            data['error'] = str(e)
+            data = {'tipo_accion': 'error',  'correcto': True}
+            transaction.rollback()
+        else:
+            transaction.commit()
+        return JsonResponse(data, safe=False)
+    elif request.method == 'GET':
+        invent = Inventario_Item.objects.filter(estado_id__in=[1,2])
+        return render(request, 'inventario/mantenimiento.html',{'invent':invent})
+
+@login_required
+def pdfMantenimientoView(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('inventario.add_historico_mantenimientos')):
+        return redirect('usuarios_app:error_view')
+    if request.method == 'GET':
+        try:
+            id_mtn = request.GET['id']
+            data_mtn =  historico_mantenimientos.objects.filter(id=id_mtn)
+            for mtn in data_mtn:
+                title = mtn.title
+                correlativo = mtn.inventario_item.correlativo
+                item = Inventario_Item.objects.get(correlativo=mtn.inventario_item.correlativo)
+                comentarios = mtn.comentario
+                serie = mtn.inventario_item.serial_number
+                caracteristicas = mtn.inventario_item.caracteristica
+                fecha_crea = mtn.created_at
+                usuario_creo = mtn.created_by.username
+                cambio_partes = mtn.cambio_partes
+            try:
+                data_asg = historial_asignaciones.objects.get(inventario_item = item)
+                for asg in data_asg:
+                    asignado = asg.usuario.username
+            except historial_asignaciones.DoesNotExist:
+                asignado = 'No asignado'
+            html_string = render_to_string('inventario/mantenimiento_pdf.html',{
+                            'correlativo':correlativo,
+                            'title':title,
+                            'fecha_crea':fecha_crea,
+                            'comentarios':comentarios,
+                            'usuario_creo':usuario_creo,
+                            'cambio_partes':cambio_partes,
+                            'serie':serie,
+                            'asignado':asignado,
+                            'caracteristicas':caracteristicas,
                             })
             html = HTML(string=html_string,base_url=request.build_absolute_uri()) #base url es lo que hace funcionar los archivos estaticos en el pdf
             response = HttpResponse(html.write_pdf(), content_type='application/pdf')

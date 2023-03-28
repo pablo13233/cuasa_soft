@@ -128,3 +128,37 @@ class Inventario_Item(models.Model):
         else:
             item['updated_by'] = {'id': self.updated_by.id, 'username': self.updated_by.username}
         return item
+
+def get_item_image_folder_maintenance(instance, filename):
+    return '{0}/{1}/{2}/{3}'.format('maintenance', instance.inventario_item.correlativo, instance.id, filename)
+class historico_mantenimientos(models.Model):
+    id = models.AutoField(primary_key=True)
+    inventario_item = models.ForeignKey(Inventario_Item, on_delete=models.PROTECT, related_name="mantenimiento_inventario")
+    cambio_partes = models.BooleanField(default=False, blank = False, null = False)
+    title = models.CharField(max_length=100)
+    comentario = models.TextField(max_length=500, blank = False, null = False)
+    imagen_mantenimiento = models.ImageField(upload_to=get_item_image_folder_maintenance,default='img_defecto.jpg', blank=False, null = False, verbose_name='Image_Maintenance')
+    created_at = models.DateTimeField(auto_now_add=True) 
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='mantenimiento_creado_por')
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True, related_name="mantenimiento_actualizado_por")
+
+    def __str__(self):
+        return self.title
+    
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['inventario'] = {'id': self.inventario_item.id,'correlativo': self.inventario_item.correlativo}
+        item['cambio_partes'] = self.cambio_partes
+        item['titulo'] = self.title
+        item['comentario'] = self.comentario
+        item['imagen_mantenimiento'] = self.imagen_mantenimiento.url
+        if self.cambio_partes == True:
+            item['cambio_partes'] = {'estado': 'si'}
+        else:
+            item['cambio_partes'] = {'estado': 'no'}
+        item['creado_fecha'] = self.created_at.strftime("%Y-%m-%d")
+        item['creado_por'] = {'id': self.created_by.id, 'usuario_creo': self.created_by.username}
+        item['actualizo_fecha'] = self.created_at.strftime("%Y-%m-%d")
+        item['actualizo_por'] = {'id': self.updated_by.id, 'usuario_actualizo': self.updated_by.username}
+        return item
