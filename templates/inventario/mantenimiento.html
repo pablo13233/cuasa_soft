@@ -3,8 +3,23 @@
 {% load static %}
 
 {% block title %}
-Inventario
+Mantenimientos
 {% endblock title %}
+
+{% block route_bar %}
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="{% url 'inventario_app:inventario' %}" class="icon-route">Inventario</a>
+</li>
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="#" class="icon-route">Mantenimientos</a>
+</li>
+{% endblock route_bar %}
 
 {% block content %}
 

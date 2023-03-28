@@ -537,9 +537,11 @@ def pdfMantenimientoView(request):
                 usuario_creo = mtn.created_by.username
                 cambio_partes = mtn.cambio_partes
             try:
-                data_asg = historial_asignaciones.objects.get(inventario_item = item)
+                data_asg = historial_asignaciones.objects.filter(inventario_item = item)
                 for asg in data_asg:
                     asignado = asg.usuario.username
+                    id_asg = asg.pk
+                
             except historial_asignaciones.DoesNotExist:
                 asignado = 'No asignado'
             html_string = render_to_string('inventario/mantenimiento_pdf.html',{
@@ -552,6 +554,7 @@ def pdfMantenimientoView(request):
                             'serie':serie,
                             'asignado':asignado,
                             'caracteristicas':caracteristicas,
+                            'id_asg':id_asg,
                             })
             html = HTML(string=html_string,base_url=request.build_absolute_uri()) #base url es lo que hace funcionar los archivos estaticos en el pdf
             response = HttpResponse(html.write_pdf(), content_type='application/pdf')

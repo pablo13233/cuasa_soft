@@ -6,6 +6,15 @@
 Asignaciones
 {% endblock title %}
 
+{% block route_bar %}
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="#" class="icon-route">Asignaciones</a>
+</li>
+{% endblock route_bar %}
+
 {% block content %}
 
 <div class="container-fluid py-4">
@@ -282,6 +291,13 @@ Asignaciones
                 `{% for itm in invent %}
                     <option value="{{itm.pk}}"> 
                         {{itm.correlativo}} | {{itm.nombre_item}}
+                    </option>
+                {% endfor %}`
+            );
+            $('#usuario').html(
+                `{% for usr in usuarios %}
+                    <option value="{{usr.pk}}"> 
+                        {{usr.username}}
                     </option>
                 {% endfor %}`
             );

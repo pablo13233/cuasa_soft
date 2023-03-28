@@ -6,6 +6,21 @@
 Categorias
 {% endblock title %}
 
+{% block route_bar %}
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="{% url 'tickets_app:admin_ticket' 1 %}" class="icon-route">Administracion de Tickets</a>
+</li>
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="#" class="icon-route">Comentarios</a>
+</li>
+{% endblock route_bar %}
+
 {% block content %}
 <div class="container-fluid py-4 col-12 ">
     <div class="row mb-4">

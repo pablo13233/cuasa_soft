@@ -6,6 +6,15 @@
 Tickets
 {% endblock title %}
 
+{% block route_bar %}
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="#" class="icon-route">Tickets</a>
+</li>
+{% endblock route_bar %}
+
 {% block content %}
 <div class="container-fluid py-4 col-12 ">
     <div class="row mb-4">
@@ -14,7 +23,7 @@ Tickets
                 <div class="card-header pb-0">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h3><i class="fa-solid fa-ticket fs-1"></i></i> Historial Tickets</h3>
+                            <h3><i class="fa-solid fa-ticket fs-1"></i></i> Mis Tickets</h3>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
                             <button type="button" class="btn btn-success btn-sm mb-2 me-2" id="btnAdd">

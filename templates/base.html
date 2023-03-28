@@ -200,16 +200,15 @@
       <div class="page-header">
         <ul class="breadcrumbs ">
           <li class="nav-home-route ">
-            <a href="#">
+            <a href="{% url 'home_app:home' %}">
               <i class="fas fa-home icon-route"></i>
             </a>
           </li>
-          <li class="separator ">
-            <i class="fas fa-chevron-right icon-route"></i>
-          </li>
-          <li class="nav-item-route ">
-            <a href="#" class="icon-route">Dashboard</a>
-          </li>
+          
+          {% block route_bar %}
+            
+          {% endblock route_bar %}
+            
         </ul>
       </div><!-- FinEncabezado del Contenido (Navegacion)-->
     </div>
