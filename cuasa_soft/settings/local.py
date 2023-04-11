@@ -33,3 +33,14 @@ MEDIA_URL = '/media/'
 
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #MEDIA_URL = "/media/"
+
+# Email Settings
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# Host for sending
+EMAIL_HOST = 'premium95.web-hosting.com'
+# Port for sending
+EMAIL_PORT = 587
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = get_secret('EMAIL_USER')
+EMAIL_HOST_PASSWORD = get_secret('EMAIL_PSW')

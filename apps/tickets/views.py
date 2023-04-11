@@ -1,7 +1,11 @@
 from django.utils import formats
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-
+#
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+#
 from django.contrib.auth.models import User
 from apps.tickets.models import *
 from django.db.models import Q
@@ -9,6 +13,7 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.utils import timezone
 import datetime
+#
 # Create your views here.
 
 @login_required
@@ -31,22 +36,33 @@ def ticketViews (request):
                         print(i.created_at)
                         #========================   Crear   =========================
                 elif action =='crear':
-
+                    usuario_registro = User.objects.get(pk=id_user)
                     dato_Ticket = Ticket()
                     if int(request.POST['categoria'])>0:
                         dato_Ticket.categoria = categoria_ticket.objects.get(pk=request.POST['categoria'])
                     dato_Ticket.title = request.POST['title']
                     dato_Ticket.description = request.POST['description']
 
-                    dato_Ticket.user_id = User.objects.get(pk=id_user)
-                    dato_Ticket.updated_by = User.objects.get(pk=id_user)
+                    dato_Ticket.user_id = usuario_registro
+                    dato_Ticket.updated_by = usuario_registro
                     dato_Ticket.save()
-
                     if request.FILES:
                         imagen = request.FILES.get("imagen")
                         imagen.name = str(dato_Ticket.pk)+"_"+imagen.name
                         dato_Ticket.img_ticket = imagen
-                        dato_Ticket.save()#Actualizamos la ruta de la imagen con la concatenacion del id recien creado
+                        dato_Ticket.save()
+                        #Actualizamos la ruta de la imagen con la concatenacion del id recien creado
+                    
+                    #Envio de correo de confirmacion de que se registro el ticket
+                    asunto = f"Ticket # {dato_Ticket.pk} <{dato_Ticket.title}> generado exitosamente"
+
+                    mensaje_html = render_to_string('tickets/confirmacion_correo.html', {'dato_Ticket': dato_Ticket})
+                    mensaje_txt = strip_tags(mensaje_html)
+                    
+                    email = EmailMultiAlternatives(asunto, mensaje_txt, 'no-reply@distribuidoravenecia.com', [usuario_registro.email])
+                    email.attach_alternative(mensaje_html, "text/html")
+                    email.send()
+
                     data = {'tipo_accion': 'crear', 'correcto': True}
         except Exception as e:
             data['error'] = str(e)
