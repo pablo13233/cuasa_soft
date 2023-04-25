@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Reporte de Tickets</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <style>
+        /* Estilos personalizados para el reporte */
+        /* Establecer el tamaño de la página */
+        @page {
+            size: letter;
+        }
+        /* Establecer un margen de 2cm en todas las páginas */
+        @page {
+            margin: 1.27cm 1.50cm;
+        }
+         /* Estilos para el título  */
+        .title {
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        }
+        /*  Estilos para la imagen del título  */
+        .title img {
+        width: 100px;
+        height: auto;
+        }
+        /* Estilos para las firmas */
+        .firmas {
+        position: relative;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        }
+        /* Estilos para la línea horizontal */
+        .firmas hr {
+        border-top: 1px solid #000;
+        width: 200px;
+        }
+        .grafico {
+            width: 600px;
+            height: 650px;
+            background-image: url('{{ filename }}');
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Título con imagen -->
+    <div class="m-0 p-0">
+        <div class="title m-0 p-0">
+            <img src="{% static 'img/logo-2.png' %}" alt="Imagen del título">
+            <h2 class="text-center text-uppercase pt-4">Conteo de tickets por categoría</h2>
+        </div>
+        <hr style="border-bottom: 1px solid #000;">
+    </div>
+
+    <!-- Contenido del reporte -->
+    <div class="container pt-3">
+        <h3>Rango de fecha: {{f_inicial}} - {{f_final}}</h3>
+        <div class="grafico"></div>
+    </div>
+    <br>
+    <div class="container">
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Categoría</th>
+                    <th class="text-center">Número de tickets</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for categoria, num_tickets in tabla %}
+                    <tr>
+                        <td>{{ categoria }}</td>
+                        <td class="text-center">{{ num_tickets }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

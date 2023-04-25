@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Reporte tickets
+{% endblock title %}
+
+
+{% block route_bar %}
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="{% url 'inventario_app:inventario' %}" class="icon-route">Reportes</a>
+</li>
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="#" class="icon-route">Conteo por categoria</a>
+</li>
+{% endblock route_bar %}
+    
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-lg-2 col-md-2"></div>
+        <div class="col-lg-8 col-md-8 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-8">
+                            <h4>Tickets por categoria</h4>
+                        </div>
+                        <div class="col-4 my-auto text-end p-0">
+                            <a type="button" href="{% url 'tickets_app:ticket_categoria'%}" class="btn btn-success btn-sm mb-2 me-2 col-10" target="_blank">
+                                <i class="fa-solid fa-print opacity-10 fs-4" aria-hidden="true"></i><span class="fs-5"> Imprimir</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body px-0 pb-2">
+                    <div class="row">
+                        <div class="container" style="max-width: 600px; max-height: 650px; min-height: 250px; min-width: 135px;">
+                            <canvas id="ticketChart" width="800" height="450"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2"></div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-12 col-md-8 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-7">
+                            <h4>Tickets segun categoria</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2 ms-2 me-2">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const label = {{ labels|safe }}
+    const dts = {{ data|safe }}
+    var ctx = document.getElementById('ticketChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: label,
+                datasets: [{
+                    data: dts,
+                    backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(255, 159, 64)',
+                    'rgb(255, 205, 86)',
+                    'rgb(75, 192, 192)',
+                    'rgb(54, 162, 235)',
+                    'rgb(153, 102, 255)',
+                    'rgb(201, 203, 207)',
+                    'rgb(117, 117, 117)',
+                    'rgb(255, 99, 132)'
+                    ],
+                    borderColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(255, 159, 64)',
+                    'rgb(255, 205, 86)',
+                    'rgb(75, 192, 192)',
+                    'rgb(54, 162, 235)',
+                    'rgb(153, 102, 255)',
+                    'rgb(201, 203, 207)',
+                    'rgb(117, 117, 117)',
+                    'rgb(255, 99, 132)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+</script>
+
+{% endblock content %}

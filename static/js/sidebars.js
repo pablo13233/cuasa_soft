@@ -17,20 +17,6 @@ $(document).ready(function () {
     sidebar.classList.remove("close");
   })
 
-  modeSwitch.addEventListener("click", () => {
-    body.classList.toggle("dark");
-
-    if (body.classList.contains("dark")) {
-      modeText.innerText = "Light mode";
-      modeText.style.color="#3a3b3c";
-    } else {
-      modeText.innerText = "Dark mode";
-      modeText.style.color="#ffffff";
-
-    }
-
-
-  })
 
   //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
   var dropdown = document.getElementsByClassName("dropdown-btn");

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Reporte tickets
+{% endblock title %}
+
+
+{% block route_bar %}
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="{% url 'tickets_app:reportes' %}" class="icon-route">Reportes</a>
+</li>
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="#" class="icon-route">Sin datos</a>
+</li>
+{% endblock route_bar %}
+    
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-12">
+                            <h3><i class="fa-solid fa-file-chart-pie fs-1"></i> Reportes</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body px-0 pb-2">
+                    <p class="px-5">No hay datos para mostrar en la selección que realizo.</p>
+                    <p class="px-5">Por favor relaize una nueva consulta <a href="{% url 'tickets_app:reportes' %}"><span class="text nav-text fs-4">Reportes</span></a></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    
+</div>
+
+
+</script>
+
+{% endblock content %}

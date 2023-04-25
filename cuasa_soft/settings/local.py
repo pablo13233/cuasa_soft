@@ -25,6 +25,7 @@ DATABASES = {
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [ BASE_DIR.parent / 'static' ]
+STATIC_ROOT = '/static/'
 
 
 MEDIA_ROOT = BASE_DIR.parent / 'media'
@@ -38,7 +39,7 @@ MEDIA_URL = '/media/'
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # Host for sending
-EMAIL_HOST = 'premium95.web-hosting.com'
+EMAIL_HOST = 'mail.cuasa.hn'
 # Port for sending
 EMAIL_PORT = 587
 # Optional SMTP authentication information for EMAIL_HOST.

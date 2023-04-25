@@ -116,8 +116,14 @@
 
             <li class="">
               <a href="{% url 'tickets_app:admin_ticket' 1 %}">
-                <i class="fas fa-clipboard-list fs-4 icon"></i>
+                <i class="fa fa-clipboard-list fs-4 icon"></i>
                 <span class="text nav-text">Tickets</span>
+              </a>
+            </li>
+            <li class="">
+              <a href="{% url 'tickets_app:reportes' %}">
+                <i class="fa-solid fa-file-chart-pie fs-4 icon"></i>
+                <span class="text nav-text">Reportes</span>
               </a>
             </li>
             <li class="">
@@ -161,18 +167,6 @@
             </li>
 
           </div>
-          <li class="mode ">
-            <div class="sun-moon toggle">
-              <i class="fa-solid fa-moon icon moon" style="color: grey;"></i>
-              <i class="fa-solid fa-sun icon sun" style="color: yellow;"></i>
-            </div>
-            <span class="mode-text text " style="color: #3a3b3c;">Dark mode</span>
-
-            <div class="toggle-switch">
-              <span class="switch"></span>
-            </div>
-          </li>
-
         </div>
       </div>
     </div>

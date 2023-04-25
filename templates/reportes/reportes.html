@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Reporte tickets
+{% endblock title %}
+
+
+{% block route_bar %}
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="#" class="icon-route">Reportes</a>
+</li>
+{% endblock route_bar %}
+    
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-12">
+                            <h3><i class="fa-solid fa-file-chart-pie fs-1"></i> Reportes</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body px-0 pb-2">
+                    <div class="container-fluid col-12 text-center">
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="button" id="fecha_categoria" class="btn btn-outline-info fs-4 m-1"><i class="fa-solid fa-file-chart-pie fs-2"></i> Conteo por Categorías</button>
+                            <button type="button" id="fecha_departamentos" class="btn btn-outline-info fs-4 m-1"><i class="fa-solid fa-file-chart-line fs-2"></i> Incidencias por Departamento</button>
+                            <button type="button" id="fecha_categoria_departamentos" class="btn btn-outline-info fs-4 m-1"><i class="fa-sharp fa-solid fa-file-chart-line fs-2"></i> Categorías por Departamento</button> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    
+</div>
+
+<script>
+    document.getElementById('fecha_categoria').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Seleccionar rango de fechas',
+            html: `
+                <label for="fecha-inicial">Fecha inicial:</label>
+                <input type="date" id="fecha-inicial" name="fecha-inicial" class="swal2-input">
+                <label for="fecha-final">Fecha final:</label>
+                <input type="date" id="fecha-final" name="fecha-final" class="swal2-input">
+            `,
+            focusConfirm: false,
+            preConfirm: () => {
+                const fechaInicial = Swal.getPopup().querySelector('#fecha-inicial').value;
+                const fechaFinal = Swal.getPopup().querySelector('#fecha-final').value;
+                if (!fechaInicial || !fechaFinal) {
+                    Swal.showValidationMessage('Debes seleccionar un rango de fechas');
+                }
+                return { fechaInicial: fechaInicial, fechaFinal: fechaFinal };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+            const fechaInicial = result.value.fechaInicial;
+            const fechaFinal = result.value.fechaFinal;
+            window.open("{% url 'tickets_app:ticket_categoria'%}?f_in=" + fechaInicial + '&f_fin=' + fechaFinal);
+            }
+        });
+    });
+    
+    document.getElementById('fecha_departamentos').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Seleccionar rango de fechas',
+            html: `
+                <label for="fecha-inicial">Fecha inicial:</label>
+                <input type="date" id="fecha-inicial" name="fecha-inicial" class="swal2-input">
+                <label for="fecha-final">Fecha final:</label>
+                <input type="date" id="fecha-final" name="fecha-final" class="swal2-input">
+            `,
+            focusConfirm: false,
+            preConfirm: () => {
+                const fechaInicial = Swal.getPopup().querySelector('#fecha-inicial').value;
+                const fechaFinal = Swal.getPopup().querySelector('#fecha-final').value;
+                if (!fechaInicial || !fechaFinal) {
+                    Swal.showValidationMessage('Debes seleccionar un rango de fechas');
+                }
+                return { fechaInicial: fechaInicial, fechaFinal: fechaFinal };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+            const fechaInicial = result.value.fechaInicial;
+            const fechaFinal = result.value.fechaFinal;
+            window.open("{% url 'tickets_app:incidencia_departamento'%}?f_in=" + fechaInicial + '&f_fin=' + fechaFinal);
+            }
+        });
+    });
+
+    document.getElementById('fecha_categoria_departamentos').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Seleccionar rango de fechas y departamento',
+            html: `
+                <label for="fecha-inicial">Fecha inicial:</label>
+                <input type="date" id="fecha-inicial" name="fecha-inicial" class="swal2-input">
+                <label for="fecha-final">Fecha final:</label>
+                <input type="date" id="fecha-final" name="fecha-final" class="swal2-input">
+                <br>
+                    <label for="departamento">Departamento:</label>
+                    <select name="departamento" id="departamento"
+                        class="swal2-select">
+                        <option selected value="0">--Seleccione--</option>
+                        {% for dep in deptos %}
+                        <option value="{{dep.id}}">
+                            {{dep.nombre_depto}}
+                        </option>
+                        {% endfor %}
+                    </select>
+            `,
+            focusConfirm: false,
+            preConfirm: () => {
+                const fechaInicial = Swal.getPopup().querySelector('#fecha-inicial').value;
+                const fechaFinal = Swal.getPopup().querySelector('#fecha-final').value;
+                const depto = Swal.getPopup().querySelector('#departamento').value;
+                if (!fechaInicial || !fechaFinal || depto == 0) {
+                    Swal.showValidationMessage('Debes seleccionar un rango de fechas y un departamento');
+                }
+                return { fechaInicial: fechaInicial, fechaFinal: fechaFinal, depto: depto };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+            const fechaInicial = result.value.fechaInicial;
+            const fechaFinal = result.value.fechaFinal;
+            const depto = result.value.depto;
+            window.open("{% url 'tickets_app:categoria_departamento'%}?f_in=" + fechaInicial + '&f_fin=' + fechaFinal + '&dpt=' + depto);
+            }
+        });
+    });
+</script>
+
+{% endblock content %}
