@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Administracion Tickets
+Administración Tickets
 {% endblock title %}
 
 {% block route_bar %}
@@ -11,7 +11,7 @@ Administracion Tickets
     <i class="fas fa-chevron-right icon-route"></i>
 </li>
 <li class="nav-item-route ">
-    <a href="#" class="icon-route">Administracion de Tickets</a>
+    <a href="#" class="icon-route">Administración de Tickets</a>
 </li>
 {% endblock route_bar %}
 
@@ -65,7 +65,7 @@ Administracion Tickets
                         </div>
                         <div class="col-2 my-auto text-end p-0">
                             <a type="button" href="{% url 'tickets_app:categorias_ticket'%}" class="btn btn-success btn-sm mb-2 me-2">
-                                <i class="fa fa-bookmark opacity-10 fs-4" aria-hidden="true"></i><span class="fs-5"> Categorias</span>
+                                <i class="fa fa-bookmark opacity-10 fs-4" aria-hidden="true"></i><span class="fs-5"> Categoría</span>
                             </a>
                         </div>
                     </div>
@@ -94,7 +94,7 @@ Administracion Tickets
                                         Estado
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Accion
+                                        Acción
                                     </th>
                                 </tr>
                             </thead>
@@ -135,7 +135,7 @@ Administracion Tickets
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="exampleFormControlTextarea1">Descripcion</label>
+                        <label for="exampleFormControlTextarea1">Descripción</label>
                         <textarea class="form-control" id="description_ticket" name="description_ticket" rows="3" name="descripcion" disabled></textarea>
                     </div>
                     <div class="btn-group mt-2 mb-2" role="group">
@@ -449,6 +449,13 @@ Administracion Tickets
         var tr = tablaTicket.cell($(this).closest('td, li')).index();
         var data = tablaTicket.row(tr.row).data();
         estado = data.status;
+
+        $('#asignar_usuario').html(
+            `{% for us in users %}
+                <option value="{{us.id}}">{{us.username}}</option>
+            {% endfor %}`
+        );
+
         $('#asignar_usuario').val(data.assignee_id.id);
         $('#titulo_ticket').val(data.title);
         $('#id_ticket').val(data.id);

@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Categorias
+Categorías
 {% endblock title %}
 
 {% block route_bar %}
@@ -11,13 +11,13 @@ Categorias
     <i class="fas fa-chevron-right icon-route"></i>
 </li>
 <li class="nav-item-route ">
-    <a href="{% url 'tickets_app:admin_ticket' 1 %}" class="icon-route">Administracion de Tickets</a>
+    <a href="{% url 'tickets_app:admin_ticket' 1 %}" class="icon-route">Administración de Tickets</a>
 </li>
 <li class="separator ">
     <i class="fas fa-chevron-right icon-route"></i>
 </li>
 <li class="nav-item-route ">
-    <a href="#" class="icon-route">Categorias</a>
+    <a href="#" class="icon-route">Categorías</a>
 </li>
 {% endblock route_bar %}
 
@@ -29,7 +29,7 @@ Categorias
                 <div class="card-header pb-0">
                     <div class="row">
                         <div class="col-lg-6 col-7">
-                            <h3><i class="fa-solid fa-tags opacity-10 fs-1"></i> Categorias</h3>
+                            <h3><i class="fa-solid fa-tags opacity-10 fs-1"></i> Categorías</h3>
                         </div>
                         <div class="col-lg-6 col-5 my-auto text-end">
                             <button type="button" class="btn btn-success btn-sm mb-2" id="btnAdd">
@@ -44,7 +44,7 @@ Categorias
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        # Categoria
+                                        # Categoría
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -52,7 +52,7 @@ Categorias
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Descripcion
+                                        Descripción
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -60,7 +60,7 @@ Categorias
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Accion
+                                        Acción
                                     </th>
                                 </tr>
                             </thead>
@@ -82,7 +82,7 @@ Categorias
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="">
-                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Categoria</span>
+                    <i class="fa-solid fa-plus fs-4"></i><span> Crear Categoría</span>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
@@ -104,7 +104,7 @@ Categorias
                     <div class="form-group row">
                         <div class="col-md-12">
                             <div class="input-group mb-3">
-                                <span class="input-group-text" >Descripcion:</span>
+                                <span class="input-group-text" >Descripción:</span>
                                 <textarea maxlength="500" type="text" class="form-control" name="description" id="description" required aria-label="Descripcion de la categoria"></textarea>
                             </div>
                         </div>

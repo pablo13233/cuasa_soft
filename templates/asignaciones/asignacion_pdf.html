@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>Historico No. {{id}}</title>
+    <title>Histórico No. {{id}}</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <style>
         /* Estilos personalizados para el reporte */
@@ -53,7 +53,7 @@
     <div class="m-0 p-0">
         <div class="title m-0 p-0">
             <img src="{% static 'img/logo-2.png' %}" alt="Imagen del título">
-            <h2 class="text-center text-uppercase pt-4">Nota de {% if status == 'DESCARGO' %} Descargo {% elif status == 'ASIGNADO' %} Asignacion {% endif %} de equipo</h2>
+            <h2 class="text-center text-uppercase pt-4">Nota de {% if status == 'DESCARGO' %} Descargo {% elif status == 'ASIGNADO' %} Asignación {% endif %} de equipo</h2>
             <div class="text-right text-uppercase">
                 <p>No. {{id}}</p>
             </div>
@@ -68,29 +68,29 @@
         un <span class="text-uppercase fw-bold">{{categoria}}</span> con nombre: <span class="text-uppercase fw-bold">{{equipo}}</span>, marca: <span class="text-uppercase fw-bold">{{marca}}</span>, 
         modelo: <span class="text-uppercase fw-bold">{{modelo}}</span>, con S/N o Service Tag No.: <span class="text-uppercase fw-bold">{{serie}}</span>.
         </p>
-        <p>Con las siguientes caracteristicas:</p>
+        <p>Con las siguientes características:</p>
         <p>{{caracteristicas}}</p>
         
         
         {% if status == 'ASIGNADO' %}
-            <p>Completamente en buen estado de funcionamiento y presentacion, con el proposito de realizar el cumplimiento de mis actividades diarias
-                en el cumplimiento de mis funciones en la empresa por lo cual CONVENGO Y ME OBLIGO a:
+            <p>Completamente en buen estado de funcionamiento y presentación, con el propósito de realizar el cumplimiento de mis actividades diarias en el cumplimiento de 
+                mis funciones en la empresa, por lo cual CONVENGO Y ME OBLIGO a:
             </p>
             <p>
                 <ul>
                     <li>Utilizar la computadora estrictamente para el cumplimiento de mis actividades laborales.</li>
-                    <li>En caso de extravió, daño o robo el usuario será responsable del equipo y en caso de robo 
+                    <li>En caso de extravío, daño o robo el usuario será responsable del equipo y en caso de robo 
                         deberá presentar la respectiva denuncia policial.</li>
                     <li>En caso de no permitir el respaldo de la información, el usuario será responsable de la 
                         perdida de información del equipo.</li>
-                    <li>En caso de no permitir el mantenimiento del equipo el usuario será responsable de cualquier 
+                    <li>En caso de no permitir el mantenimiento del equipo, el usuario será responsable de cualquier 
                         daño o reparación que este necesite en caso de que este falle.</li>
                     <li>Utilizar la computadora para almacenar información estrictamente de la empresa.</li>
                     <li>No se permite la instalación de ningún programa por parte del usuario.</li>
                     <li>El usuario es responsable del equipo asignado.</li>
                 </ul>
             </p>
-            <p>Obsercaciones:</p>
+            <p>Observaciones:</p>
             <p><span class="text-uppercase">{{observaciones}}</span></p>
             {% elif status == 'DESCARGO' %}
             <p>El equipo presenta las siguientes observaciones:</p> 
