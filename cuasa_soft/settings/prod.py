@@ -1,6 +1,6 @@
 from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['10.0.1.180']
 
@@ -25,12 +25,10 @@ DATABASES = {
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [ BASE_DIR.parent / 'static' ]
-STATIC_ROOT = '/static/'
-
-
-MEDIA_ROOT = BASE_DIR.parent / 'media'
+STATIC_ROOT = BASE_DIR.joinpath('staticfiles')
 
 MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR.joinpath('media')
 
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #MEDIA_URL = "/media/"
@@ -45,3 +43,26 @@ EMAIL_PORT = 587
 # Optional SMTP authentication information for EMAIL_HOST.
 EMAIL_HOST_USER = get_secret('EMAIL_USER')
 EMAIL_HOST_PASSWORD = get_secret('EMAIL_PSW')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '/webapps/entorno_cuasa/logs/log-django.txt',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+        },
+        'cuasa_soft': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+    },
+}
