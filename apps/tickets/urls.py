@@ -13,4 +13,5 @@ urlpatterns = [
     path('reportes/', reportes_views, name='reportes'),
     path('reportes/incidencia-departamento', ticket_departamento_pdf, name='incidencia_departamento'),
     path('reportes/categoria-departamento', categoria_departamento_pdf, name='categoria_departamento'),
+    path('reportes/ticket-categoria-prueba', ticket_departamento_test, name='ticket_categoria-prueba'),
 ]

@@ -70,7 +70,7 @@ def ticketViews (request):
                     mensaje_html = render_to_string('tickets/confirmacion_correo.html', {'dato_Ticket': dato_Ticket})
                     mensaje_txt = strip_tags(mensaje_html)
                     
-                    email = EmailMultiAlternatives(asunto, mensaje_txt, 'no-reply@distribuidoravenecia.com', [usuario_registro.email])
+                    email = EmailMultiAlternatives(asunto, mensaje_txt, 'it@cuasa.hn', [usuario_registro.email])
                     email.attach_alternative(mensaje_html, "text/html")
                     email.send()
 
@@ -113,7 +113,8 @@ def AdminTicketViews (request,id):
                             data.append(i.toJSON())
                     elif estado == 'DONE':
                         fecha_ini = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_ini'],'%Y-%m-%d')) 
-                        fecha_final = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_final'], '%Y-%m-%d'))
+                        fecha_final_1 = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_final'], '%Y-%m-%d'))
+                        fecha_final = fecha_final_1.replace(hour=23, minute=59, second=59, microsecond=999)
                         for i in Ticket.objects.filter(status=estado, created_at__range=[fecha_ini, fecha_final]):
                             data.append(i.toJSON())
                         #========================   Crear   =========================
@@ -126,7 +127,19 @@ def AdminTicketViews (request,id):
 
                     if int(request.POST['assignee_id'])>0:
                         dato_Ticket.assignee_id = User.objects.get(pk=request.POST['assignee_id'])
+                        
+                        usuario_registro = dato_Ticket.user_id.email
+                        asunto = f"Ticket # {dato_Ticket.pk} <{dato_Ticket.title}> asignado exitosamente"
+
+                        mensaje_html = render_to_string('tickets/asignacion_correo.html', {'dato_Ticket': dato_Ticket})
+                        mensaje_txt = strip_tags(mensaje_html)
+                        
+                        email = EmailMultiAlternatives(asunto, mensaje_txt, 'it@cuasa.hn', [usuario_registro])
+                        email.attach_alternative(mensaje_html, "text/html")
+
                         dato_Ticket.save()
+                        
+                        email.send()
                         data = {'tipo_accion': 'actualizarOpen', 'correcto': True}
 
                 elif action =='actualizarProgress':
@@ -135,7 +148,20 @@ def AdminTicketViews (request,id):
                     dato_Ticket.updated_by = User.objects.get(pk=id_user)
                     dato_Ticket.updated_at = formats.date_format(date_up)
 
+                    usuario_registro = dato_Ticket.user_id.email
+                    #Envio de correo de confirmacion de que se registro el ticket
+                    asunto = f"Ticket # {dato_Ticket.pk} <{dato_Ticket.title}> cerrado"
+
+                    mensaje_html = render_to_string('tickets/cerrado_correo.html', {'dato_Ticket': dato_Ticket})
+                    mensaje_txt = strip_tags(mensaje_html)
+                    
+                    email = EmailMultiAlternatives(asunto, mensaje_txt, 'it@cuasa.hn', [usuario_registro])
+                    email.attach_alternative(mensaje_html, "text/html")
+
                     dato_Ticket.save()
+                    
+                    email.send()
+
                     data = {'tipo_accion': 'actualizarProgress', 'correcto': True}
         except Exception as e: 
             data['error'] = str(e)
@@ -265,7 +291,8 @@ def ticket_categorias_pdf(request):
     if request.method =="GET":
 
         fecha_inicial = timezone.make_aware(datetime.datetime.strptime(request.GET['f_in'],'%Y-%m-%d'))
-        fecha_final = timezone.make_aware(datetime.datetime.strptime(request.GET['f_fin'],'%Y-%m-%d'))
+        fecha_final_1 = timezone.make_aware(datetime.datetime.strptime(request.GET['f_fin'],'%Y-%m-%d'))
+        fecha_final = fecha_final_1.replace(hour=23, minute=59, second=59, microsecond=999)
         # Grafico
         categorias = categoria_ticket.objects.filter(ticket_categoria_ticket__created_at__range=(fecha_inicial, fecha_final)).annotate(num_tickets=Count('ticket_categoria_ticket'))
         # redireccion si no se encuentran datos
@@ -278,7 +305,7 @@ def ticket_categorias_pdf(request):
         plot = df.plot.pie(y='num_tickets', figsize=(9, 9),autopct='%1.1f%%',labels=None)
         plot.set_ylabel('')
         fig = plot.get_figure()
-        fig.savefig('static/grafico_pie.png')
+        fig.savefig('media/grafico_pie.png')
         plt.close()
         
         # Tabla
@@ -286,7 +313,7 @@ def ticket_categorias_pdf(request):
         fecha_inicial_str = fecha_inicial.strftime('%b. %d, %Y')
         fecha_final_str = fecha_final.strftime('%b. %d, %Y')
 
-        filename = os.path.join(settings.STATIC_ROOT, 'grafico_pie.png')
+        filename = os.path.join(settings.MEDIA_ROOT, '/grafico_pie.png')
         html_string = render_to_string('reportes/reporte_categoria_pdf.html', {'filename': filename, 'tabla': tabla,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
         html = HTML(string=html_string,base_url=request.build_absolute_uri())
         response = HttpResponse(html.write_pdf(), content_type='application/pdf')
@@ -310,8 +337,8 @@ def ticket_departamento_pdf(request):
         try:
             with transaction.atomic():
                 fecha_inicial = timezone.make_aware(datetime.datetime.strptime(request.GET['f_in'],'%Y-%m-%d'))
-                fecha_final = timezone.make_aware(datetime.datetime.strptime(request.GET['f_fin'],'%Y-%m-%d'))
-
+                fecha_final_1 = timezone.make_aware(datetime.datetime.strptime(request.GET['f_fin'],'%Y-%m-%d'))
+                fecha_final = fecha_final_1.replace(hour=23, minute=59, second=59, microsecond=999)
                 tickets_por_depto = Ticket.objects.filter(user_id__empleado_usuario__depto__isnull=False, created_at__range=[fecha_inicial, fecha_final]).values('user_id__empleado_usuario__depto','user_id__empleado_usuario__depto__nombre_depto').annotate(total_tickets=Count('id'))
                 # redireccion si no se encuentran datos
                 if not tickets_por_depto:
@@ -330,7 +357,7 @@ def ticket_departamento_pdf(request):
                 ax.set_xlabel('Departamentos') 
                 ax.set_ylabel('Número de Tickets')
                 plt.tight_layout()
-                plt.savefig('static/tickets_por_depto.png')
+                plt.savefig('media/tickets_por_depto.png')
                 plt.close()
 
                 
@@ -346,7 +373,7 @@ def ticket_departamento_pdf(request):
                 fecha_final_str = fecha_final.strftime('%b. %d, %Y')
                 tabla_dict_short = sorted(tabla_dict, key=lambda k: k['total_tickets'], reverse=True)
 
-                filename = os.path.join(settings.STATIC_ROOT, 'tickets_por_depto.png')
+                filename = os.path.join(settings.MEDIA_ROOT, 'tickets_por_depto.png')
                 html_string = render_to_string('reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
                 html = HTML(string=html_string,base_url=request.build_absolute_uri())
                 response = HttpResponse(html.write_pdf(), content_type='application/pdf')
@@ -367,7 +394,8 @@ def categoria_departamento_pdf(request):
         try:
             with transaction.atomic():
                 fecha_inicial = timezone.make_aware(datetime.datetime.strptime(request.GET['f_in'],'%Y-%m-%d'))
-                fecha_final = timezone.make_aware(datetime.datetime.strptime(request.GET['f_fin'],'%Y-%m-%d'))
+                fecha_final_1 = timezone.make_aware(datetime.datetime.strptime(request.GET['f_fin'],'%Y-%m-%d'))
+                fecha_final = fecha_final_1.replace(hour=23, minute=59, second=59, microsecond=999)
                 depto = Departamentos.objects.get(id=request.GET['dpt'])
 
                 
@@ -388,7 +416,7 @@ def categoria_departamento_pdf(request):
                 ax.set_xlabel('Categorías') 
                 ax.set_ylabel('Número de Tickets')
                 plt.tight_layout()
-                plt.savefig('static/tickets_por_categoria.png')
+                plt.savefig('media/tickets_por_categoria.png')
                 plt.close()
                 
                 # Crear la tabla de resultados
@@ -404,7 +432,7 @@ def categoria_departamento_pdf(request):
                 fecha_inicial_str = fecha_inicial.strftime('%b. %d, %Y')
                 fecha_final_str = fecha_final.strftime('%b. %d, %Y')
 
-                filename = os.path.join(settings.STATIC_ROOT, 'tickets_por_categoria.png')
+                filename = os.path.join(settings.MEDIA_ROOT, '/tickets_por_categoria.png')
                 html_string = render_to_string('reportes/reporte_categorias_departamentos_pdf.html', {'filename': filename, 'tabla': tabla_dict_short, 'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str, 'depto': depto})
                 html = HTML(string=html_string,base_url=request.build_absolute_uri())
                 response = HttpResponse(html.write_pdf(), content_type='application/pdf')
@@ -415,3 +443,60 @@ def categoria_departamento_pdf(request):
         else:
             transaction.commit()
             return response
+        
+@login_required
+def ticket_departamento_test(request):
+    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('tickets.delete_ticket')):
+        return redirect('usuarios_app:error_view')
+    if request.method =="GET":
+
+        try:
+            with transaction.atomic():
+                fecha_inicial = timezone.make_aware(datetime.datetime.strptime(request.GET['f_in'],'%Y-%m-%d'))
+                fecha_final_1 = timezone.make_aware(datetime.datetime.strptime(request.GET['f_fin'],'%Y-%m-%d'))
+                fecha_final = fecha_final_1.replace(hour=23, minute=59, second=59, microsecond=999)
+                tickets_por_depto = Ticket.objects.filter(user_id__empleado_usuario__depto__isnull=False, created_at__range=[fecha_inicial, fecha_final]).values('user_id__empleado_usuario__depto','user_id__empleado_usuario__depto__nombre_depto').annotate(total_tickets=Count('id'))
+                # redireccion si no se encuentran datos
+                if not tickets_por_depto:
+                    return render(request, 'reportes/no_hay_datos.html')
+                # Convertir los resultados de la consulta en un dataframe de pandas
+                df = pd.DataFrame(list(tickets_por_depto))
+                
+                # Ordenar el dataframe por número de tickets de forma descendente
+                df = df.sort_values(by='total_tickets', ascending=False)
+
+                # Crear el gráfico de barras
+                plt.figure(figsize=(8,8))
+                sns.set(style="whitegrid")
+                ax = sns.barplot(x='user_id__empleado_usuario__depto__nombre_depto', y='total_tickets', data=df)
+                ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+                ax.set_xlabel('Departamentos') 
+                ax.set_ylabel('Número de Tickets')
+                plt.tight_layout()
+                plt.savefig('media/tickets_por_depto.png')
+                plt.close()
+
+                
+                tabla_dict = []
+                for ticket in tickets_por_depto:
+                    ticket_asg={}
+                    ticket_asg['depto_id'] = ticket['user_id__empleado_usuario__depto']
+                    ticket_asg['depto_nombre'] = ticket['user_id__empleado_usuario__depto__nombre_depto']
+                    ticket_asg['total_tickets'] = ticket['total_tickets']
+                    tabla_dict.append(ticket_asg)
+                
+                fecha_inicial_str = fecha_inicial.strftime('%b. %d, %Y')
+                fecha_final_str = fecha_final.strftime('%b. %d, %Y')
+                tabla_dict_short = sorted(tabla_dict, key=lambda k: k['total_tickets'], reverse=True)
+
+                filename = os.path.join(settings.MEDIA_ROOT, 'tickets_por_depto.png')
+                html_string = render_to_string('reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
+                html = HTML(string=html_string,base_url=request.build_absolute_uri())
+                response = HttpResponse(html.write_pdf(), content_type='application/pdf')
+                # return response
+        except Exception as e:
+            print('Error -->', e)
+            transaction.rollback()
+        else:
+            transaction.commit()
+            return render(request,'reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})

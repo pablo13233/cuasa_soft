@@ -377,7 +377,8 @@ def descarteViews(request):
                             data.append(i.toJSON())
                     else:
                         fecha_ini = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_ini'],'%Y-%m-%d')) 
-                        fecha_final = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_final'], '%Y-%m-%d'))
+                        fecha_final_1 = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_final'], '%Y-%m-%d'))
+                        fecha_final = fecha_final_1.replace(hour=23, minute=59, second=59, microsecond=999)
                         for i in Inventario_Item.objects.filter(estado_id=3, updated_at__range=[fecha_ini, fecha_final]):
                             data.append(i.toJSON())
                 
@@ -470,7 +471,8 @@ def mantenimientosViews(request):
                         print('Error en fechas')
                     else:
                         fecha_ini = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_ini'],'%Y-%m-%d')) 
-                        fecha_final = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_final'], '%Y-%m-%d'))
+                        fecha_final_1 = timezone.make_aware(datetime.datetime.strptime(request.POST['fecha_final'], '%Y-%m-%d'))
+                        fecha_final = fecha_final_1.replace(hour=23, minute=59, second=59, microsecond=999)
                         for i in historico_mantenimientos.objects.filter(updated_at__range=[fecha_ini, fecha_final]):
                             data.append(i.toJSON())
                 

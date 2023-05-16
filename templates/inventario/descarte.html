@@ -212,7 +212,7 @@ Descartes
         $("#fechaInicial").datepicker({
             format: 'yyyy-mm-dd',
             autoclose: true,
-            todayBtn: true
+            todayBtn: false
         }).on("changeDate", function (e) {
             fechaInicial = $("#fechaInicial").val();
             $("#fechaFinal").datepicker("setStartDate", fechaInicial);
@@ -221,7 +221,7 @@ Descartes
         $("#fechaFinal").datepicker({
             format: 'yyyy-mm-dd',
             autoclose: true,
-            todayBtn: true
+            todayBtn: false
         }).on("changeDate", function (e) {
             fechaFinal = $("#fechaFinal").val();
             if (fechaFinal < fechaInicial) {
