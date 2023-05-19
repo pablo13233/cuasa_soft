@@ -314,7 +314,7 @@ def ticket_categorias_pdf(request):
         fecha_inicial_str = fecha_inicial.strftime('%b. %d, %Y')
         fecha_final_str = fecha_final.strftime('%b. %d, %Y')
 
-        filename = os.path.join(settings.MEDIA_ROOT, 'grafico_pie.png')
+        filename = 'grafico_pie.png'
         html_string = render_to_string('reportes/reporte_categoria_pdf.html', {'filename': filename, 'tabla': tabla,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
         html = HTML(string=html_string,base_url=request.build_absolute_uri())
         response = HttpResponse(html.write_pdf(), content_type='application/pdf')
@@ -378,8 +378,7 @@ def ticket_departamento_pdf(request):
                 fecha_final_str = fecha_final.strftime('%b. %d, %Y')
                 tabla_dict_short = sorted(tabla_dict, key=lambda k: k['total_tickets'], reverse=True)
 
-                filename = os.path.join(settings.MEDIA_ROOT, 'tickets_por_depto.png')
-                print('ruta--',filename)
+                filename = 'tickets_por_depto.png'
                 html_string = render_to_string('reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
                 html = HTML(string=html_string,base_url=request.build_absolute_uri())
                 
@@ -390,8 +389,8 @@ def ticket_departamento_pdf(request):
             transaction.rollback()
         else:
             transaction.commit()
-            return response
-            # return render(request, 'reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
+            # return response
+            return render(request, 'reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
         
 @login_required
 def categoria_departamento_pdf(request):
@@ -440,7 +439,7 @@ def categoria_departamento_pdf(request):
                 fecha_inicial_str = fecha_inicial.strftime('%b. %d, %Y')
                 fecha_final_str = fecha_final.strftime('%b. %d, %Y')
 
-                filename = os.path.join(settings.MEDIA_ROOT, 'tickets_por_categoria.png')
+                filename = 'tickets_por_categoria.png'
                 
                 html_string = render_to_string('reportes/reporte_categorias_departamentos_pdf.html', {'filename': filename, 'tabla': tabla_dict_short, 'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str, 'depto': depto})
                 html = HTML(string=html_string,base_url=request.build_absolute_uri())
