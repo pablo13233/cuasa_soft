@@ -306,7 +306,7 @@ def ticket_categorias_pdf(request):
         plot = df.plot.pie(y='num_tickets', figsize=(9, 9),autopct='%1.1f%%',labels=None)
         plot.set_ylabel('')
         fig = plot.get_figure()
-        fig.savefig('grafico_pie.png')
+        fig.savefig(os.path.join(settings.MEDIA_ROOT, 'grafico_pie.png'))
         plt.close()
         
         # Tabla
@@ -424,7 +424,7 @@ def categoria_departamento_pdf(request):
                 ax.set_xlabel('Categorías') 
                 ax.set_ylabel('Número de Tickets')
                 plt.tight_layout()
-                plt.savefig('tickets_por_categoria.png')
+                plt.savefig(os.path.join(settings.MEDIA_ROOT, 'tickets_por_categoria.png'))
                 plt.close()
                 
                 # Crear la tabla de resultados
