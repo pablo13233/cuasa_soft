@@ -21,6 +21,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+from django.core.files.storage import default_storage
 #
 from weasyprint import HTML
 #
@@ -305,7 +306,7 @@ def ticket_categorias_pdf(request):
         plot = df.plot.pie(y='num_tickets', figsize=(9, 9),autopct='%1.1f%%',labels=None)
         plot.set_ylabel('')
         fig = plot.get_figure()
-        fig.savefig('media/grafico_pie.png')
+        fig.savefig('grafico_pie.png')
         plt.close()
         
         # Tabla
@@ -313,7 +314,7 @@ def ticket_categorias_pdf(request):
         fecha_inicial_str = fecha_inicial.strftime('%b. %d, %Y')
         fecha_final_str = fecha_final.strftime('%b. %d, %Y')
 
-        filename = os.path.join(settings.MEDIA_ROOT, '/grafico_pie.png')
+        filename = os.path.join(settings.MEDIA_ROOT, 'grafico_pie.png')
         html_string = render_to_string('reportes/reporte_categoria_pdf.html', {'filename': filename, 'tabla': tabla,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
         html = HTML(string=html_string,base_url=request.build_absolute_uri())
         response = HttpResponse(html.write_pdf(), content_type='application/pdf')
@@ -357,7 +358,11 @@ def ticket_departamento_pdf(request):
                 ax.set_xlabel('Departamentos') 
                 ax.set_ylabel('Número de Tickets')
                 plt.tight_layout()
-                plt.savefig('media/tickets_por_depto.png')
+                plt.savefig('tickets_por_depto.png')
+                # plt.close()
+                # Guardar la imagen en la ruta de media
+                # image_path = default_storage.path('tickets_por_depto.png')
+                # plt.savefig(image_path)
                 plt.close()
 
                 
@@ -374,6 +379,7 @@ def ticket_departamento_pdf(request):
                 tabla_dict_short = sorted(tabla_dict, key=lambda k: k['total_tickets'], reverse=True)
 
                 filename = os.path.join(settings.MEDIA_ROOT, 'tickets_por_depto.png')
+                print('ruta--',filename)
                 html_string = render_to_string('reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
                 html = HTML(string=html_string,base_url=request.build_absolute_uri())
                 response = HttpResponse(html.write_pdf(), content_type='application/pdf')
@@ -416,7 +422,7 @@ def categoria_departamento_pdf(request):
                 ax.set_xlabel('Categorías') 
                 ax.set_ylabel('Número de Tickets')
                 plt.tight_layout()
-                plt.savefig('media/tickets_por_categoria.png')
+                plt.savefig('tickets_por_categoria.png')
                 plt.close()
                 
                 # Crear la tabla de resultados
@@ -432,7 +438,8 @@ def categoria_departamento_pdf(request):
                 fecha_inicial_str = fecha_inicial.strftime('%b. %d, %Y')
                 fecha_final_str = fecha_final.strftime('%b. %d, %Y')
 
-                filename = os.path.join(settings.MEDIA_ROOT, '/tickets_por_categoria.png')
+                filename = os.path.join(settings.MEDIA_ROOT, 'tickets_por_categoria.png')
+                
                 html_string = render_to_string('reportes/reporte_categorias_departamentos_pdf.html', {'filename': filename, 'tabla': tabla_dict_short, 'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str, 'depto': depto})
                 html = HTML(string=html_string,base_url=request.build_absolute_uri())
                 response = HttpResponse(html.write_pdf(), content_type='application/pdf')
@@ -442,61 +449,5 @@ def categoria_departamento_pdf(request):
             transaction.rollback()
         else:
             transaction.commit()
+            print('holaa asdads')
             return response
-        
-@login_required
-def ticket_departamento_test(request):
-    if not (request.user.is_superuser or request.user.is_staff or request.user.has_perm('tickets.delete_ticket')):
-        return redirect('usuarios_app:error_view')
-    if request.method =="GET":
-
-        try:
-            with transaction.atomic():
-                fecha_inicial = timezone.make_aware(datetime.datetime.strptime(request.GET['f_in'],'%Y-%m-%d'))
-                fecha_final_1 = timezone.make_aware(datetime.datetime.strptime(request.GET['f_fin'],'%Y-%m-%d'))
-                fecha_final = fecha_final_1.replace(hour=23, minute=59, second=59, microsecond=999)
-                tickets_por_depto = Ticket.objects.filter(user_id__empleado_usuario__depto__isnull=False, created_at__range=[fecha_inicial, fecha_final]).values('user_id__empleado_usuario__depto','user_id__empleado_usuario__depto__nombre_depto').annotate(total_tickets=Count('id'))
-                # redireccion si no se encuentran datos
-                if not tickets_por_depto:
-                    return render(request, 'reportes/no_hay_datos.html')
-                # Convertir los resultados de la consulta en un dataframe de pandas
-                df = pd.DataFrame(list(tickets_por_depto))
-                
-                # Ordenar el dataframe por número de tickets de forma descendente
-                df = df.sort_values(by='total_tickets', ascending=False)
-
-                # Crear el gráfico de barras
-                plt.figure(figsize=(8,8))
-                sns.set(style="whitegrid")
-                ax = sns.barplot(x='user_id__empleado_usuario__depto__nombre_depto', y='total_tickets', data=df)
-                ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
-                ax.set_xlabel('Departamentos') 
-                ax.set_ylabel('Número de Tickets')
-                plt.tight_layout()
-                plt.savefig('media/tickets_por_depto.png')
-                plt.close()
-
-                
-                tabla_dict = []
-                for ticket in tickets_por_depto:
-                    ticket_asg={}
-                    ticket_asg['depto_id'] = ticket['user_id__empleado_usuario__depto']
-                    ticket_asg['depto_nombre'] = ticket['user_id__empleado_usuario__depto__nombre_depto']
-                    ticket_asg['total_tickets'] = ticket['total_tickets']
-                    tabla_dict.append(ticket_asg)
-                
-                fecha_inicial_str = fecha_inicial.strftime('%b. %d, %Y')
-                fecha_final_str = fecha_final.strftime('%b. %d, %Y')
-                tabla_dict_short = sorted(tabla_dict, key=lambda k: k['total_tickets'], reverse=True)
-
-                filename = os.path.join(settings.MEDIA_ROOT, 'tickets_por_depto.png')
-                html_string = render_to_string('reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
-                html = HTML(string=html_string,base_url=request.build_absolute_uri())
-                response = HttpResponse(html.write_pdf(), content_type='application/pdf')
-                # return response
-        except Exception as e:
-            print('Error -->', e)
-            transaction.rollback()
-        else:
-            transaction.commit()
-            return render(request,'reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
