@@ -358,7 +358,7 @@ def ticket_departamento_pdf(request):
                 ax.set_xlabel('Departamentos') 
                 ax.set_ylabel('Número de Tickets')
                 plt.tight_layout()
-                plt.savefig('tickets_por_depto.png')
+                plt.savefig(os.path.join(settings.MEDIA_ROOT, 'tickets_por_depto.png'))
                 # plt.close()
                 # Guardar la imagen en la ruta de media
                 # image_path = default_storage.path('tickets_por_depto.png')
@@ -382,6 +382,7 @@ def ticket_departamento_pdf(request):
                 print('ruta--',filename)
                 html_string = render_to_string('reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
                 html = HTML(string=html_string,base_url=request.build_absolute_uri())
+                
                 response = HttpResponse(html.write_pdf(), content_type='application/pdf')
                 # return response
         except Exception as e:
@@ -390,6 +391,7 @@ def ticket_departamento_pdf(request):
         else:
             transaction.commit()
             return response
+            # return render(request, 'reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
         
 @login_required
 def categoria_departamento_pdf(request):
