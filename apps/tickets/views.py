@@ -21,6 +21,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+from django.core.files.storage import default_storage
 #
 from weasyprint import HTML
 #
@@ -357,7 +358,11 @@ def ticket_departamento_pdf(request):
                 ax.set_xlabel('Departamentos') 
                 ax.set_ylabel('Número de Tickets')
                 plt.tight_layout()
-                plt.savefig('media/tickets_por_depto.png')
+                # plt.savefig('media/tickets_por_depto.png')
+                # plt.close()
+                # Guardar la imagen en la ruta de media
+                image_path = default_storage.path('tickets_por_depto.png')
+                plt.savefig(image_path)
                 plt.close()
 
                 
@@ -373,7 +378,7 @@ def ticket_departamento_pdf(request):
                 fecha_final_str = fecha_final.strftime('%b. %d, %Y')
                 tabla_dict_short = sorted(tabla_dict, key=lambda k: k['total_tickets'], reverse=True)
 
-                filename = os.path.join(settings.MEDIA_ROOT, 'tickets_por_depto.png')
+                filename = default_storage.url('tickets_por_depto.png')
                 html_string = render_to_string('reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
                 html = HTML(string=html_string,base_url=request.build_absolute_uri())
                 response = HttpResponse(html.write_pdf(), content_type='application/pdf')
@@ -473,8 +478,8 @@ def ticket_departamento_test(request):
                 ax.set_xlabel('Departamentos') 
                 ax.set_ylabel('Número de Tickets')
                 plt.tight_layout()
-                plt.savefig('media/tickets_por_depto.png')
-                plt.close()
+                # plt.savefig('media/tickets_por_depto.png')
+                # plt.close()
 
                 
                 tabla_dict = []
