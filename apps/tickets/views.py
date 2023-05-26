@@ -10,6 +10,7 @@ from django.utils.html import strip_tags
 #
 from django.contrib.auth.models import User
 from apps.tickets.models import *
+from apps.historico.models import *
 from django.db.models import Q, Count
 from django.db import transaction
 from django.http import JsonResponse, HttpResponse
@@ -64,7 +65,10 @@ def ticketViews (request):
                         dato_Ticket.img_ticket = imagen
                         dato_Ticket.save()
                         #Actualizamos la ruta de la imagen con la concatenacion del id recien creado
-                    
+
+                    historial_accion = 'Se creo el ticket num. (' + str(dato_Ticket.pk) + ') con asunto (' + str(dato_Ticket.title) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
+
                     #Envio de correo de confirmacion de que se registro el ticket
                     asunto = f"Ticket # {dato_Ticket.pk} <{dato_Ticket.title}> generado exitosamente"
 
@@ -140,6 +144,9 @@ def AdminTicketViews (request,id):
 
                         dato_Ticket.save()
                         
+                        historial_accion = 'Se asigno el ticket num. (' + str(dato_Ticket.pk) + ') a el usuario (' + str(dato_Ticket.assignee_id.username) + ')'
+                        historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
+
                         email.send()
                         data = {'tipo_accion': 'actualizarOpen', 'correcto': True}
 
@@ -161,6 +168,8 @@ def AdminTicketViews (request,id):
 
                     dato_Ticket.save()
                     
+                    historial_accion = 'Se cerro el ticket num. (' + str(dato_Ticket.pk) + ') a el usuario (' + str(dato_Ticket.assignee_id.username) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
                     email.send()
 
                     data = {'tipo_accion': 'actualizarProgress', 'correcto': True}
@@ -199,6 +208,9 @@ def categoria_ticket_view(request):
                     ca.updated_by = User.objects.get(pk=id_user)
                     ca.save()
 
+                    historial_accion = 'Se creo la categoria de ticket num. (' + str(ca.pk) + ') con el nombre (' + str(ca.tittle) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
+                    
                     data = {'tipo_accion':'crear', 'correcto':True}
                 elif action == 'editar':
                     ca = categoria_ticket.objects.get(pk=request.POST['id'])
@@ -207,6 +219,9 @@ def categoria_ticket_view(request):
                     ca.updated_by = User.objects.get(pk=id_user)
                     ca.updated_at = formats.date_format(date_up)
                     ca.save()
+
+                    historial_accion = 'Se modifico la categoria de ticket num. (' + str(ca.pk) + ') con el nombre (' + str(ca.tittle) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
 
                     data = {'tipo_accion':'editar', 'correcto':True}
                 else:
@@ -243,13 +258,16 @@ def commentTicket_view(request):
                         data.append(i.toJSON())
                 elif action == 'crear':
                     # print('lol ',id_t)
-                    commentTicket.objects.create(
+                    coment = commentTicket.objects.create(
                         id_ticket=Ticket.objects.get(pk=id_t),
                         title = request.POST['title'],
                         comment = request.POST['comments'],
                         created_by = User.objects.get(pk=id_user),
                         updated_by = User.objects.get(pk=id_user),
                     )
+
+                    historial_accion = 'Se creo el comentario num. ('+str(coment.pk) +') a el ticket num. (' + str(coment.id_ticket.pk) + ') con el asunto (' + str(coment.title) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
 
                     data = {'tipo_accion':'crear', 'correcto':True}
                 elif action == 'editar':
@@ -259,6 +277,9 @@ def commentTicket_view(request):
                         updated_by = User.objects.get(pk=id_user),
                         updated_at = date_up
                     )
+                    coment = commentTicket.objects.get(pk=request.POST['id_comment'])
+                    historial_accion = 'Se modifico el comentario num. ('+str(coment.pk) +') a el ticket num. (' + str(coment.id_ticket.pk) + ') con el asunto (' + str(coment.title) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
 
                     data = {'tipo_accion':'editar', 'correcto':True}
                 else:

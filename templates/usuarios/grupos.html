@@ -59,18 +59,7 @@ Permisos
                             </thead>
                             <tbody class="text-center">
                                 
-                                <!-- {% for grup in grupos %}
-                                    <tr>
-                                        <td>{{grup.id}}</td>
-                                        <td>{{grup.name}}</td>
-                                        <td>
-                                            <button href="ver" type="button" class="btn btn-secondary btn-sm btn-flat">
-                                                <i class="fa fa-eye fs-6"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                    -->
+                                
                             </tbody>
                         </table>
                     </div>
@@ -141,7 +130,31 @@ Permisos
         });
         $('#datatable').DataTable();
         obtenerDatos();
-    }
+    };
+
+    $(document).ready(function(){
+        $('#nombre').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Convertir a mayúsculas
+            inputValue = inputValue.toUpperCase();
+            
+            // Verificar si se ingresaron caracteres no permitidos
+            if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+                alert("No se pueden ingresar los caracteres: ' \" |");
+                
+                // Remover los caracteres no permitidos utilizando replace()
+                inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+                
+                // Actualizar el valor del input sin los caracteres no permitidos
+                $(this).val(inputValue);
+                return;
+            }
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
+        });
+    });
 
     $("#btn").on("click", function () {
         if ($("#nombre").val == "") {

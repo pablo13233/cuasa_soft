@@ -140,6 +140,48 @@ Categorías
         obtenerDatos();
     }
 
+    $(document).ready(function() {
+        $('#nombre').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Convertir a mayúsculas
+            inputValue = inputValue.toUpperCase();
+            
+            // Verificar si se ingresaron caracteres no permitidos
+            if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+                alert("No se pueden ingresar los caracteres: ' \" |");
+                
+                // Remover los caracteres no permitidos utilizando replace()
+                inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+                
+                // Actualizar el valor del input sin los caracteres no permitidos
+                $(this).val(inputValue);
+                return;
+            }
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
+        });
+        $('#description').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Verificar si se ingresaron caracteres no permitidos
+            if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+                alert("No se pueden ingresar los caracteres: ' \" |");
+                
+                // Remover los caracteres no permitidos utilizando replace()
+                inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+                
+                // Actualizar el valor del input sin los caracteres no permitidos
+                $(this).val(inputValue);
+                return;
+            }
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
+        });
+    });
+
     $("#btn").on("click", function(){
         if(($("#nombre").val == "") || ($("#description").val == "")){
             alert("No puede dejar campos vacios");
@@ -158,7 +200,7 @@ Categorías
 
         $('#action').val("editar");
         $('#id_categoria').val(data.id);
-        $('#nombre').val(data.nombre_categoria);
+        $('#nombre').val(data.tittle);
         $('#description').val(data.description);
         $('#modalCategoria').modal('show');
     });
