@@ -5,6 +5,7 @@ from django.db import transaction
 from apps.asignaciones.models import *
 from apps.inventario.models import *
 from apps.usuarios.models import *
+from apps.historico.models import *
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from weasyprint import HTML
@@ -30,7 +31,7 @@ def PdfView(request):
                 dni = ident.dni
                 observaciones = asg.observaciones
                 item = Inventario_Item.objects.get(id=asg.inventario_item.id)
-                item_nombre = item.nombre_item
+                item_nombre = item.correlativo
                 item_caracteristica = item.caracteristica
                 serie = item.serial_number
                 modelo = item.ModeloItem.nombre_modelo
@@ -116,6 +117,8 @@ def asignacionViews(request):
                         inv.estado = Estado.objects.get(pk=1)
                         inv.updated_at = updated_time
                         inv.save()
+                        historial_accion = 'Se creo la asignacion num. (' + str(asg.id) + ') con el equipo correlativo num. ('+str(inv.correlativo)+ ') a el usuario ('+str(asg.usuario.username)+')'
+                        historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=usuario_asg)
                         data = {'tipo_accion': 'crear', 'correcto': True}
                 #editar
                 elif action == 'descargo':
@@ -123,7 +126,7 @@ def asignacionViews(request):
                     equipo = request.POST['item_id']
                     id_asignacion = request.POST['id_asignacion']
                     #-----------------Se crea el nuevo registro en el historial (No se actualiza ya que este necesita un historico)
-                    historial_asignaciones.objects.filter(id=id_asignacion).create(
+                    historial_asignacion = historial_asignaciones.objects.filter(id=id_asignacion).create(
                         usuario = User.objects.get(pk=usuario_equipo),
                         inventario_item = Inventario_Item.objects.get(pk=equipo),
                         status = 'DESCARGO',
@@ -136,6 +139,9 @@ def asignacionViews(request):
                         estado = 2,
                         updated_at = updated_time,
                     )
+                    inventario = Inventario_Item.objects.get(id=equipo)
+                    historial_accion = 'Se creo el descargo num. (' + str(historial_asignacion.id) + ') con el equipo correlativo num. ('+str(inventario.correlativo)+ ') a el usuario ('+str(historial_asignacion.usuario.username)+')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=usuario_asg)
 
                     data = {'tipo_accion': 'descargo', 'correcto': True}
                 # elif action == 'pdf':

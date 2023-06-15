@@ -231,6 +231,24 @@ Descartes
                 obtenerDatos();
             }
         });
+        $('#comentarios').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Verificar si se ingresaron caracteres no permitidos
+            if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+                alert("No se pueden ingresar los caracteres: ' \" |");
+                
+                // Remover los caracteres no permitidos utilizando replace()
+                inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+                
+                // Actualizar el valor del input sin los caracteres no permitidos
+                $(this).val(inputValue);
+                return;
+            }
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
+        });
     });
 
     function obtenerDatos(){

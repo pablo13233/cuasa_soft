@@ -94,7 +94,7 @@ Tickets
                 <form method="post" action="." id="form_ticket" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group row">
-                        <div class="col-md-8">
+                        <div class="col-md-12">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="categoria">Categoría:</label>
                                 <select name="categoria" id="categoria" class="form-control form-select form-select-sm">
@@ -261,6 +261,45 @@ Tickets
         $('#categoria').select2({
             dropdownParent:  $('#modalTicket'),
             theme: 'bootstrap-5'
+        });
+        $('#title').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Convertir a mayúsculas
+            inputValue = inputValue.toUpperCase();
+            
+            // Verificar si se ingresaron caracteres no permitidos
+            if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+                alert("No se pueden ingresar los caracteres: ' \" |");
+                
+                // Remover los caracteres no permitidos utilizando replace()
+                inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+                
+                // Actualizar el valor del input sin los caracteres no permitidos
+                $(this).val(inputValue);
+                return;
+            }
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
+        });
+        $('#description').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Verificar si se ingresaron caracteres no permitidos
+            if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+                alert("No se pueden ingresar los caracteres: ' \" |");
+                
+                // Remover los caracteres no permitidos utilizando replace()
+                inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+                
+                // Actualizar el valor del input sin los caracteres no permitidos
+                $(this).val(inputValue);
+                return;
+            }
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
         });
     });
 

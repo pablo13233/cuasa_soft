@@ -7,7 +7,7 @@ from django.contrib.auth.models import Permission, Group
 from django.contrib.auth.hashers import make_password
 from apps.usuarios.models import Departamentos, Empleado
 from apps.asignaciones.models import historial_asignaciones
-from apps.tickets.models import Ticket
+from apps.historico.models import *
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.db import transaction
@@ -71,7 +71,7 @@ def empleados_views(request):
                             n_is_active = True
                         n_is_superuser = False
                         
-                        User.objects.create_user(
+                        usuario_creado = User.objects.create_user(
                             username = request.POST['nombre_usuario'],
                             email = request.POST['correo'],
                             first_name = request.POST['nombres'],
@@ -95,7 +95,10 @@ def empleados_views(request):
                             emp.updated_by = User.objects.get(pk=user_crea)
                         emp.usuario = User.objects.get(username = request.POST['nombre_usuario'])
                         emp.save()
-
+                        historial_accion_user = 'Se creo el usuario num. (' + str(usuario_creado.pk) + ') con el username (' + str(usuario_creado.username) + ')'
+                        historial_user = historico.objects.create(accion=historial_accion_user,tipo_accion=True,created_by=User.objects.get(pk=user_crea))
+                        historial_accion_emp = 'Se creo el empleado num. (' + str(emp.pk) + ') con el DNI (' + str(emp.dni) + ') para el usuario ' + str(emp.usuario.username) + ')'
+                        historial_emp = historico.objects.create(accion=historial_accion_emp,tipo_accion=True,created_by=User.objects.get(pk=user_crea))
                         data = {'tipo_accion': 'crear', 'correcto': True}
                 elif action == 'grupo_usuario':
                     username = request.POST['username']
@@ -115,17 +118,36 @@ def empleados_views(request):
                     response = JsonResponse(grupo_data, safe=False)
                     return response
                 elif action == 'editar':
+                    usr_correo = User.objects.get(id = request.POST['id_usuario'])
+                    empl_actualizar = Empleado.objects.get(usuario = User.objects.get(id = request.POST['id_usuario']))
                     #validaciones para que no se actualizen datos en blanco
-                    if len(request.POST['dni']) == 0:
-                        # el numero de identidad ya esta en usuario
-                        response = JsonResponse({"message":"No puede dejar el numero de identidad en blanco"})
-                        response.status_code = 500
-                        return response
+                    if (empl_actualizar.dni != request.POST['dni']):
+                        if len(request.POST['dni']) == 0:
+                            # el numero de identidad ya esta en usuario
+                            response = JsonResponse({"message":"No puede dejar el numero de identidad en blanco"})
+                            response.status_code = 500
+                            return response
+                        else:
+                            response = JsonResponse({"message":"El numero de identidad ya esta en uso"})
+                            response.status_code = 500
+                            return response
                     elif len(request.POST['correo']) == 0:
                         # el correo ya existe
                         response = JsonResponse({"message":"No puede dejar el correo en blanco"})
                         response.status_code = 500
                         return response
+                    elif (usr_correo.email != request.POST['correo']):
+                        # el correo ya existe
+                        if(User.objects.filter(email = request.POST['correo']).exists()):
+                            response = JsonResponse({"message":"El correo ya esta en uso"})
+                            response.status_code = 500
+                            return response
+                    elif (usr_correo.username != request.POST['nombre_usuario']):
+                        if(User.objects.filter(username = request.POST['nombre_usuario']).exists()):
+                            # nombre de usuario ya existe
+                            response = JsonResponse({"message":"El nombre de usuario ya existe"})
+                            response.status_code = 500
+                            return response
                     elif len(request.POST['apellidos']) == 0:
                         #contrasena erronea
                         response = JsonResponse({"message":"No puede dejar el apellido en blanco"})
@@ -173,6 +195,13 @@ def empleados_views(request):
                         
                         usuario_grupo.groups.set(grupo_user) #agregamos el usuario al grupo
                         
+                        empleado_actualizado = Empleado.objects.get(dni=request.POST['dni'])
+                        usuario_actualizado = User.objects.get(username = request.POST['nombre_usuario'])
+                        historial_accion_user = 'Se modifico el usuario num. (' + str(usuario_actualizado.pk) + ') con el username (' + str(usuario_actualizado.username) + ')'
+                        historial_user = historico.objects.create(accion=historial_accion_user,tipo_accion=False,created_by=User.objects.get(pk=user_crea))
+                        historial_accion_emp = 'Se modifico el empleado num. (' + str(empleado_actualizado.pk) + ') con el DNI (' + str(empleado_actualizado.dni) + ') para el usuario ' + str(empleado_actualizado.usuario.username) + ')'
+                        historial_emp = historico.objects.create(accion=historial_accion_emp,tipo_accion=False,created_by=User.objects.get(pk=user_crea))
+
                         data = {'tipo_accion': 'editar', 'correcto': True}
                 elif action == 'desactivar_user':
                     User.objects.filter(username = request.POST['nombre_usuario']).update(is_active=False)
@@ -227,20 +256,24 @@ def departamentosViews(request):
                     dep = Departamentos()
                     dep.nombre_depto = request.POST['nombre_depto']
                     dep.save()
-                    # print('lol')
+
+                    historial_accion = 'Se creo el departamento num. (' + str(dep.pk) + ') con el nombre (' + str(dep.nombre_depto) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
+
                     data = {'tipo_accion': 'crear', 'correcto': True}
                 elif action == 'editar':
                     Departamentos.objects.filter(pk=request.POST['id']).update(
                         nombre_depto = request.POST['nombre_depto'],
                         updated_date = updated_time
                     )
+                    departamento_actualizado = Departamentos.objects.get(pk=request.POST['id'])
+                    historial_accion = 'Se modifico el departamento num. (' + str(departamento_actualizado.pk) + ') con el nombre (' + str(departamento_actualizado.nombre_depto) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
 
                     data = {'tipo_accion': 'editar', 'correcto': True}
                 else:
                     data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            # print(str(e))
-            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
             transaction.rollback()
@@ -260,6 +293,7 @@ def grupos_view(request):
             with transaction.atomic():
                 # =====================  select ================
                 action = request.POST['action']
+                id_user = request.user.id
                 # id_user = request.user.id
                 if action == 'buscardatos':
                     grupos = Group.objects.all()
@@ -285,6 +319,9 @@ def grupos_view(request):
                     #guardamos cambios en la base de datos
                     group.save()
 
+                    historial_accion = 'Se creo el Grupo de usuarios num. (' + str(group.pk) + ') con el nombre (' + str(group.name) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
+                    
                     data = {'tipo_accion': 'crear', 'correcto': True}
                 elif action == 'permisos_grupo':
                     grupo = Group.objects.get(pk= request.POST['id'])
@@ -316,7 +353,10 @@ def grupos_view(request):
                         # print(permisos.pk)
                         lista_permisos.append(permisos.pk) #agrega el id del permiso a la lista
                     grupo.permissions.set(lista_permisos) #cambia la lista de permisos del grupo por la lista nueva
-                        
+                    
+                    historial_accion = 'Se modifico el Grupo de usuarios num. (' + str(grupo.pk) + ') con el nombre (' + str(grupo.name) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
+
                     data = {'tipo_accion': 'editar', 'correcto': True}
                 else:
                     data['error'] = 'Ha ocurrido un error.'

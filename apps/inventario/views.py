@@ -6,6 +6,7 @@ from django.utils import formats, timezone
 import datetime
 from django.contrib.auth.models import User
 from apps.inventario.models import *
+from apps.historico.models import *
 from apps.asignaciones.models import historial_asignaciones
 from django.db import transaction
 from django.http import JsonResponse
@@ -62,6 +63,8 @@ def inventarioViews(request):
                         inv.imagen_item = imagen
                         inv.save()
 
+                    historial_accion = 'Se creo el equipo num. (' + str(inv.id) + ') con correlativo num. (' + str(inv.correlativo) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'crear', 'correcto': True}
 
                 # =====================  editar  ================
@@ -96,6 +99,8 @@ def inventarioViews(request):
                         inv.imagen_item = imagen
     #validad que si el estado a actualizar es descarte que el equipo se descargo anteriormente estado == 2
                     inv.save()
+                    historial_accion = 'Se modifico el equipo num. (' + str(inv.id) + ') con correlativo num. (' + str(inv.correlativo) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'editar', 'correcto': True}
                 else:
                     data['error'] = 'Ha ocurrido un error.'
@@ -140,12 +145,17 @@ def categoriaViews(request):
                     ca.created_by = User.objects.get(pk=id_user)
                     ca.save()
 
+                    historial_accion = 'Se creo la cateogoria num. ('+ str(ca.id) +') con nombre (' + str(ca.nombre_categoria) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
+
                     data = {'tipo_accion': 'crear', 'correcto': True}
                 elif action == 'editar':
                     ca = Categoria.objects.get(pk=request.POST['id'])
                     ca.nombre_categoria = request.POST['nombre_categoria']
                     ca.save()
 
+                    historial_accion = 'Se modifico la cateogoria num. ('+ str(ca.id) +') con nombre (' + str(ca.nombre_categoria) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'editar', 'correcto': True}
                 else:
                     data['error'] = 'Ha ocurrido un error.'
@@ -189,6 +199,9 @@ def marcasViews(request):
                         imagen.name = str(ma.pk)+" "+imagen.name
                         ma.image = imagen
                         ma.save()
+
+                    historial_accion = 'Se creo la marca num. ('+ str(ma.id) +') con nombre (' + str(ma.nombre_marca) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'crear', 'correcto': True}
                 elif action == 'editar':
                     ma = Marca.objects.get(pk=request.POST['id'])
@@ -203,6 +216,9 @@ def marcasViews(request):
                         ma.image = imagen
 
                     ma.save()
+                    
+                    historial_accion = 'Se modifico la marca num. ('+ str(ma.id) +') con nombre (' + str(ma.nombre_marca) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
 
                     data = {'tipo_accion': 'editar', 'correcto': True}
                 else:
@@ -243,7 +259,8 @@ def modeloViews(request):
                     if int(request.POST['id_marca']) > 0:
                         mo.marca = Marca.objects.get(pk=request.POST['id_marca'])
                     mo.save()
-
+                    historial_accion = 'Se creo el modelo num. ('+ str(mo.id) +') con nombre (' + str(mo.nombre_modelo) + ') de la marca (' + str(mo.marca.nombre_marca) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'crear', 'correcto': True}
                 elif action == 'editar':
                     mo = ModeloItem.objects.get(pk=request.POST['id'])
@@ -252,6 +269,8 @@ def modeloViews(request):
                         mo.marca = Marca.objects.get(pk=request.POST['id_marca'])
                     mo.save()
 
+                    historial_accion = 'Se modifico el modelo num. ('+ str(mo.id) +') con nombre (' + str(mo.nombre_modelo) + ') de la marca (' + str(mo.marca.nombre_marca) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'editar', 'correcto': True}
                 else:
                     data['error'] = 'Ha ocurrido un error.'
@@ -292,6 +311,8 @@ def proveedoresViews(request):
                     prov.created_by = User.objects.get(pk=id_user)
                     prov.save()
 
+                    historial_accion = 'Se creo el proveedor num. ('+ str(prov.id) +') con nombre (' + str(prov.nombre_proveedor) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'crear', 'correcto': True}
                 elif action == 'editar':
                     prov = Proveedor.objects.get(pk=request.POST['id'])
@@ -301,6 +322,8 @@ def proveedoresViews(request):
                     prov.created_by = User.objects.get(pk=id_user)
                     prov.save()
 
+                    historial_accion = 'Se modifico el proveedor num. ('+ str(prov.id) +') con nombre (' + str(prov.nombre_proveedor) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'editar', 'correcto': True}
                 else:
                     data['error'] = 'Ha ocurrido un error.'
@@ -333,17 +356,21 @@ def estadosViews(request):
 
                 # ======================== crear =========================
                 elif action == 'crear':
-                    prov = Estado()
-                    prov.nombre_estado = request.POST['nombre_estado']
-                    prov.created_by = User.objects.get(pk=id_user)
-                    prov.save()
+                    est = Estado()
+                    est.nombre_estado = request.POST['nombre_estado']
+                    est.created_by = User.objects.get(pk=id_user)
+                    est.save()
 
+                    historial_accion = 'Se creo el estado de inventario num. ('+ str(est.id) +') con nombre (' + str(est.nombre_estado) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'crear', 'correcto': True}
                 elif action == 'editar':
-                    prov = Estado.objects.get(pk=request.POST['id'])
-                    prov.nombre_estado = request.POST['nombre_estado']
-                    prov.save()
+                    est = Estado.objects.get(pk=request.POST['id'])
+                    est.nombre_estado = request.POST['nombre_estado']
+                    est.save()
 
+                    historial_accion = 'Se modifico el estado de inventario num. ('+ str(est.id) +') con nombre (' + str(est.nombre_estado) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=False,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'editar', 'correcto': True}
                 else:
                     data['error'] = 'Ha ocurrido un error.'
@@ -390,19 +417,13 @@ def descarteViews(request):
                         updated_at = timezone.now(),
                         updated_by = User.objects.get(pk=id_user),
                     )
-
+                    descarte = Inventario_Item.objects.get(pk=request.POST['item_id'])
+                    historial_accion = 'Se creo el descarte de equipo num. ('+ str(descarte.id) +') a el equipo con correlativo num. (' + str(descarte.correlativo) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'crear', 'correcto': True}
-                elif action == 'editar':
-                    prov = Estado.objects.get(pk=request.POST['id'])
-                    prov.nombre_estado = request.POST['nombre_estado']
-                    prov.save()
-
-                    data = {'tipo_accion': 'editar', 'correcto': True}
                 else:
                     data['error'] = 'Ha ocurrido un error.'
         except Exception as e:
-            # print(str(e))
-            # print(action)
             data['error'] = str(e)
             data = {'tipo_accion': 'error',  'correcto': True}
             transaction.rollback()
@@ -497,14 +518,9 @@ def mantenimientosViews(request):
                         imagen.name = str(hm.pk)+" "+imagen.name
                         hm.imagen_mantenimiento = imagen
                         hm.save()
-
+                    historial_accion = 'Se creo el mantenimiento de equipo num. ('+ str(hm.id) +') a el equipo con correlativo num. (' + str(hm.inventario_item.correlativo) + ')'
+                    historial = historico.objects.create(accion=historial_accion,tipo_accion=True,created_by=User.objects.get(pk=id_user))
                     data = {'tipo_accion': 'crear', 'correcto': True}
-                elif action == 'editar':
-                    prov = Estado.objects.get(pk=request.POST['id'])
-                    prov.nombre_estado = request.POST['nombre_estado']
-                    prov.save()
-
-                    data = {'tipo_accion': 'editar', 'correcto': True}
                 else:
                     data['error'] = 'Ha ocurrido un error.'
         except Exception as e:

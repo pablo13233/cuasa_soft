@@ -208,6 +208,7 @@ Inventario
                                 <input type="text" class="form-control" value="0.00" name="precio" id="precio" aria-label="Precio"/>
                                 <span class="input-group-text">Ej. 1.23</span>
                             </div>
+                            <label for="" id="precioError" style="color: red;"></label>
                         </div>
                     </div>
 
@@ -369,7 +370,136 @@ $(document).ready(function(){
         dropdownParent:  $('#modalInventario'),
         theme: 'bootstrap-5'
     });
+    $('#comentarios').on('input', function() {
+        var inputValue = $(this).val();
+        
+        // Verificar si se ingresaron caracteres no permitidos
+        if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+            alert("No se pueden ingresar los caracteres: ' \" |");
+            
+            // Remover los caracteres no permitidos utilizando replace()
+            inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+            
+            // Actualizar el valor del input sin los caracteres no permitidos
+            $(this).val(inputValue);
+            return;
+        }
+        
+        // Actualizar el valor del input
+        $(this).val(inputValue);
+    });
+    $('#serial_number').on('input', function() {
+        var inputValue = $(this).val();
+        
+        inputValue = inputValue.toUpperCase();
+        // Verificar si se ingresaron caracteres no permitidos
+        if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+            alert("No se pueden ingresar los caracteres: ' \" |");
+            
+            // Remover los caracteres no permitidos utilizando replace()
+            inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+            
+            // Actualizar el valor del input sin los caracteres no permitidos
+            $(this).val(inputValue);
+            return;
+        }
+        
+        // Actualizar el valor del input
+        $(this).val(inputValue);
+    });
+    $('#ubicacion').on('input', function() {
+        var inputValue = $(this).val();
+        
+        // Verificar si se ingresaron caracteres no permitidos
+        if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+            alert("No se pueden ingresar los caracteres: ' \" |");
+            
+            // Remover los caracteres no permitidos utilizando replace()
+            inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+            
+            // Actualizar el valor del input sin los caracteres no permitidos
+            $(this).val(inputValue);
+            return;
+        }
+        
+        // Actualizar el valor del input
+        $(this).val(inputValue);
+    });
+    $('#caracteristica').on('input', function() {
+        var inputValue = $(this).val();
+        
+        // Verificar si se ingresaron caracteres no permitidos
+        if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+            alert("No se pueden ingresar los caracteres: ' \" |");
+            
+            // Remover los caracteres no permitidos utilizando replace()
+            inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+            
+            // Actualizar el valor del input sin los caracteres no permitidos
+            $(this).val(inputValue);
+            return;
+        }
+        
+        // Actualizar el valor del input
+        $(this).val(inputValue);
+    });
     
+    $('#precio').on('input', function() {
+        var inputValue = $(this).val();
+        
+        // Eliminar cualquier caracter no numérico excepto el punto decimal
+        inputValue = inputValue.replace(/[^0-9.]/g, '');
+        var dotCount = (inputValue.match(/\./g) || []).length;
+        if (dotCount > 1) {
+            inputValue = inputValue.replace(/\./g, '');
+        }
+        // Actualizar el valor del input
+        $(this).val(inputValue);
+    });
+    
+    
+    $('#nombre').on('input', function() {
+        var inputValue = $(this).val();
+        
+        // Convertir a mayúsculas
+        inputValue = inputValue.toUpperCase();
+        
+        // Verificar si se ingresaron caracteres no permitidos
+        if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+            alert("No se pueden ingresar los caracteres: ' \" |");
+            
+            // Remover los caracteres no permitidos utilizando replace()
+            inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+            
+            // Actualizar el valor del input sin los caracteres no permitidos
+            $(this).val(inputValue);
+            return;
+        }
+        
+        // Actualizar el valor del input
+        $(this).val(inputValue);
+    });
+    $('#correlativo').on('input', function() {
+        var inputValue = $(this).val();
+        
+        // Convertir a mayúsculas
+        inputValue = inputValue.toUpperCase();
+        
+        // Verificar si se ingresaron caracteres no permitidos
+        if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+            alert("No se pueden ingresar los caracteres: ' \" |");
+            
+            // Remover los caracteres no permitidos utilizando replace()
+            inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+            
+            // Actualizar el valor del input sin los caracteres no permitidos
+            $(this).val(inputValue);
+            return;
+        }
+        
+        // Actualizar el valor del input
+        $(this).val(inputValue);
+    });
 });
 
 //------------------------- boton en modal para agregar -----------------------
@@ -428,6 +558,7 @@ $('#datatable tbody').on('click', 'a[rel="editar"]', function(){
         $('#proveedor').val(data.proveedor.id);
         $('#precio').val(data.precio);
         $('#fecha_compra').val(data.fecha_compra);
+        console.log(data.fecha_compra)
         $('#fecha_garantia').val(data.fecha_garantia);
         $('#estado').val(data.estado.id);
         $('#caracteristica').val(data.caracteristica);

@@ -347,6 +347,13 @@ Asignaciones
                     </option>
                 {% endfor %}`
             );
+            $('#usuario').html(
+                `{% for usr in usuarios %}
+                    <option value="{{usr.pk}}"> 
+                        {{usr.username}}
+                    </option>
+                {% endfor %}`
+            );
             modalTitulo.find('span').html(' Descartar Equipo Asignado');
             modalTitulo.find('i').removeClass().addClass('fa-solid fa-user-minus');
             $('#action').val("descargo");

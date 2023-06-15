@@ -132,7 +132,7 @@ Proveedores
                         <div class="col-md-12">
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="">Teléfono:</label>
-                                <input type="text" class="form-control" name="telefono" id="telefono" required />
+                                <input type="text" class="form-control" name="telefono" id="telefono" placeholder="9999-9999" maxlength="9" required />
                             </div>
                         </div>
                     </div>
@@ -140,8 +140,9 @@ Proveedores
                         <div class="col-md-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Email</span>
-                                <input type="text" class="form-control" name="email" id="email" required />
+                                <input type="email" class="form-control" name="email" id="email" placeholder="correo@cuasa.hn" required />
                             </div>
+                            <label for="" class="px-10 text-danger" id="emailError"></label>
                         </div>
                     </div>
                 </form>
@@ -167,12 +168,60 @@ Proveedores
             $('#action').val('crear');
             $('#formProveedor')[0].reset();
             $('#nombre').focus();
-
+            $('#emailError').hide();
             $('#modalProveedor').modal('show');
         });
         $('#datatable').DataTable();
         obtenerDatos();
     }
+
+    $(document).ready(function() {
+        $('#nombre').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Convertir a mayúsculas
+            inputValue = inputValue.toUpperCase();
+            
+            // Verificar si se ingresaron caracteres no permitidos
+            if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+                alert("No se pueden ingresar los caracteres: ' \" |");
+                
+                // Remover los caracteres no permitidos utilizando replace()
+                inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+                
+                // Actualizar el valor del input sin los caracteres no permitidos
+                $(this).val(inputValue);
+                return;
+            }
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
+        });
+        $('#telefono').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Eliminar cualquier caracter no numérico utilizando replace()
+            inputValue = inputValue.replace(/\D/g, '');
+            
+            // Aplicar la máscara 0000-0000
+            inputValue = inputValue.replace(/(\d{4})(\d{0,4})/, '$1-$2');
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
+        });
+        $('#email').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Verificar el formato de correo electrónico utilizando una expresión regular
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(inputValue)) {
+                $('#emailError').text('Por favor, ingresa un correo electrónico válido.').show();
+            } else {
+                $('#emailError').hide();
+            }
+        });
+    });
 
     $("#btn").on("click", function(){
         if($("#nombre").val == ""){

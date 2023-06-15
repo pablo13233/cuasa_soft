@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Historial
+{% endblock title %}
+
+{% block route_bar %}
+<li class="separator ">
+    <i class="fas fa-chevron-right icon-route"></i>
+</li>
+<li class="nav-item-route ">
+    <a href="#" class="icon-route">Historial</a>
+</li>
+{% endblock route_bar %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-lg-12 col-md-8 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-header pt-2">
+                    <div class="row">
+                        <div class="col-lg-6 col-6">
+                            <h4><i class="fa-solid fa-arrow-right-from-arc fs-3"></i> Historial de acciones</h4>
+                        </div>
+                        <div class="col-2"></div>
+                        <div class="col-4 p-0 text-center">
+                            <form method="post" action="." id="formFechasHistorial" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="col-12 p-0" id="div_fechas">
+                                    <div class="row p-0 m-0">
+                                        <div class="form-group col-5 pb-2">
+                                            <label for="fechaInicial">Fecha Inicial:</label>
+                                            <input type="text" class="form-control datepicker p-0" id="fechaInicial" readonly>
+                                        </div>
+                                        <div class="col-1 p-0 m-0"></div>
+                                        <div class="form-group col-5 pb-2">
+                                            <label for="fechaFinal">Fecha Final:</label>
+                                            <input type="text" class="form-control datepicker p-0" id="fechaFinal" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pt-2">
+                    <table class="table align-items-center mb-0" id="datatable">
+                        <thead>
+                            <tr>
+                                <th style="width:50px;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    # No.
+                                </th>
+                                <th style="width:80px;" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Usuario
+                                </th>
+                                <th style="width:80px;" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Tipo
+                                </th>
+                                <th style="width:150px;" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Acción
+                                </th>
+                                <th style="width:80px;" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Fecha
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var tablaHistorial;
+    var fechaFinal;
+    var fechaInicial;
+
+    window.onload = function () {
+        $('#datatable').DataTable();
+
+        fechaInicial = null;
+        fechaFinal = null;
+        $("#fechaFinal").attr("disabled", true);
+        $("#fechaInicial").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayBtn: false
+        }).on("changeDate", function (e) {
+            fechaInicial = $("#fechaInicial").val();
+            $("#fechaFinal").datepicker("setStartDate", fechaInicial);
+            $("#fechaFinal").attr("disabled", false);
+        });
+        $("#fechaFinal").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayBtn: false
+        }).on("changeDate", function (e) {
+            fechaFinal = $("#fechaFinal").val();
+            if (fechaFinal < fechaInicial) {
+                alert("La fecha final debe ser igual o mayor a la fecha inicial!");
+                $("#fechaFinal").val("");
+            }else{
+                obtenerDatos();
+            }
+        });
+        obtenerDatos();
+    }
+    
+    $(document).ready(function () {
+        
+    });
+
+
+    // $('#datatable tbody').on('click', 'a[rel="pdf"]', function () {
+    //         var tr = tablaHistorial.cell($(this).closest('td, li')).index();
+    //         var data = tablaHistorial.row(tr.row).data();
+            
+    //         asignacion_id  = data.id;
+    //         Swal.fire({
+    //             title: '¿Imprimir el archivo?',
+    //             icon: 'info',
+    //             showCancelButton: true,
+    //             confirmButtonColor: '#3085d6',
+    //             cancelButtonColor: '#d33',
+    //             confirmButtonText: 'Sí',
+    //             cancelButtonText: 'No'
+    //         }).then((result) => {
+    //             if (result.isConfirmed) {
+    //             window.open("{% url 'asignaciones_app:nota_asg' %}?asignacion_id=" +asignacion_id);
+    //             }
+    //         })
+    //     }
+    // );
+
+    //================================================== Obtener Datos===========================================================
+    function obtenerDatos() {
+        token = $('input[name="csrfmiddlewaretoken"]').val();
+        tablaHistorial = $('#datatable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            bSortable: true,
+            deferRender: true,
+            language: { "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"},
+            ajax: {
+                url: window.location.pathname, //Obtenemos la url obsoluta
+                type: 'POST',
+                data: {
+                    'action': 'buscardatos', 
+                    'fecha_ini':fechaInicial,
+                    'fecha_final':fechaFinal,
+                    'csrfmiddlewaretoken': token
+                }, // parametros
+                dataSrc: ""
+            },
+            columns: [ //Columnas de nuestro modelo/Tabla aqui retorna o pinta los valores en la datables
+                {
+                    "data": "id"
+                },
+                {
+                    "data": "created_by.username"
+                },
+                {
+                    "data": "tipo_accion.tipo"
+                },
+                {
+                    "data": "accion"
+                },
+                {
+                    "data": "created_at"
+                },
+            ], 
+            columnDefs: [ //Personalizar una columna
+                {
+                    targets: [0], //Personalizar la colummna numero 6
+                    class: 'text-center',
+                    orderable: false, //
+                },
+                {
+                    targets: [3],
+                    render: function (data, type, row) {
+                        return data.substr(0, 100) + "...";
+                    }
+                },
+                
+            ],
+            order: [[0,'desc']],
+        });
+    }
+
+</script>
+{% endblock content %}

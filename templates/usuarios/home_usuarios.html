@@ -118,13 +118,13 @@ Usuarios
                     {% csrf_token %}
                     <div class="form-group row">
                         <input type="text" class="d-none" name="action" id="action" value="crear" />
-                        <input type="text" class="d-none" id="id_ticket" value="0" />
+                        <input type="text" class="d-none" id="id_usuario" value="0" />
                         <!-- sep -->
                         <div class="col-md-12">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Identidad</span>
                                 <input type="text" class="form-control" name="dni" id="dni" required
-                                    area-label="Numero de identidad" />
+                                    area-label="Numero de identidad" maxlength="13" placeholder="Ej. 0601198012345"/>
                             </div>
                         </div>
                     </div>
@@ -151,8 +151,9 @@ Usuarios
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Email</span>
                                 <input type="email" class="form-control" name="email" id="email" required
-                                    area-label="Correo del empleado" />
+                                    area-label="Correo del empleado" placeholder="correo@cuasa.hn" />
                             </div>
+                            <label for="" class="px-10 text-danger" id="emailError"></label>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -386,7 +387,7 @@ Usuarios
             $('#staff').attr("checked", false);
             $('#contrasena').val("");
             $('#contrasena2').val("");
-
+            $('#emailError').hide();
             $('#dni').focus();
 
             $('#modalEmpleado').modal('show');
@@ -403,6 +404,75 @@ Usuarios
             dropdownParent:  $('#modalEmpleado'),
             theme: 'bootstrap-5'
         });
+        //-------------------------------
+        $('#dni').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Eliminar cualquier caracter no numérico
+            inputValue = inputValue.replace(/\D/g, '');
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
+        });
+        $('#nombres,#apellidos').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Convertir a mayúsculas
+            inputValue = inputValue.toUpperCase();
+            
+            // Verificar si se ingresaron caracteres no permitidos
+            if (inputValue.includes("'") || inputValue.includes('"') || inputValue.includes('|')) {
+                alert("No se pueden ingresar los caracteres: ' \" |");
+                
+                // Remover los caracteres no permitidos utilizando replace()
+                inputValue = inputValue.replace(/['"|\u201C\u201D]/g, '');
+                
+                // Actualizar el valor del input sin los caracteres no permitidos
+                $(this).val(inputValue);
+                return;
+            }
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
+        });
+        
+        $('#email').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Verificar el formato de correo electrónico utilizando una expresión regular
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(inputValue)) {
+                $('#emailError').text('Por favor, ingresa un correo electrónico válido.').show();
+            } else {
+                $('#emailError').hide();
+            }
+        });
+        $('#username').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Eliminar cualquier caracter no alfabético
+            inputValue = inputValue.replace(/[^a-z]/g, '');
+            
+            // Convertir a minúsculas
+            inputValue = inputValue.toLowerCase();
+            
+            // Actualizar el valor del input
+            $(this).val(inputValue);
+        });
+        $('#contrasena, #contrasena2').on('input', function() {
+            var inputValue = $(this).val();
+            
+            // Verificar si se ingresan caracteres especiales no permitidos
+            if (/[\s'"\[\]{}|\\]/.test(inputValue)) {
+                $(this).val('');
+                alert("No se pueden ingresar los siguientes caracteres especiales: espacios en blanco, ', \", [], {}, | o \\. Por favor, ingrese una contraseña válida.");
+                return;
+            }
+            
+        });
+
+        //--------------------------------
     });
 
     // ==================================== Obtener 
@@ -563,9 +633,9 @@ Usuarios
         modalTitulo.find('i').removeClass().addClass('fas fa-edit fs-3');
 
         $('#grupo').html(
-            `{% for dep in departamentos %}
-                <option value="{{dep.id}}">
-                    {{dep.nombre_depto}}
+            `{% for gr in grupos %}
+                <option value="{{gr.id}}">
+                    {{gr.name}}
                 </option>
             {% endfor %}`
         );
@@ -583,6 +653,7 @@ Usuarios
         $('#departamento').val(data.depto.id);
         $('#email').val(data.email);
         $('#username').val(data.usuario.usuario);
+        $('#id_usuario').val(data.usuario.id);
         if (data.estado.estado == 'activo') {
             $('#active').attr('checked', true);
         } else {
@@ -595,7 +666,6 @@ Usuarios
         }
         $('#contrasena').val("");
         $('#contrasena2').val("");
-        $('#username').attr('disabled', true);
 
         $('#dni').focus();
 
@@ -695,7 +765,8 @@ Usuarios
         var parametros = new FormData();
         token = $('input[name="csrfmiddlewaretoken"]').val();
         parametros.append('action', $('#action').val());
-
+        
+        parametros.append('id_usuario', $("#id_usuario").val());
         parametros.append('nombres', $("#nombres").val());
         parametros.append('apellidos', $("#apellidos").val());
         parametros.append('dni', $("#dni").val());
@@ -821,7 +892,7 @@ Usuarios
                     $("#modalPassword").modal("hide");
                     switch (result.tipo_accion) {
                         case "cambiar_psw":
-                            texto = "USe cambio la contraseña con exito";
+                            texto = "Se cambio la contraseña con exito";
                             break;
                         default:
                             texto = "";
