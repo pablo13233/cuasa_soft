@@ -31,7 +31,7 @@ def PdfView(request):
                 dni = ident.dni
                 observaciones = asg.observaciones
                 item = Inventario_Item.objects.get(id=asg.inventario_item.id)
-                item_nombre = item.nombre_item
+                item_nombre = item.correlativo
                 item_caracteristica = item.caracteristica
                 serie = item.serial_number
                 modelo = item.ModeloItem.nombre_modelo

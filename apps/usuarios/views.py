@@ -118,17 +118,36 @@ def empleados_views(request):
                     response = JsonResponse(grupo_data, safe=False)
                     return response
                 elif action == 'editar':
+                    usr_correo = User.objects.get(id = request.POST['id_usuario'])
+                    empl_actualizar = Empleado.objects.get(usuario = User.objects.get(id = request.POST['id_usuario']))
                     #validaciones para que no se actualizen datos en blanco
-                    if len(request.POST['dni']) == 0:
-                        # el numero de identidad ya esta en usuario
-                        response = JsonResponse({"message":"No puede dejar el numero de identidad en blanco"})
-                        response.status_code = 500
-                        return response
+                    if (empl_actualizar.dni != request.POST['dni']):
+                        if len(request.POST['dni']) == 0:
+                            # el numero de identidad ya esta en usuario
+                            response = JsonResponse({"message":"No puede dejar el numero de identidad en blanco"})
+                            response.status_code = 500
+                            return response
+                        else:
+                            response = JsonResponse({"message":"El numero de identidad ya esta en uso"})
+                            response.status_code = 500
+                            return response
                     elif len(request.POST['correo']) == 0:
                         # el correo ya existe
                         response = JsonResponse({"message":"No puede dejar el correo en blanco"})
                         response.status_code = 500
                         return response
+                    elif (usr_correo.email != request.POST['correo']):
+                        # el correo ya existe
+                        if(User.objects.filter(email = request.POST['correo']).exists()):
+                            response = JsonResponse({"message":"El correo ya esta en uso"})
+                            response.status_code = 500
+                            return response
+                    elif (usr_correo.username != request.POST['nombre_usuario']):
+                        if(User.objects.filter(username = request.POST['nombre_usuario']).exists()):
+                            # nombre de usuario ya existe
+                            response = JsonResponse({"message":"El nombre de usuario ya existe"})
+                            response.status_code = 500
+                            return response
                     elif len(request.POST['apellidos']) == 0:
                         #contrasena erronea
                         response = JsonResponse({"message":"No puede dejar el apellido en blanco"})

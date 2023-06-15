@@ -181,7 +181,7 @@ def AdminTicketViews (request,id):
             transaction.commit()
         return JsonResponse(data,safe=False)
     elif request.method =="GET":
-        users = User.objects.filter(is_staff=True)
+        users = User.objects.filter(is_staff=True, is_superuser=False)
         return render(request, 'tickets/ticket_admin.html',{'users':users})
 
 @login_required
@@ -410,8 +410,8 @@ def ticket_departamento_pdf(request):
             transaction.rollback()
         else:
             transaction.commit()
-            # return response
-            return render(request, 'reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
+            return response
+            # return render(request, 'reportes/reporte_incidencias_depto_pdf.html', {'filename': filename, 'tabla': tabla_dict_short,'f_inicial': fecha_inicial_str, 'f_final': fecha_final_str})
         
 @login_required
 def categoria_departamento_pdf(request):

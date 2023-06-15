@@ -118,11 +118,11 @@ class Inventario_Item(models.Model):
         if self.fecha_compra == None:
             item['fecha_compra'] = ''
         else:
-            item['fecha_compra'] = self.created_at.strftime("%Y-%m-%d")
+            item['fecha_compra'] = self.fecha_compra.strftime("%Y-%m-%d")
         if self.fecha_garantia == None:
             item['fecha_garantia'] = ''
         else:
-            item['fecha_garantia'] = self.updated_at.strftime("%Y-%m-%d")
+            item['fecha_garantia'] = self.fecha_garantia.strftime("%Y-%m-%d")
         if self.updated_by == None:
             item['updated_by'] = {'id': 'no actualizado', 'username': 'no actualizado'}
         else:
